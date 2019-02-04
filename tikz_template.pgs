@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage{mathptmx}
+\usepackage{tikz}
+\usepackage{tikz-3dplot}
+\usepackage{pgfplots}
+\usepgfplotslibrary{groupplots}
+\usepgfplotslibrary{statistics}
+\usepackage{pgf}
+\usepackage{relsize}
+\usepackage[binary-units = true,load-configurations=binary]{siunitx}
+
+\pgfplotsset{compat=1.11}
+%\usepackage{color}
+\DeclareSymbolFont{symbolsb}{OMS}{cmsy}{m}{n}
+\SetSymbolFont{symbolsb}{bold}{OMS}{cmsy}{b}{n}
+\DeclareSymbolFontAlphabet{\mathcal}{symbolsb}
+
+\usetikzlibrary{patterns,arrows,positioning,fit,shadows,backgrounds,matrix,arrows,scopes,shadows}
+\usetikzlibrary{shapes.symbols,positioning}
+\usetikzlibrary{intersections}
+\usetikzlibrary{calc}
+\makeatletter
+\tikzset{nomorepostaction/.code=\let\tikz@postactions\pgfutil@empty}
+\makeatother
+
+\definecolor{uablue50}{RGB}{0,91,130}
+\definecolor{uablue35}{RGB}{166,198,211}
+\definecolor{uablue30}{RGB}{178,206,217}
+\definecolor{uablue20}{RGB}{204,222,236}
+\definecolor{uablue10}{RGB}{229,239,242}
+
+\definecolor{uagray80}{RGB}{81,81,81}
+\definecolor{uagray50}{RGB}{156,156,156}
+\definecolor{uagray30}{RGB}{185,185,185}
+\definecolor{uagray20}{RGB}{204,204,204} % unofficial extension (inkscape conversion from cmyk!)
+\definecolor{uagray10}{RGB}{229,229,229} % unofficial extension (inkscape conversion from cmyk!)
+\definecolor{uagray05}{RGB}{242,242,242} % unofficial extension (inkscape conversion from cmyk!)
+\definecolor{uawhite}{RGB}{255,255,255}
+
+\definecolor{uabranchred}{RGB}{212,45,18}% Gesundheit
+\definecolor{uabranchyellow}{RGB}{230,175,17}% Energie und Umwelt
+\definecolor{uabranchblue}{RGB}{0,131,190}% Informationstechnologie
+
+\definecolor{uablue}{RGB}{0,91,130}% Diagram color blue % 100%
+\definecolor{ualightblue}{RGB}{110,159,189}% Diagram color blue % 50% (inkscape conversion from cmyk!) {cmyk}{0.42,0.16,0.00,0.26}
+
+\definecolor{uared}{RGB}{175,90,80}% Diagram color red % 100%
+\definecolor{ualightred}{RGB}{198,141,132}% Diagram color red % 70%
+
+\definecolor{uagreen}{RGB}{125,150,110}% Diagram color green % 100%
+\definecolor{ualightgreen}{RGB}{164,181,153}% Diagram color green % 70%
+
+\definecolor{uayellow}{RGB}{215,170,80}% Diagram color yellow % 100%
+\definecolor{ualightyellow}{RGB}{235,212,167}% Diagram color yellow % 50%
+
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{bg_input}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{bg_input,background,main,foreground}
+\usepackage[active,pdftex,tightpage]{preview}
+\PreviewEnvironment[]{tikzpicture}
+\PreviewEnvironment[]{pgfpicture}
+\begin{document}
+<>
+\end{document}

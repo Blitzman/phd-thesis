@@ -1,0 +1,144 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% UAThesis
+% LaTeX Template
+% Version 1.0 (01/09/15)
+%
+% Based on the template
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[
+  11pt,           % The default document font size, options: 10pt, 11pt, 12pt
+  %oneside,       % Two side (alternating margins) for binding by default, uncomment to switch to one side
+  english,        % Language option for the babel package
+  singlespacing,  % Single line spacing, alternatives: onehalfspacing or doublespacing
+  %draft,         % Uncomment to enable draft mode (no pictures, no links, overfull hboxes indicated)
+  %nolistspacing, % If the document is onehalfspacing or doublespacing, uncomment this to set spacing in lists to single
+  %liststotoc,    % Uncomment to add the list of figures/tables/etc to the table of contents
+  %toctotoc,      % Uncomment to add the main table of contents to the table of contents
+  %parskip,       % Uncomment to add space between paragraphs
+]{UAThesis} % The class file specifying the document structure
+
+%----------------------------------------------------------------------------------------
+%	THESIS INFORMATION
+%----------------------------------------------------------------------------------------
+
+\thesistitle{TBD}
+% Your thesis title, this is used in the title and abstract, print it elsewhere with \ttitle
+\supervisor{Jose \textsc{Garcia-Rodriguez}}
+% Your supervisor's name, this is used in the title page, print it elsewhere with \supname
+\examiner{}
+% Your examiner's name, this is not currently used anywhere in the template, print it elsewhere with \examname
+\degree{Doctor of Philosophy}
+% Your degree name, this is used in the title page and abstract, print it elsewhere with \degreename
+\author{Alberto \textsc{Garcia-Garcia}}
+% Your name, this is used in the title page and abstract, print it elsewhere with \authorname
+\addresses{} 
+% Your address, this is not currently used anywhere in the template, print it elsewhere with \addressname
+\subject{Computer Science}
+% Your subject area, this is not currently used anywhere in the template, print it elsewhere with \subjectname
+\keywords{}
+% Keywords for your thesis, this is not currently used anywhere in the template, print it elsewhere with \keywordnames
+\university{{University of Alicante}}
+% Your university's name and URL, this is used in the title page and abstract, print it elsewhere with \univname
+\department{{Department of Computer Technology}}
+% Your department's name and URL, this is used in the title page and abstract, print it elsewhere with \deptname
+\group{{3D Perception Lab}}
+% Your research group's name and URL, this is used in the title page, print it elsewhere with \groupname
+\faculty{\href{http://www.eps.ua.es/}{Higher Polytechnic School}}
+% Your faculty's name and URL, this is used in the title page and abstract, print it elsewhere with \facname
+
+\hypersetup{pdftitle=\ttitle} % Set the PDF's title to your title
+\hypersetup{pdfauthor=\authorname} % Set the PDF's author to your name
+\hypersetup{pdfkeywords=\keywordnames} % Set the PDF's keywords to your keywords
+
+\begin{document}
+
+\frontmatter
+% Use roman page numbering style (i, ii, iii, iv...) for the pre-content pages
+
+\pagestyle{plain}
+% Default to the plain heading style until the thesis style is called for the body content
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+\input{Frontmatter/titlepage}
+
+\input{Frontmatter/license}
+%----------------------------------------------------------------------------------------
+%	QUOTATION PAGE
+%----------------------------------------------------------------------------------------
+
+\input{Frontmatter/quotation}
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT PAGE
+%----------------------------------------------------------------------------------------
+
+\input{Frontmatter/abstract}
+\input{Frontmatter/resumen}
+
+%----------------------------------------------------------------------------------------
+%	ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+
+\input{Frontmatter/acknowledgements}
+%\input{Frontmatter/agradecimientos}
+
+%----------------------------------------------------------------------------------------
+%	LIST OF CONTENTS/FIGURES/TABLES PAGES
+%----------------------------------------------------------------------------------------
+
+\tableofcontents % Prints the main table of contents
+
+\listoffigures % Prints the list of figures
+
+\listoftables % Prints the list of tables
+
+\chapter{List of Acronyms}
+\input{acronyms} % Acronyms
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - CHAPTERS
+%----------------------------------------------------------------------------------------
+
+\mainmatter % Begin numeric (1,2,3...) page numbering
+
+\pagestyle{thesis} % Return the page headers back to the "thesis" style
+
+% Include the chapters of the thesis as separate files from the Mainmatter folder
+\input{Mainmatter/chapter_introduction}
+\input{Mainmatter/chapter_objrecog}
+\input{Mainmatter/chapter_semanticseg}
+\input{Mainmatter/chapter_tactile}
+\input{Mainmatter/chapter_conclusion}
+
+%----------------------------------------------------------------------------------------
+%	THESIS CONTENT - APPENDICES
+%----------------------------------------------------------------------------------------
+
+\appendix % Cue to tell LaTeX that the following 'chapters' are Appendices
+
+% Include the appendices of the thesis as separate files from the Appendices folder
+
+%\input{Appendices/AppendixCaffeModels}
+%\input{Appendices/AppendixSourceCode}
+
+%----------------------------------------------------------------------------------------
+%	BIBLIOGRAPHY
+%----------------------------------------------------------------------------------------
+
+\printbibliography[heading=bibintoc]
+
+%----------------------------------------------------------------------------------------
+
+\end{document}
