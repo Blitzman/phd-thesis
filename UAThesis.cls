@@ -500,7 +500,22 @@ breaklinks=true,
    \let\\\space
 }
 
-\newenvironment{chapterabstract}{\leftskip2em\rightskip2em\itshape}{}
+\newcommand{\mybox}[1]{\par\noindent\colorbox{gray!50}
+{\parbox{\dimexpr\textwidth-2\fboxsep\relax}{#1}}}
+
+%\newenvironment{chapterabstract}{\leftskip2em\rightskip2em\itshape}{}
+\newenvironment{chapterabstract}{%
+  \par\nobreak\noindent
+  \textbf{\textit{Abstract}~\hrulefill}\par\nobreak
+  \medskip
+  \small
+  \noindent\ignorespaces}
+{%
+  \par\nobreak\normalsize
+  \medskip
+  \vskip-\ht\strutbox\noindent
+  \textbf{\hrulefill}%
+}
 
 %----------------------------------------------------------------------------------------
 

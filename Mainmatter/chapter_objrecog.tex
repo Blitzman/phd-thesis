@@ -1,8 +1,13 @@
 \chapter{Object Recognition}
 \label{cha:objrecog}
 
+\begin{chapterabstract}
+In this chapter, we address the problem of object class recognition. To approach this problem, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. More specifically, we leverage deep learning for such task. The chapter begins introducing and formulating the object recognition task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature in Section \ref{cha:objrecog:sec:relatedworks}. After that, we present our first proposal towards 3D object recognition using \acp{CNN}, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
+\end{chapterabstract}
+
 \section{Introduction}
 \label{cha:objrecog:sec:introduction}
+
 
 \section{Related Works}
 \label{cha:objrecog:sec:relatedworks}
@@ -19,8 +24,22 @@
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
 
+\subsection{Data Representation}
+\label{cha:objrecog:sec:pointnet:subsec:data}
+
+The system takes a point cloud of an object as input to recognize it, i.e., predict its class label. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization.
+
+\subsection{Network Architecture}
+\label{cha:objrecog:sec:pointnet:subsec:network}
+
+\subsection{Experiments}
+\label{cha:objrecog:sec:pointnet:subsec:experiments}
+
+\subsection{Discussion}
+\label{cha:objrecog:sec:pointnet:subsec:discussion}
+
 \section{Noise and Occlusion}
-\label{cha:objrecog:sec:noiseocclusion}
+\label{cha:objrecog:sec:study}
 
 \section{LonchaNet}
 \label{cha:objrecog:sec:lonchanet}
