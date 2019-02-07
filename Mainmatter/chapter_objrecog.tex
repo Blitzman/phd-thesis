@@ -2,12 +2,19 @@
 \label{cha:objrecog}
 
 \begin{chapterabstract}
-In this chapter, we address the problem of object class recognition. To approach this problem, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. More specifically, we leverage deep learning for such task. The chapter begins introducing and formulating the object recognition task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature in Section \ref{cha:objrecog:sec:relatedworks}. After that, we present our first proposal towards 3D object recognition using \acp{CNN}, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
+In this chapter, we address the problem of object class recognition. To approach this challenge, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. More specifically, we leverage deep learning for such task. The chapter begins introducing and formulating the object recognition task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature in Section \ref{cha:objrecog:sec:relatedworks}. After that, we present our first proposal towards 3D object recognition using \acp{CNN}, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
 \end{chapterabstract}
 
 \section{Introduction}
 \label{cha:objrecog:sec:introduction}
 
+Object recognition is fundamental to computer vision and remains a challenging area of research. 
+
+Recognizing objects is one of the problems that must be solved to achieve total visual scene understanding. Such deeper and better knowledge of the environment eases and enables the execution of a wide variety of more complex tasks. For instance, accurately recognizing objects in a room can be extremely useful for any robotic system that navigates within indoor environments. Due to the unstructured nature of those environments, autonomous robots need to do reasoning grounded in the dynamic real world. In other words, they need to understand the information captured by their sensors to perform tasks such as grasping, navigation, mapping, or even providing humans with information about their surroundings. Identifying the classes to which objects belong is one key step to enhance the aforementioned capabilities.
+
+Although we humans recognize numerous objects in difficult settings (e.g., different points of view, sizes, scales, translations, rotations, occlusion, lighting...) with little to no effort, approaching that problem is not that easy for a computer.
+
+For those reasons, object recognition lies at the intersection of computer vision, robotics, and machine learning. That fact makes it one of the most active and important fields at the moment. 
 
 \section{Related Works}
 \label{cha:objrecog:sec:relatedworks}
