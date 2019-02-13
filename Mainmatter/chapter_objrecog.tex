@@ -41,16 +41,26 @@ At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned 
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
 
+The proposed system takes a point cloud of an object as an input and predicts its class label. In this regard, the proposal is twofold: a volumetric grid based on point density to estimate spatial occupancy inside each voxel, and a pure \ac{3D}-\ac{CNN} which is trained to predict object classes. The occupancy grid -- inspired by VoxNet \cite{Maturana2015} occupancy models based on probabilistic estimates -- provides a compact representation of the object's 3D information from the point cloud. That grid is fed to the \ac{CNN} architecture, which in turn computes a label for that sample, i.e., predicts the class of the object.
+
 \subsection{Data Representation}
 \label{cha:objrecog:sec:pointnet:subsec:data}
 
-The system takes a point cloud of an object as input to recognize it, i.e., predict its class label. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization.
+As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it.
+
+Occupancy grids are data structures which allow us to obtain a compact representation of the volumetric space. They stand between meshes or clouds, which offer rich but large amounts of information, and voxelized representations with packed but poor information. At that midpoint, occupancy grids provide considerable shape cues to perform learning, while enabling an efficient processing of that information thanks to their array-like implementation.
+
+TODO: Talk about other approaches that make use of occupancy grids
+
+We propose an occupancy grid inspired by the aforementioned successes but aiming to maintain a reasonable accuracy while allowing a real-time implementation. In our volumetric representation, each point of a cloud is mapped to a voxel of a fixed-size occupancy grid. Before performing that mapping, the object cloud is scaled to fit the grid. Each voxel will hold a value representing the number of points mapped to itself. At last, the values held by each cell are normalized. Figure 1 shows the proposed occupancy grid representation for a sample object.
 
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:pointnet:subsec:network}
 
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
+
+This architecture was implemented using the Point Cloud Library (PCL) [23] – which contains state-of-the-art algorithms for 3D point cloud processing – and Caffe [19], a deep learning framework developed and maintained by the Berkeley Vision and Learning Center (BVLC) and an active community of contributors on GitHub 1. This BSD-licensed C++ library allows us to design, train, and deploy CNN architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN [24] to take advantage of GPU acceleration.
 
 \subsection{Discussion}
 \label{cha:objrecog:sec:pointnet:subsec:discussion}
