@@ -92,10 +92,12 @@ With PointNet, we propose an occupancy grid inspired by the aforementioned succe
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:pointnet:subsec:network}
 
+As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in 2D images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters that highlight regions of the images. What is more, the composition of several of these regions can define a feature of a more complex object. In this regard, a combination of various filters is able to recognize a full object. We apply this approach used in 2D images to 3D recognition. The deep architecture featured by PointNet is represented in Figure [MISSINGREF]. This setup allows PointNet to be on par with state-of-the-art algorithms while keeping reduced execution times.
+
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
 
-This architecture was implemented using the Point Cloud Library (PCL) [23] – which contains state-of-the-art algorithms for 3D point cloud processing – and Caffe [19], a deep learning framework developed and maintained by the Berkeley Vision and Learning Center (BVLC) and an active community of contributors on GitHub 1. This BSD-licensed C++ library allows us to design, train, and deploy CNN architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN [24] to take advantage of GPU acceleration.
+This architecture was implemented using the \ac{PCL} [MISSINGREF] – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe [MISSINGREF], a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub [MISSINGFOOTNOTE]. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN [MISSINGREF] to take advantage of \ac{GPU} acceleration.
 
 \subsubsection{Methodology}
 
@@ -105,8 +107,27 @@ All the timings and results were obtained by performing the experiments in the f
 
 % TODO: Source code
 
-\subsection{Discussion}
+\subsubsection{Results and Discussion}
 \label{cha:objrecog:sec:pointnet:subsec:discussion}
+
+As a result of training PointNet with a learning rate of 0.0001 and a momentum of 0.9 during 200 iterations using the ModelNet-10 dataset, it obtained a success rate of $77.6$\%. As shown in Figure 4, the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of the \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure 5, the visual features that define a desk and a table are almost the same, making it hard to distinguish. Figure 6 shows the neuron activations for the output layer of the architecture, proving that Desk and Table are consistently confused during the tests. In light of these experiments, and taking into account the knowledge of the \acp{CNN} principles, it is conceivable to think that a deeper network would provide better results so more experiments were carried out.
+
+In the deeper network experiment we added several layers to the PointNet architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers there are, a better or more expressive model is produced. An Inner Product layer was also added. Since these layers make the classification possible, adding more of them would theoretically provide better classification results.
+
+This architecture was trained during $1,000$ iterations and tested every $200$ iterations. The best result was provided by the $800$ iterations test with an accuracy of $76.7$\%, while the $1,000$ iterations test dropped the performance to a $75.9$\% due to overfitting.
+
+It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most.
+
+The network was trained and tested with this more balanced dataset using the architecture defined in Section III-B and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more, as seen in Figure [MISSINGREF].
+
+After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 offered the best recognition results with a $77.6$\% success rate. In addition, PointNet featuring the architecture exposed in Figure [MISSINGREF] takes an average time of $24.6$ miliseconds to classify an example (in comparison with Voxnet, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate 3D object class recognition tool.
+
+\subsection{Conclusion}
+\label{cha:objrecog:sec:pointnet:subsec:conclusion}
+
+PointNet is a brand new kind of CNN for object class recognition that handles tridimensional data, inspired by VoxNet and 3D ShapeNets but using density occupancy grids as inner representation for input data. It was implemented in Caffe and provides a faster method than the state of art ones yet obtaining a high success rate as the experiments over the ModelNet10 dataset. This fact enlightens a promising future in real-time 3D recognition tasks.
+
+Following on this work, we plan to improve the inner representation by using adaptable occupancy grids instead of fixed-size ones. In addition, we will integrate the system in an object recognition pipeline for 3D scenes. Our network will receive a point cloud segment of the scene where the object lies, produced by a preprocessing method, and that segments will be used to generate the occupancy grids that will be learned by the system. This implies adapting the system for learning partial views of the objects and dealing with occlusions and scale changes. As an additional feature, we will include pose estimation in that pipeline, all of this with goal of developing an end-to-end 3D object recognition system.
 
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
