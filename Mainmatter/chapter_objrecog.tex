@@ -24,8 +24,6 @@ Following that, Section \ref{cha:objrecog:sec:study} analyzes how noise and occl
 
 At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned from the initial PointNet proposal and the extensive study to introduce a novel slice-based architecture to tackle the 3D object class recognition problem, LonchaNet, which achieved state of the art results in the aforementioned benchmark (ModelNet10).
 
-\clearpage
-
 \section{Related Works}
 \label{cha:objrecog:sec:relatedworks}
 
@@ -61,11 +59,12 @@ As we mentioned before, our proposed architecture takes a point cloud of an obje
 
 Occupancy grids are data structures which allow us to obtain a compact representation of the volumetric space. They stand between meshes or clouds, which offer rich but large amounts of information, and voxelized representations with packed but poor information. At that midpoint, occupancy grids provide considerable shape cues to perform learning, while enabling an efficient processing of that information thanks to their array-like implementation.
 
-% TODO: Talk about other approaches that make use of occupancy grids
 
-With PointNet, we propose an occupancy grid inspired by the aforementioned successes but aiming to maintain a reasonable accuracy while allowing a real-time implementation. In our volumetric representation, each point of a cloud is mapped to a voxel of a fixed-size occupancy grid. Before performing that mapping, the object cloud is scaled to fit the grid. Each voxel will hold a value representing the number of points mapped to itself. At last, the values held by each cell are normalized. Figure \ref{fig:objrecog:meshcloudgrid} shows the derivation of the proposed occupancy grid representation from other typical tridimensional representations of a sample object.
+As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data to be learned or classified. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids ($32 \times 32 \times 32$ voxels) that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not.
 
-\begin{figure}
+VoxNet’s occupancy grid outperforms 3D ShapeNets in terms of accuracy in the ModelNet challenge for the 3D-centric approaches described above. However, ray tracing grids considerably harmed performance in terms of execution time so that other approaches must be considered for a real-time implementation. In that very same work, the authors show that hit grids performed comparably to other approaches while keeping a low complexity to achieve a reduced runtime.
+
+\begin{figure}[!t]
   \centering
   \begin{subfigure}{0.3\linewidth}
     \centering
@@ -89,23 +88,64 @@ With PointNet, we propose an occupancy grid inspired by the aforementioned succe
   \label{fig:objrecog:meshcloudgrid}
 \end{figure}
 
+With PointNet, we propose an occupancy grid inspired by the aforementioned successes but aiming to maintain a reasonable accuracy while allowing a real-time implementation. In our volumetric representation, each point of a cloud is mapped to a voxel of a fixed-size occupancy grid. Before performing that mapping, the object cloud is scaled to fit the grid. Each voxel will hold a value representing the number of points mapped to itself. At last, the values held by each cell are normalized. Figure \ref{fig:objrecog:meshcloudgrid} shows the derivation of the proposed occupancy grid representation from other typical tridimensional representations of a sample object.
+
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:pointnet:subsec:network}
 
-As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in 2D images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters that highlight regions of the images. What is more, the composition of several of these regions can define a feature of a more complex object. In this regard, a combination of various filters is able to recognize a full object. We apply this approach used in 2D images to 3D recognition. The deep architecture featured by PointNet is represented in Figure [MISSINGREF]. This setup allows PointNet to be on par with state-of-the-art algorithms while keeping reduced execution times.
+\begin{figure}[!t]
+  \centering
+  \includegraphics{example-image}
+  \caption{PointNet's 3D \ac{CNN} architecture. [MISSINGDETAILS]}
+  \label{fig:objrecog:pointnetarch}
+\end{figure}
+
+As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in 2D images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters that highlight regions of the images. What is more, the composition of several of these regions can define a feature of a more complex object. In this regard, a combination of various filters is able to recognize a full object. We apply this approach used in 2D images to 3D recognition. The deep architecture featured by PointNet is represented in Figure \ref{fig:objrecog:pointnetarch}. This setup allows PointNet to be on par with state-of-the-art algorithms while keeping reduced execution times.
 
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
 
-This architecture was implemented using the \ac{PCL} [MISSINGREF] – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe [MISSINGREF], a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub [MISSINGFOOTNOTE]. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN [MISSINGREF] to take advantage of \ac{GPU} acceleration.
+% TODO: Experiment details and procedure
 
-\subsubsection{Methodology}
+\subsubsection{Data Generation}
 
-The CAD models are provided in Object File Format (OFF). Firstly, we converted all OFF models into Polygon File Format (PLY) to ease the usage of the dataset with the PCL. As we already mentioned, the input for PointNet are point clouds, but the dataset provides CAD models specifying vertices and faces. In this regard, we converted the PLY models into Point Cloud Data (PCD) clouds by raytracing them. A 3D sphere is tessellated and a virtual camera is placed in each vertex of that truncated icosahedron – pointing to the origin of the model – then multiple snapshots are rendered using raytracing and the z-buffer data, which contains the depth information, is used to generate point clouds from each point of view. After all points of view have been processed, the point clouds are merged. A voxel grid filter is applied to downsample the clouds after the raytracing operations. Figure 3 illustrates the aforementioned processes. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits.
+\begin{figure}[!t]
+  \centering
+  \begin{subfigure}{\linewidth}
+    \includegraphics[width=\linewidth, height=5cm]{example-image}
+    \caption{Rendered views.}
+    \label{fig:objrecog:dataproc:renders}
+  \end{subfigure}
+  \begin{subfigure}{0.32\linewidth}
+    \includegraphics[width=\linewidth]{example-image}
+    \caption{Mesh.}
+    \label{fig:objrecog:dataproc:mesh}
+  \end{subfigure}
+  \begin{subfigure}{0.32\linewidth}
+    \includegraphics[width=\linewidth]{example-image}
+    \caption{Cloud.}
+    \label{fig:objrecog:dataproc:cloud}
+  \end{subfigure}
+  \begin{subfigure}{0.32\linewidth}
+    \includegraphics[width=\linewidth]{example-image}
+    \caption{Downsampled.}
+    \label{fig:objrecog:dataproc:downsampled}
+  \end{subfigure}
+  \caption{Dataset model processing example to generate the point clouds for PointNet. Some rendered views of a toilet model are shown in (\subref{fig:objrecog:dataproc:renders}). The original \ac{OFF} mesh is shown in (\subref{fig:objrecog:dataproc:mesh}). The generated point cloud after merging all points of view is shown in (\subref{fig:objrecog:dataproc:cloud}), and (\subref{fig:objrecog:dataproc:downsampled}) shows the downsampled cloud using a voxel grid filter with a leaf size of $0.7 \times 0.7 \times 0.7$.}
+  \label{fig:objrecog:pointnetarch}
+\end{figure}
 
-All the timings and results were obtained by performing the experiments in the following test setup: Intel Core i5-3570 with 8 GB of 1600 MHz DD3 RAM on an ASUS P8H77-M PRO motherboard (Intel H77 chipset). Additionally, the system includes an NVIDIA Tesla K20 GPU, and a Seagate Barracuda 7200.14 secondary storage. Caffe RC2 was run over ElementaryOS Freya 0.3.1, an Ubuntu-based Linux distribution. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.0, and cuDNN v3.
+The CAD models are provided in \ac{OFF}. Firstly, we converted all \ac{OFF} models into \ac{PLY} to ease the usage of the dataset with the \ac{PCL}. As we already mentioned, the input for PointNet are point clouds, but the dataset provides \ac{CAD} models specifying vertices and faces. In this regard, we converted the PLY models into \ac{PCD} clouds by raytracing them. A 3D sphere is tessellated and a virtual camera is placed in each vertex of that truncated icosahedron – pointing to the origin of the model – then multiple snapshots are rendered using raytracing and the z-buffer data, which contains the depth information, is used to generate point clouds from each point of view. After all points of view have been processed, the point clouds are merged. A voxel grid filter is applied to downsample the clouds after the raytracing operations. Figure 3 illustrates the aforementioned processes. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits.
+
+\subsubsection{Implementation}
+
+This architecture was implemented using the \ac{PCL} \cite{Rusu2011}\cite{Aldoma2012} – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe \cite{Jia2014}, a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub \footnote{\url{https://github.com/BVLC/caffe}}. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN \cite{Chetlur2014} to take advantage of \ac{GPU} acceleration.
 
 % TODO: Source code
+
+\subsubsection{Setup}
+
+All the timings and results were obtained by performing the experiments in the following test setup: Intel Core i5-3570 with 8 GB of 1600 MHz DD3 RAM on an ASUS P8H77-M PRO motherboard (Intel H77 chipset). Additionally, the system includes an NVIDIA Tesla K20 GPU, and a Seagate Barracuda 7200.14 secondary storage. Caffe RC2 was run over ElementaryOS Freya 0.3.1, an Ubuntu-based Linux distribution. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.0, and cuDNN v3.
 
 \subsubsection{Results and Discussion}
 \label{cha:objrecog:sec:pointnet:subsec:discussion}
