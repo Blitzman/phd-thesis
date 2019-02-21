@@ -236,6 +236,103 @@ Following on this work, we plan to improve the inner representation by using ada
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
 
+\subsection{Data Representation}
+\label{cha:objrecog:sec:study:subsec:representation}
+
+As is clear from the previous sections, a volumetric representation to be fed to a \acs{2.5D} or \acs{3D}\acs{CNN} must encode the \acs{3D} shape of an object as a \acs{3D} tensor of binary or real values. This is due to the fact that raw \acs{3D} data is sparse, i.e., a \acs{3D} shape is only defined on its surface, and \acp{CNN} are not engineered for this kind of data.
+
+In this regard, our proposal for the study is twofold. First, we implemented two different ways of generating the structure of the tensor -- position, grid size, and leaf size -- using a fixed grid and an adaptive one. Second, we developed two possible occupancy measures for the volumetric elements of the tensor.
+
+\subsubsection{Tensor Generation}
+\label{cha:objrecog:sec:study:subsec:representation:subsubsec:tensor}
+
+Providing that the input to our network consists of point clouds generated from the information provided by \acs{RGB-D} sensors, we need to generate a discretized representation of the unbounded \acs{3D} data to feed the network. Each cloud will be represented as a \acs{3D} tensor. For that purpose, we need to spawn a grid to subdivide the space occupied by the point clouds. Two types are proposed: one with fixed leaf and grid sizes, and another one which will adapt those sizes to fit the data.
+
+\paragraph{Fixed}
+
+This kind of grid sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Then the grid is spawned, with fixed and predefined sizes for both grid and voxels. After that, the cloud is scaled up or down to fit the grid. The scale factor is computed with respect to the dimension of maximum difference between the cloud and the grid. The cloud is scaled with that factor in all axes to maintain the original ratios. As a result, a cubic grid is generated as shown in Figure \ref{fig:fixed}.
+
+\paragraph{Adaptive}
+
+The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Next, the grid size is adapted to the cloud dimensions. The leaf size is also computed in function of the grid size. Knowing both parameters, the grid is spawned, fitting the point cloud data. As a result, a non-cubic grid is generated. As shown in Figure \ref{fig:adaptive}, all voxels have the same size, but they are not necessarily cubic.
+
+It is important to remark that, in both cases (fixed and adaptive), the number of voxels in the grid is fixed. Figures \ref{fig:fixed} and \ref{fig:adaptive} show examples for both types using $8\times8\times8$ voxels for the sake of a better visualization.
+
+It is also important to notice that each representation serves a purpose. The fixed grid will not always fit the data perfectly so it might end up having sparse zones with no information at all (as seen in Figure \ref{fig:fixed:front} on the first column). However, it can be used right away for sliding box detection. On the contrary, the adaptive grid fits the data to achieve a better representation. Nonetheless, it relies on a proper segmentation of the object to spawn the grid.
+
+\subsubsection{Occupancy Computation}
+\label{cha:objrecog:sec:study:subsec:representation:subsubsec:occupancy}
+
+After spawning the grid to generate a discrete space, we need to determine the values for each cell or voxel of the \acs{3D} tensor. In order to do that, we must encode the geometric information of the point cloud into each occupied cell (see Figure \ref{fig:grid_occ}). In other words, we have to summarize as a single value, the information of all points which lie inside a certain voxel. One way to do that is using occupancy measures. For that purpose, we propose two different alternatives: binary occupancy, normalized density.
+
+\paragraph{Binary}
+
+The binary tensor is the simplest representation that can be conceived to encode the shape. Voxels will hold binary values, they will be considered occupied if at least a point lies inside, and empty otherwise. Figure \ref{fig:binary_occ} shows an example of this tensor.
+
+\paragraph{Normalized Density}
+
+Binary representations are simple and require low computational power. However, complex shapes may get oversimplified so useful shape information gets lost. This representation can be improved by taking into account more shape information. A possible alternative consists of computing the point density inside each voxel, i.e., counting the number of points that fall within each cell.
+
+It is important to notice that point density directly depends on the cloud resolution which in turn depends on many factors involving the camera and the scene, e.g., it is common for \acs{RGB-D} to generate denser shapes in closer surfaces. To alleviate this problem, we can normalize the density inside each voxel dividing each value by the maximum density over the whole tensor. An example of normalized density tensor is shown in Figure \ref{fig:density_occ}.
+
+\subsection{Network Architecture}
+\label{cha:objrecog:sec:study:subsec:architecture}
+
+In this section, we will describe the main layers that compose the \ac{CNN} that will be used for the study. Figure \ref{fig:3dcnn:cnn_architecture} shows a diagram of the chosen architecture. It is highly inspired by \emph{Voxnet} \cite{Maturana2015} and \emph{PointNet} \cite{Garcia-Garcia2016}. The network was implemented using Caffe. It features \acs{2D} convolutions and takes full \acs{3D} object model point clouds as input (more details about this input are provided in Section \ref{subsec:dataset}).
+
+The input layer is a custom data layer implemented in Caffe which takes object point clouds as inputs and generates the corresponding discrete volumetric representation as discussed in the previous section.
+
+Next, we can find a \emph{convolution layer} or $C(m, n, d)$. This layer applies $m$ filters of size $n\times n$ and a stride of $d\times d$ voxels. In our case, this first convolution layer learns $48$ $3\times3$ filters using a stride of $1\times 1$ voxels. This convolution layer is followed by a \ac{ReLU} activation to introduce non-linearities to the model.
+
+After that, another convolution layer is found. In this case, it will learn $128$ $5\times5$ filters with a stride of $1\times 1$ voxels again. This layer is also followed by a \ac{ReLU} activation one.
+
+A \emph{pooling layer} or $P(n, d)$ takes place after those blocks. It performs a max-pooling process to summarize the input data, taking the maximum value of a fixed local spatial region of $n\times n$ which is slided across the input volume using a stride of $d \times d$ voxels. In this case, a pooling region of $2\times 2$ voxels with the same stride was chosen.
+
+At last, we can find an \emph{inner product layer} or $IP(n)$. It is just a fully connected layer, a traditional neural network architecture which consists of $n$ neurons ($1024$ in this case). It is followed by a \acs{ReLU} activation and a \emph{dropout layer} \cite{Srivastava2014} or $DP(r)$. The function of the dropout layer is to avoid overfitting, randomly dropping connections with a probability $r$ ($0.5$ in our case). In the end, another fully connected layer represents the output of the network, with as many output neurons as classes has our classification problem. Since our dataset has $10$ classes (see Section \ref{subsec:dataset}) this layer has $10$ neurons.
+
+We use the term \acs{2.5D} to refer to this network due to the fact that it processes \acs{3D} data using \acs{2D} convolutions. This means that, in the end, its convolutions do not fully take into account the depth spatial dimension of the input as if we were using pure \acs{3D} convolution filters. It is intuitive to think that a \acs{3D} \acs{CNN} would yield better results due to that extra spatial dimension. However, a \acs{3D} \acs{CNN} has some disadvantages that made us consider using a \acs{2.5D} \acs{CNN} instead for the experimentation: (1) higher computational cost, (2) memory footprint is also much higher, (3) more parameters thus harder training. For those reasons, the main body of the experiments were carried out using the \acs{2.5D} approach.
+
+\subsection{Experiments}
+\label{cha:objrecog:sec:study:subsec:experiments}
+
+In order to assess the performance of the proposed model-based \acs{CNN} we carried out an extensive experimentation to determine the accuracy of the model and its robustness against occlusions and noise -- situations that often occur in real-world scenes. For that purpose we started using the normalized density grids since they offer a good balance between efficiency and representation. We also investigated the effect of both fixed and adaptive grids using different sizes. Further experimentation was performed to compare the normalized density grids with the binary ones. We also carried out a brief experiment using a \acs{3D} \acs{CNN} to compare its performance with the \acs{2.5D} counterpart.
+
+\subsubsection{Data Generation}
+\label{cha:objrecog:sec:study:subsec:experiments:subsubsec:data}
+
+\paragraph{Noise Simulation}
+
+The partial views generated using the previously described process are not a good simulation of the result that we would obtain by using a low-cost \acs{RGB-D} sensor. Those systems are noisy, so the point clouds produced by them are not a perfect representation of the real-world objects.
+
+In order to properly simulate the behavior of a sensor, a model is needed. In our case, we are dealing with low-cost \acs{RGB-D} sensors such as Microsoft Kinect and Primesense Carmine. A complete noise model for those sensors, specifically for the Kinect device, must take into account occlusion boundaries due to distance between the \ac{IR} projector and the \ac{IR} camera, $8$-bit quantization, $9\times9$ pixel correlation window smoothing, and $z$-axis or depth Gaussian noise \cite{Gschwandtner2011}.
+
+We will make use of a simplification of this model, only taking into account the Gaussian noise since it is the most significant one for the generated partial views. In this regard, the synthetic views are augmented by adding Gaussian noise to the $z$ dimension of the point clouds with mean $\mu=0$ and different values for the standard deviation $\sigma$ to quantify the noise magnitude. Figure \ref{fig:noise} shows the effect of this noise over a synthetic partial view of one object of the dataset.
+
+\paragraph{Occlusion Simulation}
+
+In addition to modelling the sensor to improve our synthetic data, it is important to also take the environment into account. In a real-world scenario, objects are not usually perfectly isolated and easily segmented; in fact, it is common for them to be occluded by other elements of the scene.
+
+The occlusion simulation process consists of picking a random point of the cloud with a uniform probability distribution. Then, a number of closest neighbors to that point are picked. At last, both the neighbors and the point are considered occluded surface and removed from the point cloud. The number of neighbors to pick depends on the amount of occlusion $\psi$ we want to simulate. For instance, for an occlusion $\psi=25\%$ we will remove neighbors until the rest of the cloud contains a $75\%$ of the original amount of points, i.e., we will remove a $25\%$ of the original cloud. Figure \ref{fig:occlusion} shows the effect of the random occlusion process with different occlusion factors $\psi$ over a synthetic partial view of a table object of the dataset.
+
+It is important to notice the randomness of the occlusion process. This means that even with a high $\psi$ it is possible not to remove any important surface information and vice versa. In other words, it is possible for some objects to remove a $50\%$ of their points and still be recognizable because the removed region was not significant at all, e.g., a completely flat surface. However it is possible to render an object unrecognizable by removing a small portion of its points if the randomly picked surface is significant for its geometry. This remark is specially important when testing the robustness of the system. In order to guarantee that an appropriate measure of the robustness against missing information is obtained, a significant amount of testing sets must be generated and their results averaged so that it is highly probable to test against objects which have been occluded all over their surface across the whole testing set.
+
+\subsubsection{Implementation and Setup}
+\label{cha:objrecog:sec:study:subsec:experiments:subsubsec:setup}
+
+%TODO: Source code
+
+Results were obtained using the following test setup: Intel Core i7-5820K with 32 GiB of Kingston HyperX 2666MHz and CL13 DDR4 RAM on an Asus X99-A motherboard (Intel X99 chipset). Additionally, the system included an NVIDIA Tesla K40c GPU used for training and inference. The framework of choice was Caffe RC2 running on Ubuntu 14.04.02. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.5, and cuDNN v3.
+
+\subsubsection{Results and Discussion}
+\label{cha:objrecog:sec:study:subsec:experiments:subsubsec:results}
+
+The networks were trained for a maximum of $5000$ iterations -- weights were snapshotted every $100$ iterations so in the end we selected the best sets of them as if we were early stopping -- using Adadelta as optimizer with $\delta = 1\cdot10^{-8}$. The regularization term or weight decay in Caffe was set to $5\cdot10^{-3}$. A batch size of $32$ training samples was chosen.
+
+After describing the experimentation setup, the dataset that was used to train and test the networks, and the ways of simulating noise and occlusion for the test sets, we will present and discuss the results of the experiments. Firstly, the normalized density tensor results -- using the \acs{2.5D} \acs{CNN} -- will be presented. After that, we will proceed with the binary tensor ones. Furthermore, we will report the experiments which produced the best results with a pure \acs{3D} \acs{CNN} with fully \acs{3D} convolutions. At last, we will perform a comparison with the state of the art.
+
+\subsection{Conclusion}
+\label{cha:objrecog:sec:study:subsec:conclusion}
+
 \section{LonchaNet}
 \label{cha:objrecog:sec:lonchanet}
 
