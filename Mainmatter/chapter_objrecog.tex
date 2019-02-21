@@ -250,30 +250,170 @@ Providing that the input to our network consists of point clouds generated from 
 
 \paragraph{Fixed}
 
-This kind of grid sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Then the grid is spawned, with fixed and predefined sizes for both grid and voxels. After that, the cloud is scaled up or down to fit the grid. The scale factor is computed with respect to the dimension of maximum difference between the cloud and the grid. The cloud is scaled with that factor in all axes to maintain the original ratios. As a result, a cubic grid is generated as shown in Figure \ref{fig:fixed}.
+This kind of grid sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Then the grid is spawned, with fixed and predefined sizes for both grid and voxels. After that, the cloud is scaled up or down to fit the grid. The scale factor is computed with respect to the dimension of maximum difference between the cloud and the grid. The cloud is scaled with that factor in all axes to maintain the original ratios. As a result, a cubic grid is generated as shown in Figure \ref{fig:objrecog:fixed}.
+
+\begin{figure}[!ht]
+	\centering
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/fixed_front}
+		\caption{Front}
+		\label{subfig:objrecog:fixed:front}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/fixed_side}
+		\caption{Side}
+		\label{subfig:objrecog:fixed:side}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/fixed_persp}
+		\caption{Perspective}
+		\label{subfig:objrecog:fixed:persp}
+	\end{subfigure}
+	\hfill
+	\caption{A fixed occupancy grid ($8\times8\times8$ voxels) with $40$ units leaf size and $320$ units grid size in all dimensions. The grid origin is placed at the minimum $x$, $y$, and $z$ values of the point cloud. Front (\subref{subfig:objrecog:fixed:front}), side (\subref{subfig:objrecog:fixed:side}), and perspective (\subref{subfig:objrecog:fixed:persp}) views of the grid over a partial view of a segmented table object are shown.}
+	\label{fig:objrecog:fixed}
+\end{figure}
 
 \paragraph{Adaptive}
 
-The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Next, the grid size is adapted to the cloud dimensions. The leaf size is also computed in function of the grid size. Knowing both parameters, the grid is spawned, fitting the point cloud data. As a result, a non-cubic grid is generated. As shown in Figure \ref{fig:adaptive}, all voxels have the same size, but they are not necessarily cubic.
+The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Next, the grid size is adapted to the cloud dimensions. The leaf size is also computed in function of the grid size. Knowing both parameters, the grid is spawned, fitting the point cloud data. As a result, a non-cubic grid is generated. As shown in Figure \ref{fig:objrecog:adaptive}, all voxels have the same size, but they are not necessarily cubic.
 
-It is important to remark that, in both cases (fixed and adaptive), the number of voxels in the grid is fixed. Figures \ref{fig:fixed} and \ref{fig:adaptive} show examples for both types using $8\times8\times8$ voxels for the sake of a better visualization.
+\begin{figure}[!htb]
+	\centering
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/adaptive_front}
+		\caption{Front}
+		\label{subfig:objrecog:adaptive:front}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/adaptive_side}
+		\caption{Side}
+		\label{subfig:objrecog:adaptive:side}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/adaptive_persp}
+		\caption{Perspective}
+		\label{subfig:objrecog:adaptive:persp}
+	\end{subfigure}
+	\hfill
+	\caption{An adaptive occupancy grid ($8\times8\times8$ voxels) with adapted leaf and grid sizes in all dimensions to fit the data. The grid origin is placed at the minimum $x$, $y$, and $z$ values of the point cloud. Front (\subref{subfig:objrecog:adaptive:front}), side (\subref{subfig:objrecog:adaptive:side}), and perspective (\subref{subfig:objrecog:adaptive:persp}) views of the grid over a partial view of a segmented table object are shown. Notice that the point clouds for the three views are exactly the same for this figure and Figure \ref{fig:objrecog:fixed}, but the grids do change. There is a noticeable difference in the	front view. In Figure \ref{fig:objrecog:fixed}, using fixed grids, all voxels are cubic and the point cloud does not fit the grid completely (leftmost column in Figure \ref{subfig:objrecog:fixed:front}), whilst in this figure, with adaptive grids, the grid is fitted to the cloud.}
+	\label{fig:objrecog:adaptive}
+\end{figure}
 
-It is also important to notice that each representation serves a purpose. The fixed grid will not always fit the data perfectly so it might end up having sparse zones with no information at all (as seen in Figure \ref{fig:fixed:front} on the first column). However, it can be used right away for sliding box detection. On the contrary, the adaptive grid fits the data to achieve a better representation. Nonetheless, it relies on a proper segmentation of the object to spawn the grid.
+It is important to remark that, in both cases (fixed and adaptive), the number of voxels in the grid is fixed. Figures \ref{fig:objrecog:fixed} and \ref{fig:objrecog:adaptive} show examples for both types using $8\times8\times8$ voxels for the sake of a better visualization.
+
+It is also important to notice that each representation serves a purpose. The fixed grid will not always fit the data perfectly so it might end up having sparse zones with no information at all (as seen in Figure \ref{subfig:objrecog:fixed:front} on the first column). However, it can be used right away for sliding box detection. On the contrary, the adaptive grid fits the data to achieve a better representation. Nonetheless, it relies on a proper segmentation of the object to spawn the grid.
 
 \subsubsection{Occupancy Computation}
 \label{cha:objrecog:sec:study:subsec:representation:subsubsec:occupancy}
 
-After spawning the grid to generate a discrete space, we need to determine the values for each cell or voxel of the \acs{3D} tensor. In order to do that, we must encode the geometric information of the point cloud into each occupied cell (see Figure \ref{fig:grid_occ}). In other words, we have to summarize as a single value, the information of all points which lie inside a certain voxel. One way to do that is using occupancy measures. For that purpose, we propose two different alternatives: binary occupancy, normalized density.
+After spawning the grid to generate a discrete space, we need to determine the values for each cell or voxel of the \acs{3D} tensor. In order to do that, we must encode the geometric information of the point cloud into each occupied cell (see Figure \ref{fig:objrecog:grid_occ}). In other words, we have to summarize as a single value, the information of all points which lie inside a certain voxel. One way to do that is using occupancy measures. For that purpose, we propose two different alternatives: binary occupancy, normalized density.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/surface_grid_front}
+		\caption{Front}
+		\label{subfig:objrecog:grid_occ:front}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/surface_grid_side}
+		\caption{Side}
+		\label{subfig:objrecog:grid_occ:side}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/surface_grid_persp}
+		\caption{Perspective}
+		\label{subfig:objrecog:grid_occ:persp}
+	\end{subfigure}
+	\hfill
+	\caption{Occupied voxels in an adaptive $8\times8\times8$ grid generated over a partial view point cloud. Those voxels with points inside are shown in a wireframe representation. Empty voxels are omitted. Occupied voxels must be filled with values which represent the contained shape.}
+	\label{fig:objrecog:grid_occ}
+\end{figure}
 
 \paragraph{Binary}
 
-The binary tensor is the simplest representation that can be conceived to encode the shape. Voxels will hold binary values, they will be considered occupied if at least a point lies inside, and empty otherwise. Figure \ref{fig:binary_occ} shows an example of this tensor.
+The binary tensor is the simplest representation that can be conceived to encode the shape. Voxels will hold binary values, they will be considered occupied if at least a point lies inside, and empty otherwise. Figure \ref{fig:objrecog:binary_occ} shows an example of this tensor.
+
+\begin{figure}[!hb]
+	\centering
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/binary_front}
+		\caption{Front}
+		\label{subfig:objrecog:binary_occ:front}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/binary_side}
+		\caption{Side}
+		\label{subfig:objrecog:binary_occ:side}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/binary_persp}
+		\caption{Perspective}
+		\label{subfig:objrecog:binary_occ:persp}
+	\end{subfigure}
+	\hfill
+	\caption{Binary tensor computed over a point cloud of a partial view of an object (shown in Figure \ref{fig:objrecog:grid_occ}). Occupied voxels are shown in blue, empty voxels are omitted for the sake of simplicity.}
+	\label{fig:objrecog:binary_occ}
+\end{figure}
 
 \paragraph{Normalized Density}
 
 Binary representations are simple and require low computational power. However, complex shapes may get oversimplified so useful shape information gets lost. This representation can be improved by taking into account more shape information. A possible alternative consists of computing the point density inside each voxel, i.e., counting the number of points that fall within each cell.
 
-It is important to notice that point density directly depends on the cloud resolution which in turn depends on many factors involving the camera and the scene, e.g., it is common for \acs{RGB-D} to generate denser shapes in closer surfaces. To alleviate this problem, we can normalize the density inside each voxel dividing each value by the maximum density over the whole tensor. An example of normalized density tensor is shown in Figure \ref{fig:density_occ}.
+It is important to notice that point density directly depends on the cloud resolution which in turn depends on many factors involving the camera and the scene, e.g., it is common for \acs{RGB-D} to generate denser shapes in closer surfaces. To alleviate this problem, we can normalize the density inside each voxel dividing each value by the maximum density over the whole tensor. An example of normalized density tensor is shown in Figure \ref{fig:objrecog:density_occ}.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/density_front}
+		\caption{Front}
+		\label{subfig:objrecog:density_occ:front}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/density_side}
+		\caption{Side}
+		\label{subfig:objrecog:density_occ:side}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.325\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/density_persp}
+		\caption{Perspective}
+		\label{subfig:objrecog:density_occ:persp}
+	\end{subfigure}
+	\hfill
+	\caption{Normalized density tensor over a point cloud of a partial view of an object (shown in Figure \ref{fig:objrecog:grid_occ}). Denser voxels are darker and sparse ones are shown in light blue. Empty voxels were removed for visualization purposes.}
+	\label{fig:objrecog:density_occ}
+\end{figure}
 
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:study:subsec:architecture}
@@ -306,7 +446,35 @@ The partial views generated using the previously described process are not a goo
 
 In order to properly simulate the behavior of a sensor, a model is needed. In our case, we are dealing with low-cost \acs{RGB-D} sensors such as Microsoft Kinect and Primesense Carmine. A complete noise model for those sensors, specifically for the Kinect device, must take into account occlusion boundaries due to distance between the \ac{IR} projector and the \ac{IR} camera, $8$-bit quantization, $9\times9$ pixel correlation window smoothing, and $z$-axis or depth Gaussian noise \cite{Gschwandtner2011}.
 
-We will make use of a simplification of this model, only taking into account the Gaussian noise since it is the most significant one for the generated partial views. In this regard, the synthetic views are augmented by adding Gaussian noise to the $z$ dimension of the point clouds with mean $\mu=0$ and different values for the standard deviation $\sigma$ to quantify the noise magnitude. Figure \ref{fig:noise} shows the effect of this noise over a synthetic partial view of one object of the dataset.
+We will make use of a simplification of this model, only taking into account the Gaussian noise since it is the most significant one for the generated partial views. In this regard, the synthetic views are augmented by adding Gaussian noise to the $z$ dimension of the point clouds with mean $\mu=0$ and different values for the standard deviation $\sigma$ to quantify the noise magnitude. Figure \ref{fig:objrecog:noise} shows the effect of this noise over a synthetic partial view of one object of the dataset.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/stddev_0}
+		\caption{$\sigma=0$}
+		\label{subfig:objrecog:noise:0}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/stddev_01}
+		\caption{$\sigma=0.1$}
+		\label{subfig:objrecog:noise:01}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/stddev_1}
+		\caption{$\sigma=1$}
+		\label{subfig:objrecog:noise:1}
+	\end{subfigure}
+	\hfill
+	\caption{Different levels of noise ($\sigma=0$ (\subref{subfig:objrecog:noise:0}), $\sigma=0.1$ (\subref{subfig:objrecog:noise:01}), and $\sigma=1$ (\subref{subfig:objrecog:noise:1})) applied to the $z$-axis of every point of a table partial view.}
+	\label{fig:objrecog:noise}
+\end{figure}
 
 \paragraph{Occlusion Simulation}
 
@@ -315,6 +483,34 @@ In addition to modelling the sensor to improve our synthetic data, it is importa
 The occlusion simulation process consists of picking a random point of the cloud with a uniform probability distribution. Then, a number of closest neighbors to that point are picked. At last, both the neighbors and the point are considered occluded surface and removed from the point cloud. The number of neighbors to pick depends on the amount of occlusion $\psi$ we want to simulate. For instance, for an occlusion $\psi=25\%$ we will remove neighbors until the rest of the cloud contains a $75\%$ of the original amount of points, i.e., we will remove a $25\%$ of the original cloud. Figure \ref{fig:occlusion} shows the effect of the random occlusion process with different occlusion factors $\psi$ over a synthetic partial view of a table object of the dataset.
 
 It is important to notice the randomness of the occlusion process. This means that even with a high $\psi$ it is possible not to remove any important surface information and vice versa. In other words, it is possible for some objects to remove a $50\%$ of their points and still be recognizable because the removed region was not significant at all, e.g., a completely flat surface. However it is possible to render an object unrecognizable by removing a small portion of its points if the randomly picked surface is significant for its geometry. This remark is specially important when testing the robustness of the system. In order to guarantee that an appropriate measure of the robustness against missing information is obtained, a significant amount of testing sets must be generated and their results averaged so that it is highly probable to test against objects which have been occluded all over their surface across the whole testing set.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/occlusion_0}
+		\caption{$\psi=0\%$}
+		\label{subfig:objrecog:occlusion:0}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/occlusion_25}
+		\caption{$\psi=25\%$}
+		\label{subfig:objrecog:occlusion:25}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/occlusion_50}
+		\caption{$\psi=50\%$}
+		\label{subfig:objrecog:occlusion:50}
+	\end{subfigure}
+	\hfill
+	\caption{Different levels of occlusion ($\psi=0\%$ (\subref{subfig:objrecog:occlusion:0}), $\psi=25\%$ (\subref{subfig:objrecog:occlusion:25}), and $\psi=50\%$ (\subref{subfig:objrecog:occlusion:50})) applied randomly to a table partial view.}
+	\label{fig:objrecog:occlusion}
+\end{figure}
 
 \subsubsection{Implementation and Setup}
 \label{cha:objrecog:sec:study:subsec:experiments:subsubsec:setup}
