@@ -68,19 +68,19 @@ VoxNet’s occupancy grid outperforms 3D ShapeNets in terms of accuracy in the M
   \centering
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/mesh.png}
+    \includegraphics[width=\linewidth]{Figures/ObjRecog/detergent_mesh.png}
     \caption{Mesh}
     \label{fig:objrecog:meshcloudgrid:mesh}
   \end{subfigure}
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/cloud.png}
+    \includegraphics[width=\linewidth]{Figures/ObjRecog/detergent_cloud.png}
     \caption{Cloud}
     \label{fig:objrecog:meshcloudgrid:cloud}
   \end{subfigure}
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/grid.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/detergent_grid.png}
     \caption{Grid}
     \label{fig:objrecog:meshcloudgrid:grid}
   \end{subfigure}
@@ -112,22 +112,25 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
 \begin{figure}[!t]
   \centering
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=\linewidth, height=5cm]{example-image}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_0}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_1}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_2}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_3}
     \caption{Rendered views.}
     \label{fig:objrecog:dataproc:renders}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{example-image}
+    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_off.png}
     \caption{Mesh.}
     \label{fig:objrecog:dataproc:mesh}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{example-image}
+    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_cloud.png}
     \caption{Cloud.}
     \label{fig:objrecog:dataproc:cloud}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{example-image}
+    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_cloud_downsampled.png}
     \caption{Downsampled.}
     \label{fig:objrecog:dataproc:downsampled}
   \end{subfigure}
@@ -150,15 +153,76 @@ All the timings and results were obtained by performing the experiments in the f
 \subsubsection{Results and Discussion}
 \label{cha:objrecog:sec:pointnet:subsec:discussion}
 
-As a result of training PointNet with a learning rate of 0.0001 and a momentum of 0.9 during 200 iterations using the ModelNet-10 dataset, it obtained a success rate of $77.6$\%. As shown in Figure 4, the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of the \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure 5, the visual features that define a desk and a table are almost the same, making it hard to distinguish. Figure 6 shows the neuron activations for the output layer of the architecture, proving that Desk and Table are consistently confused during the tests. In light of these experiments, and taking into account the knowledge of the \acp{CNN} principles, it is conceivable to think that a deeper network would provide better results so more experiments were carried out.
+As a result of training PointNet with a learning rate of 0.0001 and a momentum of 0.9 during 200 iterations using the ModelNet-10 dataset, it obtained a success rate of $77.6$\%. As shown in Figure [MISSINGREF], the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure \ref{fig:objrecog:tabledesk}, the visual features that define a desk and a table are almost the same, making it hard to distinguish between both classes. Figure \ref{fig:objrecog:tabledesk_activations} shows the neuron activations for the output layer of the architecture, proving that \emph{Desk} and \emph{Table} are consistently confused during the tests. In light of these experiments, and taking into account the knowledge of the \acp{CNN} principles, it is conceivable to think that a deeper network would provide better results so more experiments were carried out.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\linewidth]{Figures/ObjRecog/table}
+        \caption{}
+        \label{subfig:objrecog:tabledesk:table}
+    \end{subfigure}
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\linewidth]{Figures/ObjRecog/desk}
+        \caption{}
+        \label{subfig:objrecog:tabledesk:desk}
+    \end{subfigure}
+    \caption{Similarity between two objects of different classes: Table and Desk. The point cloud shown in (\subref{subfig:objrecog:tabledesk:table}) represents an object of the Table class, whilst the point cloud in (\subref{subfig:objrecog:tabledesk:desk}) represents an object whose class is Desk but it is misclassified as a Table due to their resemblance.}
+    \label{fig:objrecog:tabledesk}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\linewidth]{Figures/ObjRecog/table_matrix}
+        \caption{}
+        \label{subfig:objrecog:tabledesk_activations:table}
+    \end{subfigure}
+    \begin{subfigure}{0.45\linewidth}
+        \includegraphics[width=\linewidth]{Figures/ObjRecog/desk_matrix}
+        \caption{}
+        \label{subfig:objrecog:tabledesk_activations:desk}
+    \end{subfigure}
+    \caption{Neuron activations for the output layer of the architecture when classifying all the test samples for both \emph{Desk}(\subref{subfig:objrecog:tabledesk_activations:desk}) and \emph{Table}(\subref{subfig:objrecog:tabledesk_activations:table}) classes. Each row represents an activation vector for a specific sample, so each column is a position of the vector: the activation to that particular class. The first column corresponds to the \emph{Desk} class, while the second one is the \emph{Table}. The activation shows the clear confusion between \emph{Desk} and \emph{Table}. Although the latter one is much less confused with other classes, many \emph{Tables} are misclassified as \emph{Desks} thus lowering the accuracy for this class.}
+    \label{fig:objrecog:tabledesk_activations}
+\end{figure}
+
 
 In the deeper network experiment we added several layers to the PointNet architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers there are, a better or more expressive model is produced. An Inner Product layer was also added. Since these layers make the classification possible, adding more of them would theoretically provide better classification results.
 
 This architecture was trained during $1,000$ iterations and tested every $200$ iterations. The best result was provided by the $800$ iterations test with an accuracy of $76.7$\%, while the $1,000$ iterations test dropped the performance to a $75.9$\% due to overfitting.
 
-It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most.
+It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most. The network was trained and tested with this more balanced dataset and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more, as seen in Figure \ref{fig:objrecog:balunbal}.
 
-The network was trained and tested with this more balanced dataset using the architecture defined in Section III-B and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more, as seen in Figure [MISSINGREF].
+\begin{figure}[!htb]
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+            height=5cm,
+            width=0.8\linewidth,
+            ylabel=Accuracy,
+            xlabel=Class,
+            ymajorgrids=true,
+            xtick pos=left,
+            enlarge x limits=0.15,
+            legend pos=outer north east,
+            ybar=2pt,
+            bar width=5 pt,
+            xmin=1,
+            xmax=10,
+            ymin=0,
+            ymax=1.0,
+            ytick={0.0,0.1,...,1.1},
+            xtick=data,
+            axis on top=false,]
+            \addplot [color=uagray80, fill=uablue50] coordinates {(1, 0.9) (2, 0.72) (3, 0.8) (4, 0.9) (5, 0.69) (6, 0.57) (7, 0.57) (8, 0.56) (9, 0.59) (10, 0.64)};
+            \addplot [color=uagray80, fill=uablue10] coordinates {(1, 0.68) (2, 0.71) (3, 0.69) (4, 0.75) (5, 0.74) (6, 0.65) (7, 0.62) (8, 0.8) (9, 0.85) (10, 0.72)};
+            \legend{Unbalanced, Balanced}
+        \end{axis}
+    \end{tikzpicture}
+    \caption{Comparison of accuracy per class using an unbalanced dataset and a balanced one with a maximum of $400$ models per class via random undersampling. Accuracy is harmed in the classes in which models are removed but gained otherwise.}
+    \label{fig:objrecog:balunbal}
+\end{figure}
 
 After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 offered the best recognition results with a $77.6$\% success rate. In addition, PointNet featuring the architecture exposed in Figure [MISSINGREF] takes an average time of $24.6$ miliseconds to classify an example (in comparison with Voxnet, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate 3D object class recognition tool.
 
