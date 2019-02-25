@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+  \begin{axis}[
+	  grid=both,
+	  width=\linewidth,
+	  height=20 em,
+      xlabel={Occlusion (\%)},
+      ylabel={Accuracy},
+	  legend cell align=left,
+      legend pos=south west,
+	  legend style={font=\smaller \smaller},
+      ymajorgrids=true,
+	  y tick style={uablue50},
+	  x tick style={uablue50},
+      minor grid style={very thin, uagray10},
+	  major grid style={uagray10},
+	  axis line style={uablue50},
+	  ymin=0.0,
+	  ymax=1.0,
+	  xmin=0,
+	  xmax=30,
+	  restrict x to domain=0:30,
+	  enlarge y limits=true,
+	  enlarge x limits=true,
+    ]
+%
+	\addplot [mark=none, uablue, line width=0.1 em, smooth] table [x=percent, y=g32, col sep=space] {Data/ObjRecog/a_d_occlusion.dat};
+	\addplot [mark=none, uabranchblue, line width=0.1 em, smooth] table [x=percent, y=g48, col sep=space] {Data/ObjRecog/a_d_occlusion.dat};
+	\addplot [mark=none, ualightblue, line width=0.1 em, smooth] table [x=percent, y=g64, col sep=space] {Data/ObjRecog/a_d_occlusion.dat};
+    \legend{g32, g48, g64}
+  \end{axis}
+\end{tikzpicture}

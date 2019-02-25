@@ -1,0 +1,27 @@
+\usetikzlibrary{shapes,calc,intersections, patterns}
+
+\begin{tikzpicture}
+
+   \node[draw=uablue, shape=regular polygon,regular polygon sides=4, name = A, outer sep=0pt, scale=10] at (0,0) {}; 
+   \node[draw=uablue, regular polygon,regular polygon sides=3,rotate=75, name = B, scale=4] at (0,0) {};
+	\node[draw=uablue, regular polygon,regular polygon sides=3,rotate=135, name = C, scale=4] at (1.29,-0.35) {};
+	\node[draw=uablue, regular polygon,regular polygon sides=3,rotate=135, name = D, scale=4] at (-0.94,-0.95) {};
+	\node[draw=uablue, regular polygon,regular polygon sides=3,rotate=135, name = D, scale=4] at (-0.34,1.28) {};
+
+   \begin{scope}
+       \clip (A.corner 1) foreach \i in {2,3,4} {--(A.corner \i)} --cycle;
+       \node[dashed, fill=ualightblue, pattern=north west lines, opacity=0.5, pattern color=ualightblue, regular polygon,regular polygon sides=3,rotate=75, scale=4] at (0,0) {};
+   \end{scope}
+\begin{scope}
+       \clip (A.corner 1) foreach \i in {2,3,4} {--(A.corner \i)} --cycle;
+       \node[dashed, fill=ualightblue, pattern=north west lines,  opacity=0.5, pattern color=ualightblue, regular polygon,regular polygon sides=3,rotate=135, scale=4] at (1.29,-0.35){};
+   \end{scope}
+\begin{scope}
+       \clip (A.corner 1) foreach \i in {2,3,4} {--(A.corner \i)} --cycle;
+       \node[dashed, fill=ualightblue, pattern=north west lines, opacity=0.5, pattern color=ualightblue, regular polygon,regular polygon sides=3,rotate=135, scale=4] at  (-0.94,-0.95){};
+   \end{scope}
+\begin{scope}
+       \clip (A.corner 1) foreach \i in {2,3,4} {--(A.corner \i)} --cycle;
+       \node[dashed, fill=ualightblue, pattern=north west lines, opacity=0.5, pattern color=ualightblue, regular polygon,regular polygon sides=3,rotate=135, scale=4] at  (-0.34,1.28){};
+   \end{scope}
+\end{tikzpicture}

@@ -1,0 +1,34 @@
+\begin{tikzpicture}
+  \begin{axis}[
+	  grid=both,
+	  width=\linewidth,
+	  height=18 em,
+      xlabel={Iteration},
+      ylabel={Accuracy},
+	  legend cell align=left,
+      legend pos=south east,
+	  legend style={font=\smaller \smaller},
+      ymajorgrids=true,
+	  y tick style={uablue50},
+	ytick={0.0, 0.2, 0.4, 0.6, 0.8, 1.0},
+	  x tick style={uablue50},
+      minor grid style={very thin, uagray10},
+	  major grid style={uagray10},
+	  axis line style={uablue50},
+	  ymin=0,
+	  ymax=1.0,
+	 xtick={0, 1000, 2000, 3000, 4000, 5000},
+	  xmin=0,
+	  xmax=5000,
+	  restrict x to domain=0:5000,
+	  enlarge y limits=true,
+	  enlarge x limits=true,
+    ]
+%
+	\addplot [dashed, mark=none, uablue, line width=0.1 em, smooth] table [col sep=space] {Data/ObjRecog/g32_a_b_training.dat};
+	\addplot [, mark=none, uablue, line width=0.1 em, smooth] table [col sep=space] {Data/ObjRecog/g32_a_b_validation.dat};
+	\addplot [dashed, mark=none, ualightblue, line width=0.1 em, smooth] table [col sep=space] {Data/ObjRecog/g64_a_b_training.dat};
+	\addplot [, mark=none, ualightblue, line width=0.1 em, smooth] table [col sep=space] {Data/ObjRecog/g64_a_b_validation.dat};
+    \legend{g32 (training), g32 (validation),  g64 (training), g64\ (validation)}
+  \end{axis}
+\end{tikzpicture}

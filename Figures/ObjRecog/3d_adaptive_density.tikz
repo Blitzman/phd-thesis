@@ -1,0 +1,31 @@
+\begin{tikzpicture}
+  \begin{axis}[
+	  grid=both,
+	  width=\linewidth,
+	  height=20 em,
+      xlabel={Iteration},
+      ylabel={Accuracy},
+	  legend cell align=left,
+      legend pos=south east,
+	  legend style={font=\smaller \smaller},
+      ymajorgrids=true,
+	  y tick style={uablue50},
+	  x tick style={uablue50},
+      minor grid style={very thin, uagray10},
+	  major grid style={uagray10},
+	  axis line style={uablue50},
+	  ymin=0,
+	  ymax=1.0,
+	  xmin=0,
+	  xmax=25000,
+	  xtick={0, 5000, 10000, 15000, 20000, 25000},
+	  restrict x to domain=0:25000,
+	  enlarge y limits=true,
+	  enlarge x limits=true,
+    ]
+%
+	\addplot [dashed, mark=none, uablue, line width=0.1 em, smooth] table [x=iteration, y=acc, col sep=space] {Data/ObjRecog/3d_g32_a_d_training.dat};
+	\addplot [mark=none, uablue, line width=0.1 em, smooth] table [x=iteration, y=acc, col sep=space] {Data/ObjRecog/3d_g32_a_d_validation.dat};
+    \legend{g32(training), g32(validation)}
+  \end{axis}
+\end{tikzpicture}

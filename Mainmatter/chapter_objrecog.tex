@@ -236,6 +236,8 @@ Following on this work, we plan to improve the inner representation by using ada
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
 
+% TODO: Introductory text
+
 \subsection{Data Representation}
 \label{cha:objrecog:sec:study:subsec:representation}
 
@@ -418,7 +420,14 @@ It is important to notice that point density directly depends on the cloud resol
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:study:subsec:architecture}
 
-In this section, we will describe the main layers that compose the \ac{CNN} that will be used for the study. Figure \ref{fig:3dcnn:cnn_architecture} shows a diagram of the chosen architecture. It is highly inspired by \emph{Voxnet} \cite{Maturana2015} and \emph{PointNet} \cite{Garcia-Garcia2016}. The network was implemented using Caffe. It features \acs{2D} convolutions and takes full \acs{3D} object model point clouds as input (more details about this input are provided in Section \ref{subsec:dataset}).
+In this section, we will describe the main layers that compose the \ac{CNN} that will be used for the study. Figure \ref{fig:objrecog:cviuarch} shows a diagram of the chosen architecture. It is highly inspired by \emph{Voxnet} \cite{Maturana2015} and \emph{PointNet} \cite{Garcia-Garcia2016}. The network was implemented using Caffe. It features \acs{2D} convolutions and takes full \acs{3D} object model point clouds as input.
+
+\begin{figure}[!b]
+  \centering
+  \includegraphics{example-image}
+  \caption{CVIU's architecture. [MISSINGDETAILS]}
+  \label{fig:objrecog:cviuarch}
+\end{figure}
 
 The input layer is a custom data layer implemented in Caffe which takes object point clouds as inputs and generates the corresponding discrete volumetric representation as discussed in the previous section.
 
@@ -525,6 +534,131 @@ Results were obtained using the following test setup: Intel Core i7-5820K with 3
 The networks were trained for a maximum of $5000$ iterations -- weights were snapshotted every $100$ iterations so in the end we selected the best sets of them as if we were early stopping -- using Adadelta as optimizer with $\delta = 1\cdot10^{-8}$. The regularization term or weight decay in Caffe was set to $5\cdot10^{-3}$. A batch size of $32$ training samples was chosen.
 
 After describing the experimentation setup, the dataset that was used to train and test the networks, and the ways of simulating noise and occlusion for the test sets, we will present and discuss the results of the experiments. Firstly, the normalized density tensor results -- using the \acs{2.5D} \acs{CNN} -- will be presented. After that, we will proceed with the binary tensor ones. Furthermore, we will report the experiments which produced the best results with a pure \acs{3D} \acs{CNN} with fully \acs{3D} convolutions. At last, we will perform a comparison with the state of the art.
+
+\paragraph{Density Tensor}
+
+Figure \ref{fig:objrecog:3dcnn:experiments:25d_density} shows the accuracy results of the network for both grid types and increasing sizes. The peak accuracies for the fixed grids are $\approx0.75$, $\approx0.76$, and $\approx0.73$ for sizes $32$, $48$, and $64$ respectively. In the case of the adaptive one, the peak accuracies are $\approx0.77$, $\approx0.78$, and $\approx0.79$ for the sizes $32$, $48$, and $64$ respectively.
+
+\begin{figure}[!b]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_fixed_density.tikz}
+		\caption{Fixed Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_fixed_density}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_adaptive_density.tikz}
+		\caption{Adaptive Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_density}
+	\end{subfigure}
+	\caption{Evolution of training and validation accuracy of the model-based \acs{CNN} using both fixed (\subref{subfig:objrecog:3dcnn:experiments:25d_fixed_density}) and adaptive (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density}) normalized density grids. Different grid sizes ($32, 48, $ and $64$) were tested.}
+	\label{fig:objrecog:3dcnn:experiments:25d_density}
+\end{figure}
+
+Taking those facts into account, we can extract two conclusions. First, the adaptive grid is able to achieve a slightly better peak accuracy in all cases; however, the fixed grid takes less iterations to reach accuracy values close to the peak in all cases. Second, there is no significant difference in using a bigger grid size of $64$ voxels instead of a smaller one of $32$.
+
+The most important fact that can be observed in the aforementioned figures is that there is a considerable gap between training and validation accuracy in all situations. As we can observe, all networks reach maximum accuracy for the training set whilst the validation one hits a glass ceiling at approximately $0.80$. We hypothesize that the network suffers overfitting even when we thoroughly applied measures to avoid that. The most probable cause for that problem is the reduced number of training examples. In the case of ModelNet10 the training set consists of only $3991$ models. Considering the complexity of the \acs{CNN}, it is reasonable to think that the lack of a richer training set is causing overfitting.
+
+\begin{figure}[!b]
+	\centering
+		\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_fixed_density_occlusion.tikz}
+		\caption{Fixed Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_fixed_density_occlusion}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_adaptive_density_occlusion.tikz}
+		\caption{Adaptive Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_occlusion}
+	\end{subfigure}
+	\caption{Evolution of validation accuracy of the model-based \acs{CNN} using both fixed (\subref{subfig:objrecog:3dcnn:experiments:25d_fixed_density_occlusion}) and adaptive (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_occlusion}) normalized density grids as the amount of occlusion in the validation models increases from $0\%$ to $30\%$. Three grid sizes were tested ($32, 48, $ and $64$).}
+	\label{fig:objrecog:3dcnn:experiments:25d_density_occlusion}
+\end{figure}
+
+Concerning the robustness against occlusion, we took the best networks after training and tested them using the same validation sets as before but introducing occlusions in them (up to a $30\%$). Figure \ref{fig:objrecog:3dcnn:experiments:25d_density_occlusion} shows the accuracy of both grid types with different sizes as the amount of occlusion in the validation model increases. As we can observe, occlusion has a significant and negative impact on the fixed grid -- bigger grid sizes are less affected -- going down from $\approx0.75$ accuracy to $0.40 - 0.50$ approximately in the worst and best case respectively when a $30\%$ of the model is occluded. On the contrary, the adaptive grid does not suffer that much -- it goes down from $\approx0.78$ to $\approx0.60$ in the worst case -- and there is no significant difference between grid sizes. In conclusion, the adaptive grid is considerably more robust to occlusion than the fixed one.
+
+Regarding the resilience to noise, we also tested the best networks obtained from the aforementioned training process using validation sets with different levels of noise (ranging from $\sigma=1\cdot10^{-2}$ to $\sigma=1\cdot10^1$). Figure \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_noise} shows the results of those experiments. It can be observed that adding noise has a significant impact on the fixed grid, even small quantities, reducing the accuracy from $\approx0.75$ to $\approx0.60$, $\approx0.4$, and $\approx0.2$ for $\sigma=1\cdot10^{-1}, \sigma=1\cdot{10^0}$, and $\sigma=1\cdot10^1$ respectively. On the other hand, the adaptive one shows remarkable robustness against low levels of noise (up to $\sigma=1\cdot10^{-1}$), barely diminishing its accuracy.
+
+\begin{figure}[!t]
+	\centering
+	\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_fixed_density_noise.tikz}
+		\caption{Fixed Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_fixed_density_noise}
+	\end{subfigure}
+	\begin{subfigure}{0.49\textwidth}
+		\input{Figures/ObjRecog/25d_adaptive_density_noise.tikz}
+		\caption{Adaptive Grid}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_noise}
+	\end{subfigure}
+	\caption{Evolution of validation accuracy of the model-based \acs{CNN} using both fixed (\subref{subfig:objrecog:3dcnn:experiments:25d_fixed_density_noise}) and adaptive (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_occlusion}) normalized density grids as the standard deviation of the Gaussian noise introduced in the $z$-axis of the views increases from $0.001$ to $10$. The common grid sizes were tested ($32, 48, $ and $64$).}
+	\label{fig:objrecog:3dcnn:experiments:25d_density_noise}
+\end{figure}
+
+In the end, both grids suffer huge penalties in accuracy when noise levels higher than $\sigma=1\cdot10^-1$ are introduced, being the adaptive one less affected. The grid size has little to no effect in both cases, only in the fixed grid bigger sizes are slightly more robust when intermediate to high levels of noise are introduced. In conclusion, the adaptive grid is significantly more resilient to low levels of noise, and slightly outperforms the fixed one when dealing with intermediate to high ones.
+
+\paragraph{Binary Tensor}
+
+\begin{figure}[!t]
+	\centering
+	\begin{subfigure}{\textwidth}
+		\input{Figures/ObjRecog/25d_adaptive_binary.tikz}
+		\caption{Training}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary}
+	\end{subfigure}
+	\centering
+	\par\bigskip
+	\begin{subfigure}{0.49\linewidth}
+		\input{Figures/ObjRecog/25d_adaptive_binary_occlusion.tikz}
+		\caption{Occlusion}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.49\linewidth}
+		\input{Figures/ObjRecog/25d_adaptive_binary_noise.tikz}
+		\caption{Noise}
+		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise}
+	\end{subfigure}
+	\caption{Evolution of training and validation accuracy of the model-based \acs{CNN} using adaptive binary grids (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary}). Evolution of validation accuracy for the best network weights after training as the amount of occlusion in the validation set increases (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion}) and different levels of noise are introduced (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise}).}
+	\label{fig:objrecog:3dcnn:experiments:25d_binary}
+\end{figure}
+
+After testing the performance of the normalized density grid, we also trained and assessed the accuracy of the binary one in the same scenarios. This test intended to show whether there is any gain in using representations which include more information about the shape -- at a small penalty to execution time.
+
+For this experimentation we picked the best performer in the previous sections: the adaptive grid. We also discarded the intermediate size ($48$ voxels) since there was no significant difference between it and the others. Figure \ref{fig:objrecog:3dcnn:experiments:25d_adaptive_binary} shows the accuracy results of the network trained using binary grids. As we can observe, there is no significant difference between grid sizes neither. However, using this representation we achieved a peak accuracy of approximately $0.85$, using $64$ voxels grids, which is better to some extent than the normalized density one shown in Figure \ref{fig:objrecog:3dcnn:experiments:25d_density}.
+
+Occlusion and noise tolerance (shown in Figures \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion} and \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise} respectively) is mostly similar to the robustness shown by the normalized density adaptive grid (see Figures \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_occlusion} and \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_noise}) except from a small offset caused by the higher accuracy of the binary grid network.
+
+In conclusion, the less-is-better effect applies in this situation and turns out that the simplification introduced by the binary representation helps the network during the learning process. It is pending to check if this statement is still valid if the validation accuracy is not bounded by network overfitting.
+
+\paragraph{3D \ac{CNN}}
+
+At last, we tested the best configuration -- binary adaptive grids -- with a \acs{3D} \acs{CNN} architecture with pure \acs{3D} convolutions. We kept the same architecture we introduced in Section \ref{sec:convolutional_neural_network}, but extended its convolution and pooling layers to three dimensions. We then trained the network using adaptive binary grids as the volumetric representation of choice and monitored validation and training errors. Due to memory limitations on the \acs{GPU} we could only experiment with grids of $32\times32\times32$ voxels.
+
+\begin{figure}[!hbt]
+	\centering
+	\input{Figures/ObjRecog/3d_adaptive_density.tikz}
+	\caption{Evolution of training and validation accuracy of the \acs{3D} \acs{CNN} using adaptive binary grids with size $32\times32\times32$.}
+	\label{fig:objrecog:3dcnn:experiments:3d}
+\end{figure}
+
+\newpage
+
+Figure \ref{fig:objrecog:3dcnn:experiments:3d} shows the results of this experiment. As we can observe, we trained the network for five times more iterations than before and even then we couldn't achieve a proper convergence. The training set accuracy kept increasing slowly up to approximately $0.65$ whilst the validation one got stuck around $0.40$ for the whole experiment.
+
+In conclusion, porting the \acs{2.5D} network directly to \acs{3D} just by extending its convolution and pooling layers to slide along the depth axis did not produce good results using the same dataset and setup that produced a significantly good outcome with the \acs{2.5D} architecture. We hypothesize various causes for this problem.
+
+On the one hand, the data representation might not be adequate for such fine-grained convolutions. It is presumable that bigger grids, e.g., $64\times64\times64$, would yield better results. However, given the size of the model, they could not be tested in the available GPU.
+
+On the other hand, the complexity of the network increased considerably after including that extra dimension in convolution and pooling layers. This means that the number of parameters of the network gets increased significantly, making it harder to train with so few samples due to overfitting. This hypothesis is backed up by the fact that training accuracy kept increasing slowly while validation one got stuck. This would eventually lead to a perfect fit on the training set but low accuracy on the validation split.
+
+\paragraph{Discussion}
+
+To sum up, we determined that the adaptive grid slightly outperforms the fixed one in normal conditions. The same happens with the grid size, obtaining marginally better results with bigger sizes. However, when it comes down to noise and occlusion robustness, the adaptive grid exceeds the accuracy of the fixed grid by a large margin for low levels of occlusion and noise, whilst for intermediate and high levels the impact on both grids is somewhat similar. In other words, the adaptive grid is better than the fixed one and it is preferable to use a bigger grid size if the performance impact can be afforded.
+
+It is important to remark that the binary occupancy measure performed better than the normalized density one, both using adaptive grids, while maintaining similar resilience against noise and occlusions. The best network trained with normalized density grids reached a peak accuracy of approximately 0.79 while the best binary one achieved approximately a 0.85 accuracy on the validation set.
+
+Another remarkable fact was that all networks exhibited a considerable amount of overfitting, i.e., training accuracy was almost perfect whilst validation was far away from it by a considerable margin. We hypothesize that this was due to the fact that the dataset has few training examples considering the complexity of the network. Besides, we also inspected the confusion matrix shown in Table \ref{table:confmatrix} to gain insight about the behavior of our network. As we can observe, there are many misclassified samples of classes that are similar. If we take a closer look at some of the misclassified samples (see Figures \ref{fig:3dcnn:experiments:confusion_desk_table}, \ref{fig:3dcnn:experiments:confusion_nstand_dresser}, and \ref{fig:3dcnn:experiments:confusion_sofa_bed}) it is reasonable to think that the network is not able to classify them properly because they are extremely similar. In this regard, the dataset must be augmented introducing noise, translations, rotations, and variations of the models to avoid overfitting and learn better those models that can be easily misclassified.
 
 \subsection{Conclusion}
 \label{cha:objrecog:sec:study:subsec:conclusion}
