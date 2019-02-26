@@ -27,14 +27,116 @@ At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned 
 \section{Related Works}
 \label{cha:objrecog:sec:relatedworks}
 
-\subsection{2D Object Recognition}
-\label{cha:objrecog:sec:relatedworks:subsec:2d}
-
-\subsection{RGB-D Object Recognition}
-\label{cha:objrecog:sec:relatedworks:subsec:rgbd}
+\subsection{Traditional Approaches}
+\label{cha:objrecog:sec:relatedworks:subsec:traditional}
 
 \subsection{3D Object Recognition}
 \label{cha:objrecog:sec:relatedworks:subsec:3d}
+
+\subsection{Deep Learning}
+\label{cha:objrecog:sec:relatedworks:subsec:deeplearning}
+
+\subsection{Volumetric Representations}
+\label{cha:objrecog:sec:relatedworks:subsec:representations}
+
+In this subsection, we will review the most popular and successful volumetric representations for \acs{3D} data that have been used to feed \acp{CNN} for object recognition purposes.
+
+The first step was taken by Wu \emph{et al.} \cite{Wu2015}, their work \emph{3DShapeNets} was the first to apply \acp{CNN} to pure \acs{3D} representations. Their proposal (shown in Figure \ref{fig:objrecog:3dshapenets}) represents \acs{3D} shapes, from captured depth maps that are later transformed into point clouds, as \acs{3D} voxel grids of size $30\times30\times30$ voxels -- $24\times24\times24$ data voxels plus $3$ extra ones of padding in both directions to reduce convolution artifacts -- which can represent free space, occupied space (the shape itself), and unknown or occluded space depending on the point of view. Neither the grid generation process, nor the leaf size is described but the voxel grid relies on prior object segmentation.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_model}
+		\caption{Object model}
+		\label{subfig:objrecog:3dshapenets:model}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_view}
+		\caption{Depth map}
+		\label{subfig:objrecog:3dshapenets:depth}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_grid_occluded}
+		\caption{Voxel grid}
+		\label{subfig:objrecog:3dshapenets:grid}
+	\end{subfigure}
+	\hfill
+	\caption{\emph{3DShapeNets} representation proposed by Wu \emph{et al.} as shown in their paper \cite{Wu2015}. An object (\subref{subfig:objrecog:3dshapenets:model}) is captured from a certain point of view and a depth map is generated (\subref{subfig:objrecog:3dshapenets:depth}) which is in turn used to generate a point cloud that will be represented as a voxel grid (\subref{subfig:objrecog:3dshapenets:grid}) with empty voxels (in white, not represented), unknown voxels (in blue), and surface or occupied voxels (red).}
+	\label{fig:objrecog:3dshapenets}
+\end{figure}
+
+Song and Xiao \cite{Song2015} proposed to adopt a directional \ac{TSDF} encoding which takes a depth map as input and outputs a volumetric representation. They divide a \acs{3D} space using an equally spaced voxel grid in which each cell holds a \acl{3D} vector that records the shortest distance between the voxel center and the \acl{3D} surface in three directions. In addition, the value is clipped by $2\delta$, being $\delta$ the grid size in each dimension. A $30\times30\times30$ voxels grid is fitted to a previously segmented object candidate. Figure \ref{fig:objrecog:tsdf} shows a graphical representation of this approach.
+
+\begin{figure}[!b]
+	\centering
+	\hfill
+	\begin{subfigure}{0.26\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_rgb}
+		\caption{Object}
+		\label{subfig:objrecog:tsdf:object}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.22\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_cloud}
+		\caption{Point cloud}
+		\label{subfig:objrecog:tsdf:cloud}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.3\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_tsdf}
+		\caption{\ac{TSDF} grid}
+		\label{subfig:objrecog:tsdf:grid}
+	\end{subfigure}
+	\hfill
+	\caption{\ac{TSDF} representation proposed by Song and Xiao as shown in their paper \cite{Song2015}. An object (\subref{subfig:objrecog:tsdf:object}) is captured by a range sensor as a point cloud (\subref{subfig:objrecog:tsdf:cloud}) and then a \ac{TSDF} grid is generated (red indicates the voxel is in front of surfaces and blue indicates the voxel is behind the surface; the intensity of the color represents the \acs{TSDF} value).}
+	\label{fig:objrecog:tsdf}
+\end{figure}
+
+Maturana and Scherer \cite{Maturana2015} use occupancy grids in \emph{VoxNet} to maintain a probabilistic estimate of the occupancy of each voxel to represent a \acs{3D} shape. This estimate is a function of the sensor data and prior knowledge. They propose three different occupancy models: binary, density, and hit. The binary and density models make use of raytracing to compute the number of hits and pass-throughs for each voxel. The former one assumes that each voxel has a binary state, occupied or unoccupied. The latter one assumes that each voxel has a continuous density, based on the probability it will block a sensor beam. The hit grid ignores the difference between unknown and free space, only considering hits; it discards information but does not require the use of raytracing so it is highly efficient in comparison with the other methods. They also propose two different grids for \ac{LIDAR} and \acs{RGB-D} sensor data. For the \acs{RGB-D} case, they use a fixed occupancy grid of $32\times32\times32$ voxels, making the object of interest -- obtained by a segmentation algorithm or given by a sliding box -- occupy a subvolume of $24\times24\times24$ voxels. The $z$ axis of the grid is aligned with the direction of gravity. Figure \ref{fig:objrecog:voxnet} shows the occupancy grids used by \emph{VoxNet}.
+
+\begin{figure}[!t]
+	\centering
+	\hfill
+	\begin{subfigure}{0.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/voxnet_1}
+		\caption{\ac{LIDAR} data}
+		\label{subfig:objrecog:voxnet:lidar}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/voxnet_4}
+		\caption{Voxnet grid}
+		\label{subfig:objrecog:voxnet:lidar_grid}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/voxnet_2}
+		\caption{RGBD data}
+		\label{subfig:objrecog:voxnet:rgbd}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.23\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{Figures/ObjRecog/voxnet_3}
+		\caption{Voxnet grid}
+		\label{subfig:objrecog:voxnet:rgbd_grid}
+	\end{subfigure}
+	\hfill
+	\caption{Volumetric occupancy grid representation used by \emph{VoxNet} as shown in their paper \cite{Maturana2015}. For \acs{LIDAR} data (\subref{subfig:voxnet:lidar}) a voxel size of $0.1$m$^3$ is used to create a $32\times32\times32$ grid (\subref{subfig:objrecog:voxnet:lidar_grid}). For \acs{RGB-D} data (\subref{subfig:objrecogvoxnet:rgbd}), the resolution is chosen so the object occupies a subvolume of $24\times24\times24$ voxels in a $32\times32\times32$ grid (\subref{subfig:objrecog:voxnet:rgbd_grid}).}
+	\label{fig:objrecog:voxnet}
+\end{figure}
 
 \section{Datasets}
 \label{cha:objrecog:sec:datasets}
