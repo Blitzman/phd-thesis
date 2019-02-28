@@ -27,14 +27,62 @@ At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned 
 \section{Related Works}
 \label{cha:objrecog:sec:relatedworks}
 
+Since the very beginning of the computer vision research field, a considerable amount of effort has been directed towards achieving robust object recognition systems that are able to semantically classify a scene and detect objects within it, also providing their estimated poses \cite{Andreopoulos2013}. This is due to the fact that semantic object recognition is a key capability required by cognitive robots to being able to operate autonomously in unstructured, real-world environments.
+
 \subsection{Traditional Approaches}
 \label{cha:objrecog:sec:relatedworks:subsec:traditional}
+
+Over the past few years, intensive research has been done on feature-based object recognition methods. This approach relies on extracting features, i.e., pieces of information which describe simple but significant properties of the objects within the scene. Those features are encoded into \emph{descriptors} such as \ac{SIFT}\cite{Lowe2004}, \ac{SURF}\cite{Bay2006}, \ac{BRIEF}\cite{Calonder2010}, \ac{BRISK}\cite{Leutenegger2011}, \ac{ORB}\cite{Rublee2011}, or \ac{FREAK}\cite{Alahi2012} to name a few. After extracting those descriptors, machine learning techniques are applied to train a system with them so that it becomes able to classify features extracted from unknown scenes. Based on the used types of features, these methods can be divided into two categories: global or local feature-based methods. Global ones are characterized by dealing with the object as a whole; they define a set of features which completely encompass the object and describe it effectively. On the other hand, local methods describe local patches of the object, those regions are located around highly distinctive spots of the object named \emph{keypoints}. 
+
+Real-world scenes tend to be unstructured environments. This implies that object recognition systems must not be affected by clutter or partial occlusions. In addition, they should be invariant to illumination, transforms, and object variations. Those are the main reasons why local surface feature-based methods have been popular and successful during the last years -- since they do not need the whole object to describe it properly, they are able to cope with cluttered environments and occlusions \cite{Lowe1999}. 
 
 \subsection{3D Object Recognition}
 \label{cha:objrecog:sec:relatedworks:subsec:3d}
 
+Traditionally, those object recognition systems made use of \acs{2D} images with intensity or color information, i.e., \ac{RGB} images. However, technological advances made during the last years have caused a huge increase in the usage of \acs{3D} information. The field of computer vision in general, and object recognition research in particular, have been slowly but surely moving towards including this richer information into their algorithms.
+
+Nowadays, the use of \acs{3D} information for this task is in a state of continuous evolution, still far behind, in terms of maturity, from the systems that make use of \acs{2D} images. Nevertheless, the use of \acs{2D} information exhibits a handful of problems which hinder the development of robust object recognition systems. Oppositely, the use of range images or point clouds, which provide \acs{2.5D} or \acs{3D} information respectively, presents many significant benefits over traditional \acs{2D}-based systems. Some of the main advantages are the following ones \cite{Guo2014}: (1) they provide geometrical information thus removing surface ambiguities, (2) many of the features that can be extracted are not affected by illumination or even scale changes, (3) pose estimation is more accurate due to the increased amount of surface information. Therefore, the use of \acs{3D} data has become a solid choice to overcome the inherent hurdles of traditional \acs{2D} methods.
+
+However, despite all the advantageous assets of \acs{3D} data, researchers had to overcome certain difficulties or drawbacks. On the one hand, sensors capable of providing \acs{3D} were expensive, limited, and performed poorly in many cases. The advent of low-cost \acs{3D} acquisition systems, e.g., Microsoft Kinect, enabled a widespread adoption of these kind of sensors thanks to their accessibility and affordability. On the other hand, \acs{3D} object recognition systems are computationally intensive due to the increased dimensionality. In this regard, advances in computing devices like \acp{GPU} provided enough computational horsepower to run those algorithms in an efficient manner. In addition, the availability of low-power \acs{GPU} computing devices like NVIDIA's Jetson has supposed a significant step towards deploying robust and powerful object recognition systems in mobile robotic platforms.
+
+The combination of those three factors (the advantages of \acs{3D} data, low-cost sensors, and parallel computing devices) transformed the field of computer vision in general, and object recognition in particular. As we can see in Figure \ref{fig:terms_statistics}, there has been a significant dominance of \acs{3D} over \acs{2D} research in computer vision since the year 2000.
+
+\begin{figure}[!b]
+	\input{Figures/ObjRecog/terms_statistics.tikz}
+	\caption{Evolution of the number of academic documents containing the terms 2D, 3D, and Deep Learning together with \emph{Computer Vision}. Search terms statistics obtained from \href{http://www.scopus.com/}{scopus.com}.}
+	\label{fig:terms_statistics}
+\end{figure}
+
+Therefore, creating a robust \acs{3D} object recognition system, which is also able to work in real time, became one of the main goals towards for computer vision researchers \cite{Ponce2004}. There exist many reviews about \acs{3D} object recognition in the literature, including the seminal works of Besl and Rain \cite{Besl1985}, Brady et al. \cite{Brady1989}, Arman et al. \cite{Arman1993}, Campbell and Flynn \cite{Campbell2001}, and Mamic and Bennamoun \cite{Mamic2002}. All of them perform a general review of the \acs{3D} object recognition problem with varying levels of detail and different points of view. The work of Guo et al. \cite{Guo2014} is characterized by its comprehensive analysis of different local surface feature-based \acs{3D} object recognition methods which were published between the years 1992 and 2013. In that review, they explain the main advantages and drawbacks of each one of them. They also provide an in-depth survey of various techniques used in each phase of a \acs{3D} object recognition pipeline, from the keypoint extraction stage to the surface matching one, including the extraction of local surface descriptors. The review is specially remarkable due to its freshness and level of detail. It is important to remark that all the described methods make use of carefully designed feature descriptors by experts in the field.
+
 \subsection{Deep Learning}
 \label{cha:objrecog:sec:relatedworks:subsec:deeplearning}
+
+From the earliest days of computer vision, the aim of researchers has been to replace hand-crafted feature descriptors, which require domain expertise and engineering skills, with multilayer networks able to learn them automatically by using a general-purpose training algorithm \cite{Lecun2015}. The solution for this problem was discovered during the 1970s and 1980s by different research groups independently \cite{Werbos1974}\cite{LeCun1985}\cite{Rumelhart1988}. This gave birth to a whole new branch of machine learning named deep learning.
+
+Deep learning architectures usually consist of a multilayer stack of hierarchical learning modules which compute non-linear input-output mappings. Those modules are just functions of the input with a set of internal weights. The input of each layer in the stack is transformed, using the functions defined by the modules, to increase the selectivity and invariance of the representation. The backpropagation procedure is used to train those multilayer architectures by propagating gradients through all the modules. In the end, deep learning applications use feedforward neural network architectures which learn to map a fixed-size input, e.g., an image, to a fixed-size output, typically a vector containing a probability for each one of the possible categories \cite{Lecun2015}.
+
+\begin{figure}[!b]
+	\centering
+	\includegraphics[width=0.7\textwidth]{Figures/ObjRecog/weights}
+	\caption{Filters learned by the network proposed by Krizhevsky et al. \cite{Krizhevsky2012}. Each of the 96 filters shown is of size $11\times11\times3$. The filters have clearly learned to detect edges of various orientations and they resemble Gabor filters. Image analysis using that kind of filters is thought to be similar to perception in the human visual system \cite{Marvcelja1980}.}
+	\label{fig:alexnet_weights}
+\end{figure}
+
+Figure \ref{fig:alexnet_weights} shows some sample filter modules automatically learned by training one of the most successful deep learning architectures: the deep convolutional neural network proposed by Krizhevsky et al. \cite{Krizhevsky2012} to classify the \num{1.2} million high-resolution images in the ImageNet LSVRC-2010 \cite{Berg2010} contest into \num{1000} different classes.
+
+In spite of the fact that these kind of architectures showed a huge potential for solving many computer vision problems, they were ignored by the computer vision community during the \num{1990}s. The main reason for that was twofold. It was widely accepted that learning feature extractors with little prior knowledge was impossible. In addition, most of the researchers thought that using simple gradient descent techniques to train those networks would get them inevitably trapped in poor local minima.
+
+\begin{figure}[!t]
+	\centering
+    \includegraphics{example-image}
+	\caption{Illustration of the architecture of the aforementioned \ac{CNN} proposed by Krizhevsky et al.\cite{Krizhevsky2012} for the ImageNet challenge. Besides the normal components, e.g.,  convolutional, pooling, and fully connected layers, this network features two different paths. One \ac{GPU} runs the layers at the top while the other runs the layers at the bottom.}
+	\label{fig:convnet_architecture}
+\end{figure}
+
+In the latter years, certain breakthrough works revived the interest in deep learning architectures \cite{Lecun2015}. Recent studies proved that local minima are not an issue with large neural networks. Following a set of seminal works for the field on training deep learning networks \cite{Hinton2006}\cite{Bengio2007}, a group of researchers from the \ac{CIFAR} introduced unsupervised learning procedures to create layers of feature detectors without labelled data, they also pre-trained several layers and added a final layer of output units; the system was tuned using backpropagation and achieved a remarkable performance when applied to the handwritten digit recognition or pedestrian detection problems \cite{Sermanet2013}. In addition, the advent of \acp{GPU}, which were easily programmable and extremely efficient for parallel problems, made possible the training of huge networks in acceptable time spans \cite{Raina2009}.
+
+All those contributions to the field led to the birth of probably the most important milestone regarding deep learning: the \acf{CNN}. This special kind of deep network was designed to process data in form of multiple arrays and gained popularity because of its many practical successes. This was due to the fact that they were easier to train and generalized far better than previous models. The architecture of a typical \ac{CNN} is composed by many stages of convolutional layers followed by pooling ones and non-linearity \ac{ReLU} filters; in the end, convolutional and fully connected layers are stacked. The key idea behind using this stack of layers is to exploit the property that many natural signals are compositional hierarchies, in which higher-level features are obtained by composing lower-level ones. Figure \ref{fig:convnet_architecture} shows a typical architecture of a \ac{CNN}.
 
 \subsection{Volumetric Representations}
 \label{cha:objrecog:sec:relatedworks:subsec:representations}

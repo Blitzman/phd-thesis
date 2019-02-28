@@ -1,0 +1,36 @@
+\begin{tikzpicture}
+  \begin{axis}[
+	  ymode=log,
+	  grid=both,
+	  width=\linewidth,
+	  height=14 em,
+      xlabel={Year},
+      ylabel={Documents},
+	  legend cell align=left,
+      legend pos=south east,
+	  legend style={font=\smaller \smaller},
+      ymajorgrids=true,
+	  y tick style={uablue50},
+	  x tick style={uablue50},
+      minor grid style={very thin, uagray10},
+	  major grid style={uagray10},
+	  axis line style={uablue50},
+		restrict x to domain=2000:2014,
+	  xmin=1998,
+	  xmax=2016,
+	 xtick={2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014},
+	  enlarge y limits=true,
+	  %enlarge x limits=true,
+    ]
+%
+	\addplot [mark size=0.1 em, mark=*, uablue50, line width=0.1 em] table [x=year, y=papers, col sep=space] {Data/ObjRecog/3d_scopus.dat};
+    \addplot [mark size=0.1 em, mark=*, uabranchblue, line width=0.1 em] table [x=year, y=papers, col sep=space] {Data/ObjRecog/2d_scopus.dat};
+	\addplot [mark size=0.1 em, mark=*, ualightblue, line width=0.1 em] table [x=year, y=papers, col sep=space] {Data/ObjRecog/deep_learning_scopus.dat};
+%
+    \legend{3D + Computer Vision,  2D + Computer Vision, DL + Computer Vision}
+%
+	%\node [fzjblue50, fill=white, inner sep=0 em] at (29, 0.16) {\smaller \num{4.0}$\times$};
+%
+	%\draw [thick, fzjred, thin]({axis cs:7,0}|-{rel axis cs:0,0}) -- node [pos=1, rotate=90, below, anchor=north east]{\smaller \smaller crossover $p=7$} ({axis cs:7,0}|-{rel axis cs:0,1});
+  \end{axis}
+\end{tikzpicture}
