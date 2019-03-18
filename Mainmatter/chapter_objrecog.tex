@@ -251,16 +251,142 @@ Maturana and Scherer \cite{Maturana2015} use occupancy grids in \emph{VoxNet} to
 \subsection{Our Proposal in Context}
 \label{cha:objrecog:sec:relatedworks:subsec:context}
 
+Our proposal builds upon the successes in the literature which suggested that applying deep learning techniques to 3D information to solve the object class recognition problem exhibits potential to raise the bar in terms of performance. Firstly, we introduce a novel way for representing the \ac{3D} input data, which is based on point density occupancy grids, and we integrate it into a \ac{CNN} architecture. The focus of this first iteration is to prove that simple representations and architectures for 3D data can perform reasonably well while keeping computational cost at bay to enable real-time class recognition. Secondly, we carry out an in-depth study of the effect of adverse conditions that characterize real-world scenarios -- such as noise caused by the sensor and occlusions due to the positions of the objects in the scene -- on the performance of \acp{CNN} applied to \acs{3D} object class recognition. In this case, our target is the assessment of iterative improvements applied to the previous architecture and representations to show that not only they can perform real-time recognition at reasonable accuracy but also maintain it under adverse circumstances. At last, we take a sideways step to propose a novel approach that uses multiple \ac{2D} cross-section views of \ac{3D} models for 3D object class recognition.
+
 \section{Datasets}
 \label{cha:objrecog:sec:datasets}
 
-% TODO: Introductory paragraph
+Deep neural network architectures are usually composed by many layers which in turn mean many weights to be learned. Because of that, there is a strong need of large-scale datasets to train those networks in order to avoid overfitting the model to the input data. Nowadays, large-scale databases of real-world \acs{3D} objects are scarce, some of them do not have that high number of objects \cite{Lai2011}\cite{Singh2014}\cite{Li2014}, or were incomplete by the time this work was performed \cite{Choi2016}. A possible workaround to this problem consists of using \ac{CAD} model databases -- which are virtually unlimited -- and processing those models to simulate real-world data.
 
-In order to evaluate the performance of our proposal in terms of accuracy we made extensive use of a well-known dataset such as the Princeton ModelNet project [REF]. Its goal, as their authors state, is to provide researchers with a comprehensive clean collection of 3D \ac{CAD} models for objects, which were obtained via online search engines. Employees from the Amazon Mechanical Turk service were hired to classify over $150,000$ models into $662$ categories.
+The \emph{Princeton ModelNet} project is one of the most popular large-scale \acs{3D} object dataset. Its goal, as their authors state, is to provide researchers with a comprehensive clean collection of \acs{3D} \ac{CAD} models for objects, which were obtained via online search engines. Employees from the \ac{AMT} service were hired to classify over \num{150000} models into \num{662} different categories.
 
-At the moment, there are two versions of this dataset publicly available for download 2 : ModelNet-10 and ModelNet-40. Those are subsets of the original dataset, only providing the $10$ and $40$ most popular object categories respectively. They are specially clean since the models that did not belong to the specified categories were manually deleted.
+At the moment, there are two versions of this dataset publicly available for download\footnote{\url{http://modelnet.cs.princeton.edu/}}: \emph{ModelNet-10} and \emph{ModelNet-40}. Those are subsets of the original dataset which only provide the \num{10} and \num{40} most popular object categories respectively. These subsets are specially clean versions of the complete dataset.
 
-On the one hand, ModelNet-10 is composed of a collection of over $5,000$ \ac{CAD} models classified into $10$ categories and divided into training and test sets. In addition, the orientation of all the \ac{CAD} models was manually aligned. On the other hand ModelNet-40 features over $9,800$ models classified into $40$ categories and it also includes training and test splits; however, their orientations are not aligned as they are in ModelNet-10.
+On the one hand, ModelNet-10 is composed of a collection of over 5000 models classified into 10 categories and divided into training and test splits. In addition, the orientation of all \ac{CAD} models of the dataset was manually aligned. On the other hand, ModelNet-40 features over \num{9800} models classified into \num{40} categories, also including training and test sets. However, the orientations of its models are not aligned as they are in ModelNet-10. Figure \ref{fig:objrecog:modelnet_distribution} and Table \ref{table:objrecog:modelnet_distribution} show the model distribution per each class of both subsets taking into account the training and test splits. Figure \ref{fig:objrecog:modelnet_models} shows some model examples from ModelNet-10.
+
+\begin{figure}[!h]
+    \centering
+    \input{Figures/ObjRecog/modelnet-distribution.tikz}
+    \caption{Model distribution per object class or category for both ModelNet-10 and ModelNet-40 training and test splits.}
+    \label{fig:objrecog:modelnet_distribution}
+\end{figure}
+
+\begin{table}
+    \centering
+    \begin{tabular}{rcccc}
+    &	\multicolumn{2}{c}{\textbf{\emph{ModelNet-10}}} & \multicolumn{2}{c}{\textbf{\emph{ModelNet-40}}}\\
+    \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
+    \toprule
+    Desk      & 200        & 86		& 200  & 86     \\
+    Table     & 392        & 100    & 392  & 100	\\
+    Nighstand & 200        & 86     & 200  & 86		\\
+    Bed       & 515        & 100    & 515  & 100	\\
+    Toilet    & 344        & 100    & 344  & 100	\\
+    Dresser   & 200        & 86     & 200  & 86		\\
+    Bathtub   & 106        & 50     & 106  & 50		\\
+    Sofa      & 680        & 100    & 680  & 100	\\
+    Monitor   & 465        & 100    & 465  & 100 	\\
+    Chair     & 889        & 100    & 889  & 100	\\
+    Airplane  & -	 & -	 & 626	& 100 \\
+    Bench	  & -	 & -	 & 173	& 20 \\
+    Bookshelf & -	 & -	 & 572	& 100 \\
+    Bottle	  & -	 & -	 & 335	& 100 \\
+    Bowl	  & -	 & -	 & 64	& 20 \\
+    Car		  & -	 & -	 & 197	& 100 \\
+    Cone	  & -	 & -	 & 167	& 20 \\
+    Cup		  & -	 & -	 & 79	& 20 \\
+    Curtain	  & -	 & -	 & 138	& 20 \\
+    Door	  & -	 & -	 & 109	& 20 \\
+    Flower Pot & -	 & -	 & 149	& 20 \\
+    Glass Box & -	 & -	 & 171	& 100 \\
+    Guitar	  & -	 & -	 & 155	& 100 \\
+    Keyboard  & -	 & -	 & 145	& 20 \\
+    Lamp	  & -	 & -	 & 124	& 20 \\
+    Laptop	  & -	 & -	 & 149	& 20 \\
+    Mantel	  & -	 & -	 & 284	& 100 \\
+    Person	  & -	 & -	 & 88	& 20 \\
+    Piano	  & -	 & -	 & 231	& 100 \\
+    Plant	  & -	 & -	 & 240	& 100 \\
+    Radio	  & -	 & -	 & 104  & 20 \\
+    Range Hood & -	 & -	 & 115	& 100 \\
+    Sink	  & -	 & -	 & 128	& 20 \\
+    Stairs 	 & -	 & -	 & 124	& 20 \\
+    Stool 	 & -	 & -	 & 90	& 20 \\
+    Tent  	 & -	 & -	 & 163	& 20 \\
+    TV Stand  & -	 & -	 & 267	& 100 \\
+    Vase	 & -	 & -	 & 475	& 100 \\
+    Wardrobe  & -	 & -	 & 87	& 20 \\
+    X-Box	 & -	 & -	& 103	& 20 \\
+    \bottomrule
+    \end{tabular}
+    \caption{ModelNet-10 and ModelNet-40 distributions.}
+    \label{table:objrecog:modelnet_distribution}
+\end{table}
+
+\begin{figure}[!hbt]
+	\centering
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/table_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/table_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/table_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/table_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/table_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/nstand_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/nstand_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/nstand_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/nstand_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/nstand_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bed_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bed_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bed_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bed_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bed_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/toilet_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/toilet_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/toilet_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/toilet_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/toilet_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/dresser_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/dresser_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/dresser_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/dresser_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/dresser_4}\hfill
+	
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bathtub_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bathtub_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bathtub_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bathtub_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/bathtub_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/sofa_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/sofa_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/sofa_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/sofa_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/sofa_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/monitor_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/monitor_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/monitor_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/monitor_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/monitor_4}\hfill
+
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/chair_0}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/chair_1}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/chair_2}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/chair_3}\hfill
+	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/chair_4}\hfill
+	\caption{ModelNet10 samples.}
+	\label{fig:objrecog:modelnet_models}
+\end{figure}
 
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
@@ -327,10 +453,10 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
 \begin{figure}[!t]
   \centering
   \begin{subfigure}{\linewidth}
-    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_0}
-    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_1}
-    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_2}
-    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_3}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_0_view}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_1_view}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_2_view}
+    \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_3_view}
     \caption{Rendered views.}
     \label{fig:objrecog:dataproc:renders}
   \end{subfigure}
