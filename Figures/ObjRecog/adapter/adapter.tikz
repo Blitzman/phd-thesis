@@ -1,0 +1,27 @@
+\begin{tikzpicture}
+%\node[] (cad_model) at (0, 0) {\includegraphics[width=4.5em]{Figures/ObjRecog/adapter/cad_model}};
+\node[] (cad_model) at (0, 0) {\includegraphics[width=8em]{Figures/ObjRecog/adapter/sphere_cad}};
+\node[above = 0 em of cad_model]  (l1) {CAD Model};
+\node[right = 2 em of cad_model] (depth_1) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/depth_1_4}};
+\node[above = -1 em of depth_1] (depth_2) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/depth_2_13}};
+\node[below = -1 em of depth_1] (depth_3) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/depth_4_31}};
+\node[above = 0 em of depth_2]  (l2) {Rendered views};
+\node[right = 2 em of depth_1] (cloud_1) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/cloud_1}};
+\node[right = 2 em of depth_2] (cloud_2) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/cloud_2}};
+\node[right = 2 em of depth_3] (cloud_3) {\includegraphics[width=5em]{Figures/ObjRecog/adapter/cloud_4}};
+\node[above = 0 em of cloud_2]  (l3) {Cloud views};
+\node[right = 2 em of cloud_1] (cloud) {\includegraphics[width=4.5em]{Figures/ObjRecog/adapter/cloud}};
+\node[above = 1 em of cloud]  (l4) {Merged cloud};
+%
+\draw[uagray80, -latex](cad_model) -- (depth_1);
+\draw[uagray80,-latex](cad_model) -- (depth_2);
+\draw[uagray80,-latex](cad_model) -- (depth_3);
+%
+\draw[uagray80, -latex](depth_1) -- (cloud_1);
+\draw[uagray80, -latex](depth_2) -- (cloud_2);
+\draw[uagray80, -latex](depth_3) -- (cloud_3);
+%
+\draw[uagray80, -latex](cloud_1) -- (cloud);
+\draw[uagray80, -latex](cloud_2) -- (cloud);
+\draw[uagray80, -latex](cloud_3) -- (cloud);
+\end{tikzpicture}

@@ -260,70 +260,7 @@ Deep neural network architectures are usually composed by many layers which in t
 
 The \emph{Princeton ModelNet} project is one of the most popular large-scale \acs{3D} object dataset. Its goal, as their authors state, is to provide researchers with a comprehensive clean collection of \acs{3D} \ac{CAD} models for objects, which were obtained via online search engines. Employees from the \ac{AMT} service were hired to classify over \num{150000} models into \num{662} different categories.
 
-At the moment, there are two versions of this dataset publicly available for download\footnote{\url{http://modelnet.cs.princeton.edu/}}: \emph{ModelNet-10} and \emph{ModelNet-40}. Those are subsets of the original dataset which only provide the \num{10} and \num{40} most popular object categories respectively. These subsets are specially clean versions of the complete dataset.
-
-On the one hand, ModelNet-10 is composed of a collection of over 5000 models classified into 10 categories and divided into training and test splits. In addition, the orientation of all \ac{CAD} models of the dataset was manually aligned. On the other hand, ModelNet-40 features over \num{9800} models classified into \num{40} categories, also including training and test sets. However, the orientations of its models are not aligned as they are in ModelNet-10. Figure \ref{fig:objrecog:modelnet_distribution} and Table \ref{table:objrecog:modelnet_distribution} show the model distribution per each class of both subsets taking into account the training and test splits. Figure \ref{fig:objrecog:modelnet_models} shows some model examples from ModelNet-10.
-
-\begin{figure}[!h]
-    \centering
-    \input{Figures/ObjRecog/modelnet-distribution.tikz}
-    \caption{Model distribution per object class or category for both ModelNet-10 and ModelNet-40 training and test splits.}
-    \label{fig:objrecog:modelnet_distribution}
-\end{figure}
-
-\begin{table}
-    \centering
-    \begin{tabular}{rcccc}
-    &	\multicolumn{2}{c}{\textbf{\emph{ModelNet-10}}} & \multicolumn{2}{c}{\textbf{\emph{ModelNet-40}}}\\
-    \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
-    \toprule
-    Desk      & 200        & 86		& 200  & 86     \\
-    Table     & 392        & 100    & 392  & 100	\\
-    Nighstand & 200        & 86     & 200  & 86		\\
-    Bed       & 515        & 100    & 515  & 100	\\
-    Toilet    & 344        & 100    & 344  & 100	\\
-    Dresser   & 200        & 86     & 200  & 86		\\
-    Bathtub   & 106        & 50     & 106  & 50		\\
-    Sofa      & 680        & 100    & 680  & 100	\\
-    Monitor   & 465        & 100    & 465  & 100 	\\
-    Chair     & 889        & 100    & 889  & 100	\\
-    Airplane  & -	 & -	 & 626	& 100 \\
-    Bench	  & -	 & -	 & 173	& 20 \\
-    Bookshelf & -	 & -	 & 572	& 100 \\
-    Bottle	  & -	 & -	 & 335	& 100 \\
-    Bowl	  & -	 & -	 & 64	& 20 \\
-    Car		  & -	 & -	 & 197	& 100 \\
-    Cone	  & -	 & -	 & 167	& 20 \\
-    Cup		  & -	 & -	 & 79	& 20 \\
-    Curtain	  & -	 & -	 & 138	& 20 \\
-    Door	  & -	 & -	 & 109	& 20 \\
-    Flower Pot & -	 & -	 & 149	& 20 \\
-    Glass Box & -	 & -	 & 171	& 100 \\
-    Guitar	  & -	 & -	 & 155	& 100 \\
-    Keyboard  & -	 & -	 & 145	& 20 \\
-    Lamp	  & -	 & -	 & 124	& 20 \\
-    Laptop	  & -	 & -	 & 149	& 20 \\
-    Mantel	  & -	 & -	 & 284	& 100 \\
-    Person	  & -	 & -	 & 88	& 20 \\
-    Piano	  & -	 & -	 & 231	& 100 \\
-    Plant	  & -	 & -	 & 240	& 100 \\
-    Radio	  & -	 & -	 & 104  & 20 \\
-    Range Hood & -	 & -	 & 115	& 100 \\
-    Sink	  & -	 & -	 & 128	& 20 \\
-    Stairs 	 & -	 & -	 & 124	& 20 \\
-    Stool 	 & -	 & -	 & 90	& 20 \\
-    Tent  	 & -	 & -	 & 163	& 20 \\
-    TV Stand  & -	 & -	 & 267	& 100 \\
-    Vase	 & -	 & -	 & 475	& 100 \\
-    Wardrobe  & -	 & -	 & 87	& 20 \\
-    X-Box	 & -	 & -	& 103	& 20 \\
-    \bottomrule
-    \end{tabular}
-    \caption{ModelNet-10 and ModelNet-40 distributions.}
-    \label{table:objrecog:modelnet_distribution}
-\end{table}
-
-\begin{figure}[!hbt]
+\begin{figure}[!t]
 	\centering
 	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_0}\hfill
 	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_1}\hfill
@@ -388,6 +325,85 @@ On the one hand, ModelNet-10 is composed of a collection of over 5000 models cla
 	\label{fig:objrecog:modelnet_models}
 \end{figure}
 
+At the moment, there are two versions of this dataset publicly available for download\footnote{\url{http://modelnet.cs.princeton.edu/}}: \emph{ModelNet-10} and \emph{ModelNet-40}. Those are subsets of the original dataset which only provide the \num{10} and \num{40} most popular object categories respectively. These subsets are specially clean versions of the complete dataset.
+
+On the one hand, ModelNet-10 is composed of a collection of over 5000 models classified into 10 categories and divided into training and test splits. In addition, the orientation of all \ac{CAD} models of the dataset was manually aligned. On the other hand, ModelNet-40 features over \num{9800} models classified into \num{40} categories, also including training and test sets. However, the orientations of its models are not aligned as they are in ModelNet-10. Figure \ref{fig:objrecog:modelnet_models} shows some model examples from ModelNet-10. Figure \ref{fig:objrecog:modelnet_distribution} and Table \ref{table:objrecog:modelnet_distribution} show the model distribution per each class of both subsets taking into account the training and test splits. 
+
+\begin{figure}[!h]
+    \centering
+    \input{Figures/ObjRecog/modelnet-distribution.tikz}
+    \caption{Model distribution per object class or category for both ModelNet-10 and ModelNet-40 training and test splits.}
+    \label{fig:objrecog:modelnet_distribution}
+\end{figure}
+
+Since the final goal of the \acp{CNN} is to provide means to recognize objects onboard a mobile robotic platform which features \ac{RGB-D} sensors, it is logical to transform the full mesh representation provided by the dataset into the representation that our networks will deal with. \ac{RGB-D} cameras output depth maps which can be used to generate \acs{3D} point clouds of the scene viewed by the camera. In this regard, we will transform each \ac{CAD} object of the dataset into partial point clouds from different \acp{POV}.
+
+For this purpose, we converted the \ac{OFF} models into \ac{PCD} clouds using a raytracing-based process. The object is placed in the center of a \acs{3D} sphere, which is tessellated to a certain level, and a virtual camera pointing to the center of the sphere is placed in each vertex of that truncated icosahedron. Then those partial views are rendered and their $z$-buffer data, which contains the depth information, is used to generate point clouds from each \acs{POV}. In the end, those views are translated and rotated, depending on their \ac{POV}, and merged into a cloud for the full object.
+
+Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process. For the conversion, we used the first tessellation level of the sphere, which generates $42$ vertices or \acp{POV}. A resolution of $256\times256$ pixels was used for rendering the views. A voxel grid filter with a leaf size of $0.7\times0.7\times0.7$ units is applied to the merged cloud to equalize the point density, which is higher in certain zones due to view overlapping.
+
+\begin{figure}[!t]
+	\centering
+	\resizebox{\textwidth}{!}{
+		\input{Figures/ObjRecog/adapter/adapter.tikz}
+	}
+	\caption{From \acs{CAD} models to point clouds. The object is placed in the center of a tessellated sphere, views are rendered placing a virtual camera in each vertex of the icosahedron, the $z$-buffer data of those views is used to generate point clouds, and the point clouds are transformed and merged at last.}
+	\label{fig:objrecog:adapter}
+\end{figure}
+
+
+\begin{table}
+    \centering
+    \begin{tabular}{rcccc}
+    &	\multicolumn{2}{c}{\textbf{\emph{ModelNet-10}}} & \multicolumn{2}{c}{\textbf{\emph{ModelNet-40}}}\\
+    \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
+    \toprule
+    Desk      & 200        & 86		& 200  & 86     \\
+    Table     & 392        & 100    & 392  & 100	\\
+    Nighstand & 200        & 86     & 200  & 86		\\
+    Bed       & 515        & 100    & 515  & 100	\\
+    Toilet    & 344        & 100    & 344  & 100	\\
+    Dresser   & 200        & 86     & 200  & 86		\\
+    Bathtub   & 106        & 50     & 106  & 50		\\
+    Sofa      & 680        & 100    & 680  & 100	\\
+    Monitor   & 465        & 100    & 465  & 100 	\\
+    Chair     & 889        & 100    & 889  & 100	\\
+    Airplane  & -	 & -	 & 626	& 100 \\
+    Bench	  & -	 & -	 & 173	& 20 \\
+    Bookshelf & -	 & -	 & 572	& 100 \\
+    Bottle	  & -	 & -	 & 335	& 100 \\
+    Bowl	  & -	 & -	 & 64	& 20 \\
+    Car		  & -	 & -	 & 197	& 100 \\
+    Cone	  & -	 & -	 & 167	& 20 \\
+    Cup		  & -	 & -	 & 79	& 20 \\
+    Curtain	  & -	 & -	 & 138	& 20 \\
+    Door	  & -	 & -	 & 109	& 20 \\
+    Flower Pot & -	 & -	 & 149	& 20 \\
+    Glass Box & -	 & -	 & 171	& 100 \\
+    Guitar	  & -	 & -	 & 155	& 100 \\
+    Keyboard  & -	 & -	 & 145	& 20 \\
+    Lamp	  & -	 & -	 & 124	& 20 \\
+    Laptop	  & -	 & -	 & 149	& 20 \\
+    Mantel	  & -	 & -	 & 284	& 100 \\
+    Person	  & -	 & -	 & 88	& 20 \\
+    Piano	  & -	 & -	 & 231	& 100 \\
+    Plant	  & -	 & -	 & 240	& 100 \\
+    Radio	  & -	 & -	 & 104  & 20 \\
+    Range Hood & -	 & -	 & 115	& 100 \\
+    Sink	  & -	 & -	 & 128	& 20 \\
+    Stairs 	 & -	 & -	 & 124	& 20 \\
+    Stool 	 & -	 & -	 & 90	& 20 \\
+    Tent  	 & -	 & -	 & 163	& 20 \\
+    TV Stand  & -	 & -	 & 267	& 100 \\
+    Vase	 & -	 & -	 & 475	& 100 \\
+    Wardrobe  & -	 & -	 & 87	& 20 \\
+    X-Box	 & -	 & -	& 103	& 20 \\
+    \bottomrule
+    \end{tabular}
+    \caption{ModelNet-10 and ModelNet-40 distributions.}
+    \label{table:objrecog:modelnet_distribution}
+\end{table}
+
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
 
@@ -399,7 +415,6 @@ The proposed system takes a point cloud of an object as an input and predicts it
 As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it.
 
 Occupancy grids are data structures which allow us to obtain a compact representation of the volumetric space. They stand between meshes or clouds, which offer rich but large amounts of information, and voxelized representations with packed but poor information. At that midpoint, occupancy grids provide considerable shape cues to perform learning, while enabling an efficient processing of that information thanks to their array-like implementation.
-
 
 As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data to be learned or classified. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids ($32 \times 32 \times 32$ voxels) that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not.
 
@@ -476,10 +491,10 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
     \label{fig:objrecog:dataproc:downsampled}
   \end{subfigure}
   \caption{Dataset model processing example to generate the point clouds for PointNet. Some rendered views of a toilet model are shown in (\subref{fig:objrecog:dataproc:renders}). The original \ac{OFF} mesh is shown in (\subref{fig:objrecog:dataproc:mesh}). The generated point cloud after merging all points of view is shown in (\subref{fig:objrecog:dataproc:cloud}), and (\subref{fig:objrecog:dataproc:downsampled}) shows the downsampled cloud using a voxel grid filter with a leaf size of $0.7 \times 0.7 \times 0.7$.}
-  \label{fig:objrecog:pointnetarch}
+  \label{fig:objrecog:pointnetarchdata}
 \end{figure}
 
-The CAD models are provided in \ac{OFF}. Firstly, we converted all \ac{OFF} models into \ac{PLY} to ease the usage of the dataset with the \ac{PCL}. As we already mentioned, the input for PointNet are point clouds, but the dataset provides \ac{CAD} models specifying vertices and faces. In this regard, we converted the PLY models into \ac{PCD} clouds by raytracing them. A 3D sphere is tessellated and a virtual camera is placed in each vertex of that truncated icosahedron – pointing to the origin of the model – then multiple snapshots are rendered using raytracing and the z-buffer data, which contains the depth information, is used to generate point clouds from each point of view. After all points of view have been processed, the point clouds are merged. A voxel grid filter is applied to downsample the clouds after the raytracing operations. Figure 3 illustrates the aforementioned processes. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits.
+We generated point clouds to feed PointNet following the procedure described in Section \ref{cha:objrecog:sec:datasets}. Figure \ref{fig:objrecog:pointnetarchdata} illustrates the result of the aforementioned process. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits provided by ModelNet-10.
 
 \subsubsection{Implementation}
 
@@ -790,6 +805,8 @@ In order to assess the performance of the proposed model-based \acs{CNN} we carr
 \subsubsection{Data Generation}
 \label{cha:objrecog:sec:study:subsec:experiments:subsubsec:data}
 
+Data was generated in a similar fashion as we did for PointNet. The meshes from the ModelNet-10 dataset were converted to point clouds following the procedure described in Section \ref{cha:objrecog:sec:datasets}. However, this time we applied a set of transformations to simulate noise and occlusions in our data.
+
 \paragraph{Noise Simulation}
 
 The partial views generated using the previously described process are not a good simulation of the result that we would obtain by using a low-cost \acs{RGB-D} sensor. Those systems are noisy, so the point clouds produced by them are not a perfect representation of the real-world objects.
@@ -1014,15 +1031,57 @@ As stated before, we propose a 3D object recognition method using deep learning.
 \subsection{Data Representation}
 \label{cha:objrecog:sec:lonchanet:subsec:representation}
 
-LonchaNet takes point clouds as input, but the neural architecture itself uses three images corresponding to three slices, so first we need to extract the slices from the 3D point cloud.
+LonchaNet takes point clouds as input, but the neural architecture itself uses three images corresponding to three slices, so first we need to extract the slices from the 3D point cloud. To that end, we load the point clouds and calculate the central point for each axis. Then we make a slice across the XY, XZ, and YZ planes with a thickness of 5\% of the model size. Those points that fall inside these sections are isolated and projected in their planes to generate an image of $500 \times 500$ pixels. These images are binary maps in which the background is black and the projected points are white. This process is shown in Figure \ref{fig:objrecog:slicing}.
 
-To that end, we load the point clouds and calculate the central point for each axis. Then we make a slice across the XY, XZ, and YZ planes with a thickness of 5\% of the model size. Those points that fall inside these sections are isolated and projected in their planes to generate an image of $500 \times 500$ pixels. These images are binary maps in which the background is black and the projected points are white. This process is shown in Figure \ref{fig:slicing}.
+\begin{figure}[!t]	
+	\centering
+	\begin{subfigure}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=1\linewidth]{Figures/ObjRecog/slices/chairn_1}
+        \caption{Sliced example}
+        \label{fig:slicing_a}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.3\linewidth}
+		\centering
+		\includegraphics[width=1\linewidth]{Figures/ObjRecog/slices/chairn_2}
+        \caption{Points of every slice}
+        \label{fig:slicing_b}
+	\end{subfigure}
+    \begin{subfigure}[t]{0.8\linewidth}
+		\centering
+        \vspace{1em}
+		\includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice31}
+        \includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice32}
+        \includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice33}
+        \caption{Resultant projections of the three slices}
+        \label{fig:slicing_c}
+	\end{subfigure}
+    \caption{Extracting the slices from a point cloud example [MISSINGDETAILS]}
+    \label{fig:objrecog:slicing}
+\end{figure}
 
-Due to the inconsistent point density produced by the sampling process described in Section \ref{subsec:ply_to_pc}, there are some slices in which the points are very scattered, so the projection does not represent the object faithfully. To deal with this problem, a post-process is carried out for each projection in which we apply dilations of $10$ pixels using a square as structuring element. This post-processing step fills the gap between the scattered points and produces a more suitable representation of the object, as shown in Figure \ref{fig:dilation}.
+Due to the inconsistent point density produced by the sampling process, there are some slices in which the points are very scattered, so the projection does not represent the object faithfully. To deal with this problem, a post-process is carried out for each projection in which we apply dilations of $10$ pixels using a square as structuring element. This post-processing step fills the gap between the scattered points and produces a more suitable representation of the object, as shown in Figure \ref{fig:objrecog:dilation}. This process is performed for each example present in the dataset, so for each point cloud there are three corresponding images, one per slice.
 
-This process is performed for each example present in the dataset, so for each point cloud there are three corresponding images, one per slice.
+\begin{figure}[!t]
+	\centering
+	\begin{subfigure}[t]{0.35\linewidth}
+		\centering
+		\includegraphics[width=\linewidth, height=\linewidth]{Figures/ObjRecog/slices/bathtub_original}
+        \caption{Model slice with scattered pixels}
+        \label{fig:dilation_a}
+	\end{subfigure}
+	\quad
+	\begin{subfigure}[t]{0.35\linewidth}
+		\centering
+		\includegraphics[width=\linewidth, height=\linewidth]{Figures/ObjRecog/slices/bathtub_dilated}
+        \caption{Model slice with dilated pixels}
+        \label{fig:dilation_b}
+    \end{subfigure}
+    \caption{A comparison of a slice before and after the dilation process. The dilated image provides a more accurate representation the object.}
+    \label{fig:objrecog:dilation}
+\end{figure}
 
-This sliced representation of the object allows us to train and test a 3D recognition system in a 2D fashion, that provides the high success rate and the fast training and testing sessions that characterizes the deep image recognition neural networks yet preserving an taking advantage of the 3D information implicitly materialized in the slicing method.
+This sliced representation of the object allows us to train and test a 3D recognition system in a 2D fashion, that provides the high success rate and the fast execution time that characterizes deep image recognition networks yet preserving and taking advantage of the 3D information implicitly materialized in the slicing method.
 
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:lonchanet:subsec:architecture}
@@ -1114,6 +1173,16 @@ Figure \ref{fig:tabledesk} remarks the ambiguity of the visual features between 
 
 Using our current architecture, we reached the second place in the leaderboard of the challenge, with an accuracy of $94.37\%$ in the ModelNet-10 Accuracy task. The state of the leaderboard (as of January 2017) is shown in Table \ref{table:modelnet_leaderboard}.
 
+\subsection{Conclusion}
+\label{cha:objrecog:sec:lonchanet:subsec:conclusion}
+
+In this last iteration, we introduced a novel architecture for 3D object recognition, LonchaNet. Our system takes three slices of the input point cloud (one per 3D axis), projects the points to a plane, generating three images, and sends them to the neural network. The architecture consist in three independent GoogLeNet branches which activations are concatenated and fed to a fully connected layer. Each of this branches learns particular features of a slice.
+
+This method allows us to take advantage of the fast 2D computation whilst preserving the 3D information. LonchaNet posits as the second place in the ModelNet challenge with a succes rate of 94.37\% in the ModelNet-10 accuracy test, yet providing a extremely fast computation: once the model is trained, classifying a 3D object only takes $0.0896$ seconds.
+
+\section{Conclusion}
+\label{cha:objrecog:sec:conclusion}
+
 \begin{table}[!b]
 	\centering
 	\begin{tabular}{ccc}
@@ -1132,16 +1201,6 @@ Using our current architecture, we reached the second place in the leaderboard o
         MVCNN \cite{Su2015} & N/A & 90.10\% \\
         \hline
     \end{tabular}
-    \caption{ModelNet leaderboard as of November, 2016.}
-    \label{table:modelnet_leaderboard}
+    \caption{ModelNet leaderboard as of January, 2017.}
+    \label{table:objrecog:modelnet_leaderboard}
 \end{table}
-
-\subsection{Conclusion}
-\label{cha:objrecog:sec:lonchanet:subsec:conclusion}
-
-In this last iteration, we introduced a novel architecture for 3D object recognition, LonchaNet. Our system takes three slices of the input point cloud (one per 3D axis), projects the points to a plane, generating three images, and sends them to the neural network. The architecture consist in three independent GoogLeNet branches which activations are concatenated and fed to a fully connected layer. Each of this branches learns particular features of a slice.
-
-This method allows us to take advantage of the fast 2D computation whilst preserving the 3D information. LonchaNet posits as the second place in the ModelNet challenge with a succes rate of 94.37\% in the ModelNet-10 accuracy test, yet providing a extremely fast computation: once the model is trained, classifying a 3D object only takes $0.0896$ seconds.
-
-\section{Conclusion}
-\label{cha:objrecog:sec:conclusion}
