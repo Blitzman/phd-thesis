@@ -251,7 +251,7 @@ Maturana and Scherer \cite{Maturana2015} use occupancy grids in \emph{VoxNet} to
 \subsection{Our Proposal in Context}
 \label{cha:objrecog:sec:relatedworks:subsec:context}
 
-Our proposal builds upon the successes in the literature which suggested that applying deep learning techniques to 3D information to solve the object class recognition problem exhibits potential to raise the bar in terms of performance. Firstly, we introduce a novel way for representing the \ac{3D} input data, which is based on point density occupancy grids, and we integrate it into a \ac{CNN} architecture. The focus of this first iteration is to prove that simple representations and architectures for 3D data can perform reasonably well while keeping computational cost at bay to enable real-time class recognition. Secondly, we carry out an in-depth study of the effect of adverse conditions that characterize real-world scenarios -- such as noise caused by the sensor and occlusions due to the positions of the objects in the scene -- on the performance of \acp{CNN} applied to \acs{3D} object class recognition. In this case, our target is the assessment of iterative improvements applied to the previous architecture and representations to show that not only they can perform real-time recognition at reasonable accuracy but also maintain it under adverse circumstances. At last, we take a sideways step to propose a novel approach that uses multiple \ac{2D} cross-section views of \ac{3D} models for 3D object class recognition.
+Our proposal builds upon the successes in the literature which suggested that applying deep learning techniques to 3D information to solve the object class recognition problem exhibits potential to raise the bar in terms of performance. Firstly, we introduce a novel way for representing the \ac{3D} input data, which is based on point density occupancy grids, and we integrate it into a \ac{CNN} architecture. The focus of this first iteration is to prove that simple representations and architectures for 3D data can perform reasonably well while keeping computational cost at bay to enable real-time class recognition. Secondly, we carry out an in-depth study of the effect of adverse conditions that characterize real-world scenarios -- such as noise caused by the sensor and occlusions due to the positions of the objects in the scene -- on the performance of \acp{CNN} applied to \acs{3D} object class recognition. In this case, our target is the assessment of iterative improvements applied to the previous architecture and representations to show that not only they can perform real-time recognition at reasonable accuracy but also maintain it under adverse circumstances. At last, we take a sideways step to propose a novel approach that uses multiple \ac{2D} cross-section views of \ac{3D} models for \ac{3D} object class recognition.
 
 \section{Datasets}
 \label{cha:objrecog:sec:datasets}
@@ -354,50 +354,50 @@ Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process.
 
 \begin{table}
     \centering
-    \begin{tabular}{rcccc}
+    \begin{tabular}{rccccc}
     &	\multicolumn{2}{c}{\textbf{\emph{ModelNet-10}}} & \multicolumn{2}{c}{\textbf{\emph{ModelNet-40}}}\\
     \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
     \toprule
-    Desk      & 200        & 86		& 200  & 86     \\
-    Table     & 392        & 100    & 392  & 100	\\
-    Nighstand & 200        & 86     & 200  & 86		\\
-    Bed       & 515        & 100    & 515  & 100	\\
-    Toilet    & 344        & 100    & 344  & 100	\\
-    Dresser   & 200        & 86     & 200  & 86		\\
-    Bathtub   & 106        & 50     & 106  & 50		\\
-    Sofa      & 680        & 100    & 680  & 100	\\
-    Monitor   & 465        & 100    & 465  & 100 	\\
-    Chair     & 889        & 100    & 889  & 100	\\
-    Airplane  & -	 & -	 & 626	& 100 \\
-    Bench	  & -	 & -	 & 173	& 20 \\
-    Bookshelf & -	 & -	 & 572	& 100 \\
-    Bottle	  & -	 & -	 & 335	& 100 \\
-    Bowl	  & -	 & -	 & 64	& 20 \\
-    Car		  & -	 & -	 & 197	& 100 \\
-    Cone	  & -	 & -	 & 167	& 20 \\
-    Cup		  & -	 & -	 & 79	& 20 \\
-    Curtain	  & -	 & -	 & 138	& 20 \\
-    Door	  & -	 & -	 & 109	& 20 \\
-    Flower Pot & -	 & -	 & 149	& 20 \\
-    Glass Box & -	 & -	 & 171	& 100 \\
-    Guitar	  & -	 & -	 & 155	& 100 \\
-    Keyboard  & -	 & -	 & 145	& 20 \\
-    Lamp	  & -	 & -	 & 124	& 20 \\
-    Laptop	  & -	 & -	 & 149	& 20 \\
-    Mantel	  & -	 & -	 & 284	& 100 \\
-    Person	  & -	 & -	 & 88	& 20 \\
-    Piano	  & -	 & -	 & 231	& 100 \\
-    Plant	  & -	 & -	 & 240	& 100 \\
-    Radio	  & -	 & -	 & 104  & 20 \\
-    Range Hood & -	 & -	 & 115	& 100 \\
-    Sink	  & -	 & -	 & 128	& 20 \\
-    Stairs 	 & -	 & -	 & 124	& 20 \\
-    Stool 	 & -	 & -	 & 90	& 20 \\
-    Tent  	 & -	 & -	 & 163	& 20 \\
-    TV Stand  & -	 & -	 & 267	& 100 \\
-    Vase	 & -	 & -	 & 475	& 100 \\
-    Wardrobe  & -	 & -	 & 87	& 20 \\
-    X-Box	 & -	 & -	& 103	& 20 \\
+    1 & Desk      & 200        & 86		& 200  & 86     \\
+    2 & Table     & 392        & 100    & 392  & 100	\\
+    3 & Nighstand & 200        & 86     & 200  & 86		\\
+    4 & Bed       & 515        & 100    & 515  & 100	\\
+    5 & Toilet    & 344        & 100    & 344  & 100	\\
+    6 & Dresser   & 200        & 86     & 200  & 86		\\
+    7 & Bathtub   & 106        & 50     & 106  & 50		\\
+    8 & Sofa      & 680        & 100    & 680  & 100	\\
+    9 & Monitor   & 465        & 100    & 465  & 100 	\\
+    10 & Chair     & 889        & 100    & 889  & 100	\\
+    11 & Airplane  & -	 & -	 & 626	& 100 \\
+    12 & Bench	  & -	 & -	 & 173	& 20 \\
+    13 & Bookshelf & -	 & -	 & 572	& 100 \\
+    14 & Bottle	  & -	 & -	 & 335	& 100 \\
+    15 & Bowl	  & -	 & -	 & 64	& 20 \\
+    16 & Car		  & -	 & -	 & 197	& 100 \\
+    17 & Cone	  & -	 & -	 & 167	& 20 \\
+    18 & Cup		  & -	 & -	 & 79	& 20 \\
+    19 & Curtain	  & -	 & -	 & 138	& 20 \\
+    20 & Door	  & -	 & -	 & 109	& 20 \\
+    21 & Flower Pot & -	 & -	 & 149	& 20 \\
+    22 & Glass Box & -	 & -	 & 171	& 100 \\
+    23 & Guitar	  & -	 & -	 & 155	& 100 \\
+    24 & Keyboard  & -	 & -	 & 145	& 20 \\
+    25 & Lamp	  & -	 & -	 & 124	& 20 \\
+    26 & Laptop	  & -	 & -	 & 149	& 20 \\
+    27 & Mantel	  & -	 & -	 & 284	& 100 \\
+    28 & Person	  & -	 & -	 & 88	& 20 \\
+    29 & Piano	  & -	 & -	 & 231	& 100 \\
+    30 & Plant	  & -	 & -	 & 240	& 100 \\
+    31 & Radio	  & -	 & -	 & 104  & 20 \\
+    32 & Range Hood & -	 & -	 & 115	& 100 \\
+    33 & Sink	  & -	 & -	 & 128	& 20 \\
+    34 & Stairs 	 & -	 & -	 & 124	& 20 \\
+    35 & Stool 	 & -	 & -	 & 90	& 20 \\
+    36 & Tent  	 & -	 & -	 & 163	& 20 \\
+    37 & TV Stand  & -	 & -	 & 267	& 100 \\
+    38 & Vase	 & -	 & -	 & 475	& 100 \\
+    39 & Wardrobe  & -	 & -	 & 87	& 20 \\
+    40 & X-Box	 & -	 & -	& 103	& 20 \\
     \bottomrule
     \end{tabular}
     \caption{ModelNet-10 and ModelNet-40 distributions.}
@@ -407,18 +407,14 @@ Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process.
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
 
-The proposed system takes a point cloud of an object as an input and predicts its class label. In this regard, the proposal is twofold: a volumetric grid based on point density to estimate spatial occupancy inside each voxel, and a pure \ac{3D}-\ac{CNN} which is trained to predict object classes. The occupancy grid -- inspired by VoxNet \cite{Maturana2015} occupancy models based on probabilistic estimates -- provides a compact representation of the object's 3D information from the point cloud. That grid is fed to the \ac{CNN} architecture, which in turn computes a label for that sample, i.e., predicts the class of the object.
+In this first iteration of our efforts towards an object class recognition solution, we propose a system that takes a point cloud of an object as input and predicts its class label by leveraging two novel components: (1) a point density volumetric grid to estimate spatial occupancy inside each voxel, and (2) a \ac{3D}-\ac{CNN} which is trained to predict object classes from those grids. The occupancy grid -- inspired by VoxNet's \cite{Maturana2015} occupancy models that rely on probabilistic estimates -- provides a compact representation of the object's \ac{3D} information originally present in the point cloud that can be fed to the \ac{CNN} architecture, which in turn computes a label for that sample, i.e., predicts the class of the object. The components of this approach, namely \emph{PointNet}, will be described throughout this section. Firstly, the proposed data representation is introduced in Section \ref{cha:objrecog:sec:pointnet:subsec:data}. Secondly, the network itself is presented in Section \ref{cha:objrecog:sec:pointnet:subsec:network}. Next, we carry out a set of experiments to validate the system in Section \ref{cha:objrecog:sec:pointnet:subsec:experiments}. At last, in Section \ref{cha:objrecog:sec:pointnet:subsec:conclusion}, we draw conclusions about this work and set the stage for the next iteration.
 
 \subsection{Data Representation}
 \label{cha:objrecog:sec:pointnet:subsec:data}
 
-As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it.
+As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it. Occupancy grids expose a compact representation of the volumetric space; they stand between meshes or clouds, which offer rich but unstructured information, and voxelized representations, with packed but poor information. At that midpoint, occupancy grids provide important shape cues to perform learning while enabling an efficient processing of that information thanks to their matrix-like organization.
 
-Occupancy grids are data structures which allow us to obtain a compact representation of the volumetric space. They stand between meshes or clouds, which offer rich but large amounts of information, and voxelized representations with packed but poor information. At that midpoint, occupancy grids provide considerable shape cues to perform learning, while enabling an efficient processing of that information thanks to their array-like implementation.
-
-As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data to be learned or classified. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids ($32 \times 32 \times 32$ voxels) that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not.
-
-VoxNet’s occupancy grid outperforms 3D ShapeNets in terms of accuracy in the ModelNet challenge for the 3D-centric approaches described above. However, ray tracing grids considerably harmed performance in terms of execution time so that other approaches must be considered for a real-time implementation. In that very same work, the authors show that hit grids performed comparably to other approaches while keeping a low complexity to achieve a reduced runtime.
+As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not. VoxNet's occupancy grid outperforms 3D ShapeNets in terms of accuracy in the ModelNet challenge for the 3D-centric approaches described above. However, ray tracing grids considerably harmed performance in terms of execution time so that other approaches must be considered for a real-time implementation.
 
 \begin{figure}[!t]
   \centering
@@ -440,23 +436,25 @@ VoxNet’s occupancy grid outperforms 3D ShapeNets in terms of accuracy in the M
     \caption{Grid}
     \label{fig:objrecog:meshcloudgrid:grid}
   \end{subfigure}
-  \caption{Various 3D representations for an object. A mesh (\subref{fig:objrecog:meshcloudgrid:mesh}) is transformed into a point cloud (\subref{fig:objrecog:meshcloudgrid:cloud}), and that cloud is processed to obtain a voxelized occupancy grid (\subref{fig:objrecog:meshcloudgrid:grid}). The occupancy grid shown in this figure is a cube of $30\times 30 \times 30$ voxels. Each voxel of that cube holds the point density inside its volume. In this case, dark voxels indicate high density whilst bright ones are low density volumes. Empty voxels were removed for better visualization.}
+  \caption{Various 3D representations for an object. A mesh (\subref{fig:objrecog:meshcloudgrid:mesh}) is transformed into a point cloud (\subref{fig:objrecog:meshcloudgrid:cloud}), and that cloud is processed to obtain a voxelized occupancy grid (\subref{fig:objrecog:meshcloudgrid:grid}). The occupancy grid shown in this figure is a cube of $30\times 30 \times 30$ voxels. Each voxel of that cube holds the point density inside its volume. In this case, dark voxels indicate high density whilst bright ones are low density volumes.}
   \label{fig:objrecog:meshcloudgrid}
 \end{figure}
 
-With PointNet, we propose an occupancy grid inspired by the aforementioned successes but aiming to maintain a reasonable accuracy while allowing a real-time implementation. In our volumetric representation, each point of a cloud is mapped to a voxel of a fixed-size occupancy grid. Before performing that mapping, the object cloud is scaled to fit the grid. Each voxel will hold a value representing the number of points mapped to itself. At last, the values held by each cell are normalized. Figure \ref{fig:objrecog:meshcloudgrid} shows the derivation of the proposed occupancy grid representation from other typical tridimensional representations of a sample object.
+With PointNet, we propose an occupancy grid inspired by the aforementioned successes but aiming to maintain a reasonable accuracy while enabling a real-time implementation. In our volumetric representation, each point of a cloud is mapped to a voxel of a fixed-size occupancy grid. Before performing that mapping, the object cloud is scaled to fit the grid. Each voxel will hold a value representing the number of points mapped to itself. At last, the values held by each cell are normalized. Figure \ref{fig:objrecog:meshcloudgrid} shows the derivation of the proposed occupancy grid representation from other typical tridimensional representations of a sample object.
 
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:pointnet:subsec:network}
 
-\begin{figure}[!t]
+\begin{figure}[!b]
   \centering
   \includegraphics{example-image}
   \caption{PointNet's 3D \ac{CNN} architecture. [MISSINGDETAILS]}
   \label{fig:objrecog:pointnetarch}
 \end{figure}
 
-As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in 2D images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters that highlight regions of the images. What is more, the composition of several of these regions can define a feature of a more complex object. In this regard, a combination of various filters is able to recognize a full object. We apply this approach used in 2D images to 3D recognition. The deep architecture featured by PointNet is represented in Figure \ref{fig:objrecog:pointnetarch}. This setup allows PointNet to be on par with state-of-the-art algorithms while keeping reduced execution times.
+As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in \ac{2D} images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters. Furthermore, the composition of several of these regions can define a feature of a more complex object. By doing that, a combination of various filters is able to recognize a full object. We apply this approach used in \ac{2D} images to \ac{3D} recognition. The deep architecture featured by \emph{PointNet} is represented in Figure \ref{fig:objrecog:pointnetarch}.
+
+\newpage
 
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
@@ -465,7 +463,7 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
 
 \subsubsection{Data Generation}
 
-\begin{figure}[!t]
+\begin{figure}[!b]
   \centering
   \begin{subfigure}{\linewidth}
     \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_0_view}
@@ -496,13 +494,9 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
 
 We generated point clouds to feed PointNet following the procedure described in Section \ref{cha:objrecog:sec:datasets}. Figure \ref{fig:objrecog:pointnetarchdata} illustrates the result of the aforementioned process. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits provided by ModelNet-10.
 
-\subsubsection{Implementation}
+\subsubsection{Implementation and Setup}
 
 This architecture was implemented using the \ac{PCL} \cite{Rusu2011}\cite{Aldoma2012} – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe \cite{Jia2014}, a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub \footnote{\url{https://github.com/BVLC/caffe}}. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN \cite{Chetlur2014} to take advantage of \ac{GPU} acceleration.
-
-% TODO: Source code
-
-\subsubsection{Setup}
 
 All the timings and results were obtained by performing the experiments in the following test setup: Intel Core i5-3570 with 8 GB of 1600 MHz DD3 RAM on an ASUS P8H77-M PRO motherboard (Intel H77 chipset). Additionally, the system includes an NVIDIA Tesla K20 GPU, and a Seagate Barracuda 7200.14 secondary storage. Caffe RC2 was run over ElementaryOS Freya 0.3.1, an Ubuntu-based Linux distribution. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.0, and cuDNN v3.
 
@@ -511,7 +505,7 @@ All the timings and results were obtained by performing the experiments in the f
 
 As a result of training PointNet with a learning rate of 0.0001 and a momentum of 0.9 during 200 iterations using the ModelNet-10 dataset, it obtained a success rate of $77.6$\%. As shown in Figure [MISSINGREF], the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure \ref{fig:objrecog:tabledesk}, the visual features that define a desk and a table are almost the same, making it hard to distinguish between both classes. Figure \ref{fig:objrecog:tabledesk_activations} shows the neuron activations for the output layer of the architecture, proving that \emph{Desk} and \emph{Table} are consistently confused during the tests. In light of these experiments, and taking into account the knowledge of the \acp{CNN} principles, it is conceivable to think that a deeper network would provide better results so more experiments were carried out.
 
-\begin{figure}
+\begin{figure}[!b]
     \centering
     \begin{subfigure}{0.45\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/table}
@@ -548,7 +542,7 @@ In the deeper network experiment we added several layers to the PointNet archite
 
 This architecture was trained during $1,000$ iterations and tested every $200$ iterations. The best result was provided by the $800$ iterations test with an accuracy of $76.7$\%, while the $1,000$ iterations test dropped the performance to a $75.9$\% due to overfitting.
 
-It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most. The network was trained and tested with this more balanced dataset and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more, as seen in Figure \ref{fig:objrecog:balunbal}.
+It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most. The network was trained and tested with this more balanced dataset and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more instances as seen in Figure \ref{fig:objrecog:balunbal}.
 
 \begin{figure}[!htb]
     \centering
@@ -580,7 +574,7 @@ It is well known that training using an unbalanced dataset tends to harm those c
     \label{fig:objrecog:balunbal}
 \end{figure}
 
-After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 offered the best recognition results with a $77.6$\% success rate. In addition, PointNet featuring the architecture exposed in Figure [MISSINGREF] takes an average time of $24.6$ miliseconds to classify an example (in comparison with Voxnet, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate 3D object class recognition tool.
+After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 exhibited better performance with a $77.6$\% success rate. In addition, PointNet takes an average time of $24.6$ miliseconds to classify an example (in comparison with VoxNet, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate \ac{3D} object class recognition tool.
 
 \subsection{Conclusion}
 \label{cha:objrecog:sec:pointnet:subsec:conclusion}
