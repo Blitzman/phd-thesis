@@ -203,6 +203,21 @@
 \definecolor{uayellow}{RGB}{215,170,80}% Diagram color yellow % 100%
 \definecolor{ualightyellow}{RGB}{235,212,167}% Diagram color yellow % 50%
 
+
+\pgfplotstableset{
+    color cells/.style={
+        col sep=comma,
+        string type,
+        postproc cell content/.code={%
+                \pgfkeysalso{@cell content=\rule{0cm}{2.4ex}\cellcolor{uablue50!##1}\pgfmathtruncatemacro\number{##1}\ifnum\number>50\color{white}\fi##1}%
+                },
+        columns/x/.style={
+            column name={},
+            postproc cell content/.code={}
+        }
+    }
+}
+
 \usepackage{forest}
 \usepackage[hyphens]{url}
 \usepackage{xspace}

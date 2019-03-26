@@ -356,7 +356,7 @@ Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process.
     \centering
     \begin{tabular}{rccccc}
     &	\multicolumn{2}{c}{\textbf{\emph{ModelNet-10}}} & \multicolumn{2}{c}{\textbf{\emph{ModelNet-40}}}\\
-    \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
+    \textbf{ID} & \textbf{Category}  & \textbf{Training Set} & \textbf{Test set} & \textbf{Training Set} & \textbf{Test set} \\
     \toprule
     1 & Desk      & 200        & 86		& 200  & 86     \\
     2 & Table     & 392        & 100    & 392  & 100	\\
@@ -459,7 +459,7 @@ As we have previously stated, \acp{CNN} have proven to be very useful for recogn
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
 
-% TODO: Experiment details and procedure
+In order to evaluate the performance of our proposed representation and network, we carried out a set of experiments using the previously described ModelNet-10 dataset. Those experiments aim to prove that the network is able to achieve reasonable accuracy while still being able to execute in real time. Furthermore, we also study ways to increase our performance by analyzing our data, e.g., the balance between classes in the dataset and the possible sources of confusion that make learning harder. To that end, we first describe our data generation process as well as the experimentation methodology (implementation details and test setup); then we show our experiments together with a discussion for each one of them to keep on building and experimenting in an incremental way.
 
 \subsubsection{Data Generation}
 
@@ -496,23 +496,40 @@ We generated point clouds to feed PointNet following the procedure described in 
 
 \subsubsection{Implementation and Setup}
 
-This architecture was implemented using the \ac{PCL} \cite{Rusu2011}\cite{Aldoma2012} – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe \cite{Jia2014}, a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub \footnote{\url{https://github.com/BVLC/caffe}}. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN \cite{Chetlur2014} to take advantage of \ac{GPU} acceleration.
+This architecture was implemented using the \ac{PCL} \cite{Rusu2011}\cite{Aldoma2012} – which provides state-of-the-art algorithm implementations for 3D point cloud processing – and Caffe \cite{Jia2014}, a deep learning framework developed and maintained by the \ac{BVLC} and an active community of contributors on GitHub. This BSD-licensed C++ library enables researchers to design, train, and deploy \ac{CNN} architectures efficiently, mainly thanks to its drop-in integration of NVIDIA cuDNN \cite{Chetlur2014} to take advantage of \ac{GPU} acceleration.
 
 All the timings and results were obtained by performing the experiments in the following test setup: Intel Core i5-3570 with 8 GB of 1600 MHz DD3 RAM on an ASUS P8H77-M PRO motherboard (Intel H77 chipset). Additionally, the system includes an NVIDIA Tesla K20 GPU, and a Seagate Barracuda 7200.14 secondary storage. Caffe RC2 was run over ElementaryOS Freya 0.3.1, an Ubuntu-based Linux distribution. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.0, and cuDNN v3.
 
 \subsubsection{Results and Discussion}
 \label{cha:objrecog:sec:pointnet:subsec:discussion}
 
-As a result of training PointNet with a learning rate of 0.0001 and a momentum of 0.9 during 200 iterations using the ModelNet-10 dataset, it obtained a success rate of $77.6$\%. As shown in Figure [MISSINGREF], the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure \ref{fig:objrecog:tabledesk}, the visual features that define a desk and a table are almost the same, making it hard to distinguish between both classes. Figure \ref{fig:objrecog:tabledesk_activations} shows the neuron activations for the output layer of the architecture, proving that \emph{Desk} and \emph{Table} are consistently confused during the tests. In light of these experiments, and taking into account the knowledge of the \acp{CNN} principles, it is conceivable to think that a deeper network would provide better results so more experiments were carried out.
+The first experiment just consisted of training the vanilla network to establish a baseline upon which we could build future improments. To do so, we trained \emph{PointNet} using \ac{SGD} with a learning rate of $1e^{-4}$ and a momentum of $9e^{-1}$ during $200$ iterations with early stopping. This first experimental iteration achieved and accuracy rate of $77.6$\% in the test set. As shown in Table \ref{table:objrecog:pointnet:confusion}, the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure \ref{fig:objrecog:tabledesk}, the visual features that define a desk and a table are almost the same, making it hard to distinguish between both classes. Figure \ref{fig:objrecog:tabledesk_activations} shows the neuron activations for the output layer of the architecture, proving that \emph{Desk} and \emph{Table} are consistently confused in the test set. In light of those experiments it is conceivable to think that a deeper network would provide better results by being able to model the subtleties of such small differences.
 
-\begin{figure}[!b]
+\begin{table}[!b]\caption{Confusion matrix for the first set of experiments making use of the vanilla \emph{PointNet} architecture. Notice the high amount of confusion in the Desk-Table pair.}\label{table:objrecog:pointnet:confusion}
+\centering
+\pgfplotstabletypeset[color cells]{
+    Desk, Table, Nstand, Bed, Toilet, Dresser, Bathtub, Sofa, Monitor, Chair	
+    52, 9, 1, 4, 0, 5, 1, 5, 0, 9
+    25, 69, 0, 1, 0, 0, 0, 0, 1, 4
+    1, 2, 60, 1, 4, 8, 0, 0, 2, 8
+    4, 0, 0, 80, 0, 0, 3, 11, 1, 1
+    1, 0, 3, 1, 84, 0, 1, 3, 2, 5
+    3, 0, 14, 0, 0, 61, 0, 1, 6, 1
+    0, 1, 0, 3, 0, 0, 34, 8, 3, 1
+    1, 0, 1, 4, 1, 2, 0, 88, 1, 2
+    1, 1, 1, 1, 0, 5, 1, 1, 87, 2
+    1, 2, 1, 2, 1, 1, 0, 1, 1, 90
+}
+\end{table}
+
+\begin{figure}[!t]
     \centering
-    \begin{subfigure}{0.45\linewidth}
+    \begin{subfigure}{0.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/table}
         \caption{}
         \label{subfig:objrecog:tabledesk:table}
     \end{subfigure}
-    \begin{subfigure}{0.45\linewidth}
+    \begin{subfigure}{0.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/desk}
         \caption{}
         \label{subfig:objrecog:tabledesk:desk}
@@ -521,14 +538,19 @@ As a result of training PointNet with a learning rate of 0.0001 and a momentum o
     \label{fig:objrecog:tabledesk}
 \end{figure}
 
-\begin{figure}
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\begin{figure}[!htb]
     \centering
-    \begin{subfigure}{0.45\linewidth}
+    \begin{subfigure}{0.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/table_matrix}
         \caption{}
         \label{subfig:objrecog:tabledesk_activations:table}
     \end{subfigure}
-    \begin{subfigure}{0.45\linewidth}
+    \begin{subfigure}{0.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/desk_matrix}
         \caption{}
         \label{subfig:objrecog:tabledesk_activations:desk}
@@ -538,24 +560,26 @@ As a result of training PointNet with a learning rate of 0.0001 and a momentum o
 \end{figure}
 
 
-In the deeper network experiment we added several layers to the PointNet architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers there are, a better or more expressive model is produced. An Inner Product layer was also added. Since these layers make the classification possible, adding more of them would theoretically provide better classification results.
+For the deeper network experiment we added several layers to the vanilla \emph{PointNet} architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers induce a more complex or expressive model. Another fully connected or inner product layer was also added. Since these layers make the classification possible, making that classifier deeper would theoretically make us able to provide better classification results. Despite all those theoretical improvements, one must also consider that we are also introducing more parameters in the network thus making it harder to train and more prone to overfitting the train data.
 
-This architecture was trained during $1,000$ iterations and tested every $200$ iterations. The best result was provided by the $800$ iterations test with an accuracy of $76.7$\%, while the $1,000$ iterations test dropped the performance to a $75.9$\% due to overfitting.
+\newpage
 
-It is well known that training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most, as stated by [MISSINGREF]. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table [MISSINGTABLE], the dataset was balanced by limiting the number of examples of each class to $400$ using random undersampling. This does not fully solve the problem but improves the difference between the classes with the least number of examples and those with the most. The network was trained and tested with this more balanced dataset and it achieved an accuracy of $72.9$\%. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more instances as seen in Figure \ref{fig:objrecog:balunbal}.
+This architecture was trained during $1.000$ iterations to account for that increase in training difficulty. The best result was provided at $800$ iterations with an accuracy of $76.7$\% in the test set. Those models that kept on training dropped performance to $75.9$\% due to overfitting. Surprisingly, increasing the depth of the network did not help rising test accuracy. Because of that, we decided to investigate our data to check if any factor was hindering the training process.
+
+Training using an unbalanced dataset tends to harm those classes with the least number of examples and to benefit those with the most \cite{Dalyak2014}. Having this in mind, and knowing that ModelNet-10 is highly unbalanced as shown in Table \ref{table:objrecog:modelnet_distribution}, the dataset was balanced by limiting the number of examples of each class to $400$ samples using random undersampling. This does not fully solve the problem but makes the difference between classes with the least number of examples and those with the most least acute. The network was trained and tested again with this more balanced dataset and the best performer achieved a test accuracy of $72.9$\%. Again, this experiment did not result into any gain but rather made our network perform worse. The fact is that balancing the training set makes the accuracy of the classes with less examples higher, but it harms the success rate on classes with more instances as seen in Figure \ref{fig:objrecog:balunbal}. The improvement on those less represented classes is not enough to make up for the impact on the most represented ones.
 
 \begin{figure}[!htb]
     \centering
     \begin{tikzpicture}
         \begin{axis}[
-            height=5cm,
+            height=8cm,
             width=0.8\linewidth,
-            ylabel=Accuracy,
-            xlabel=Class,
+            ylabel={Accuracy $[\% /100]$},
+            xlabel={Class $[ID]$},
             ymajorgrids=true,
+            legend pos=south east,
             xtick pos=left,
             enlarge x limits=0.15,
-            legend pos=outer north east,
             ybar=2pt,
             bar width=5 pt,
             xmin=1,
@@ -574,14 +598,12 @@ It is well known that training using an unbalanced dataset tends to harm those c
     \label{fig:objrecog:balunbal}
 \end{figure}
 
-After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 exhibited better performance with a $77.6$\% success rate. In addition, PointNet takes an average time of $24.6$ miliseconds to classify an example (in comparison with VoxNet, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate \ac{3D} object class recognition tool.
+After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 exhibited better performance with a $77.6$\% success rate. In addition, \emph{PointNet} takes an average time of $24.6$ milliseconds to classify an example (in comparison with \emph{VoxNet}, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate \ac{3D} object class recognition tool.
 
 \subsection{Conclusion}
 \label{cha:objrecog:sec:pointnet:subsec:conclusion}
 
-PointNet is a brand new kind of CNN for object class recognition that handles tridimensional data, inspired by VoxNet and 3D ShapeNets but using density occupancy grids as inner representation for input data. It was implemented in Caffe and provides a faster method than the state of art ones yet obtaining a high success rate as the experiments over the ModelNet10 dataset. This fact enlightens a promising future in real-time 3D recognition tasks.
-
-Following on this work, we plan to improve the inner representation by using adaptable occupancy grids instead of fixed-size ones. In addition, we will integrate the system in an object recognition pipeline for 3D scenes. Our network will receive a point cloud segment of the scene where the object lies, produced by a preprocessing method, and that segments will be used to generate the occupancy grids that will be learned by the system. This implies adapting the system for learning partial views of the objects and dealing with occlusions and scale changes. As an additional feature, we will include pose estimation in that pipeline, all of this with goal of developing an end-to-end 3D object recognition system.
+\emph{PointNet} is a \ac{CNN} for object class recognition, inspired by \emph{VoxNet} and \ac{3D} \emph{ShapeNets}, that also handles tridimensional data but using density occupancy grids as its representation for input data. It was implemented in Caffe and provides a faster method than the state of art ones yet obtaining a high accuracy rate in the ModelNet-10 dataset. This fact enlightens a promising future in real-time \ac{3D} recognition tasks.
 
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
