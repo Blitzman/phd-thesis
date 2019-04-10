@@ -1,7 +1,7 @@
 \begin{tikzpicture}
   \begin{axis}[
 	  grid=both,
-	  width=0.5\linewidth,
+	  width=\linewidth,
 	  height=18 em,
       xlabel={Occlusion (\%)},
       ylabel={Accuracy},

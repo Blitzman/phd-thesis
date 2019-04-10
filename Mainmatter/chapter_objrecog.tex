@@ -603,17 +603,17 @@ After analyzing the results, it can be stated that neither a deeper network nor 
 \subsection{Conclusion}
 \label{cha:objrecog:sec:pointnet:subsec:conclusion}
 
-\emph{PointNet} is a \ac{CNN} for object class recognition, inspired by \emph{VoxNet} and \ac{3D} \emph{ShapeNets}, that also handles tridimensional data but using density occupancy grids as its representation for input data. It was implemented in Caffe and provides a faster method than the state of art ones yet obtaining a high accuracy rate in the ModelNet-10 dataset. This fact enlightens a promising future in real-time \ac{3D} recognition tasks.
+\emph{PointNet} is our first approach towards devising an efficient and accurate \ac{CNN} for \ac{3D} object class recognition. It was inspired by other contemporary works such \emph{VoxNet} and \ac{3D} \emph{ShapeNets}, in the sense that it also handles tridimensional data for object recognition. Its contributions lies in the fact that the architecture itself and the representation too were simplified and the whole pipeline was implemented in Caffe thus providing a faster method than the state of art ones yet obtaining a high accuracy rate in the ModelNet-10 dataset.
 
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
 
-% TODO: Introductory text
+Although \emph{PointNet} was a step forward at the time it was released, there were still a set of open questions regarding its effectiveness. Such questions are strongly related to common problems that arise when recognizing objects in real-world scenes: how sensitive is the network to the noise introduced by the sensor? And most importantly, how robust is the network against clutter and occlusions? In this second iteration of our object recognition system we aim to throw some light into such unknowns. To that end, we carry out a study in which we test various data representations and an improved network iterated over \emph{PointNet}. The section is organized as follows. First off, we introduce our proposals for robust data representations in Section \ref{cha:objrecog:sec:study:subsec:representation}. In the second place, we discuss the improved network architecture in Section \ref{cha:objrecog:sec:study:subsec:architecture}. After that, the main body of this iteration is presented in Section \ref{cha:objrecog:sec:study:subsec:experiments}: an extensive experimentation to determine the effect of noise and occlusion. In the end, in Section \ref{cha:objrecog:sec:study:subsec:conclusion} we discuss the insights gained thanks to the experimentation and we also set the scene for the last iteration of the object recognition system.
 
 \subsection{Data Representation}
 \label{cha:objrecog:sec:study:subsec:representation}
 
-As is clear from the previous sections, a volumetric representation to be fed to a \acs{2.5D} or \acs{3D}\acs{CNN} must encode the \acs{3D} shape of an object as a \acs{3D} tensor of binary or real values. This is due to the fact that raw \acs{3D} data is sparse, i.e., a \acs{3D} shape is only defined on its surface, and \acp{CNN} are not engineered for this kind of data.
+As we already stated previously, a volumetric representation to be fed to a \acs{CNN} must encode the \acs{3D} shape of an object as a \acs{3D} tensor of binary or real values. This is due to the fact that raw \acs{3D} data is sparse, i.e., a \acs{3D} shape is only defined on its surface, and \acp{CNN} are not engineered for this kind of data. However simple this statement might seem, there are many nuances and subtleties in the way such tensors are created and how their values are computed. Those detials may have an important impact on performance in unexpected ways.
 
 In this regard, our proposal for the study is twofold. First, we implemented two different ways of generating the structure of the tensor -- position, grid size, and leaf size -- using a fixed grid and an adaptive one. Second, we developed two possible occupancy measures for the volumetric elements of the tensor.
 
@@ -654,10 +654,6 @@ This kind of grid sets its origin at the minimum $x$, $y$, and $z$ values of the
 	\label{fig:objrecog:fixed}
 \end{figure}
 
-\paragraph{Adaptive}
-
-The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Next, the grid size is adapted to the cloud dimensions. The leaf size is also computed in function of the grid size. Knowing both parameters, the grid is spawned, fitting the point cloud data. As a result, a non-cubic grid is generated. As shown in Figure \ref{fig:objrecog:adaptive}, all voxels have the same size, but they are not necessarily cubic.
-
 \begin{figure}[!htb]
 	\centering
 	\hfill
@@ -686,6 +682,10 @@ The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values o
 	\label{fig:objrecog:adaptive}
 \end{figure}
 
+\paragraph{Adaptive}
+
+The adaptive grid also sets its origin at the minimum $x$, $y$, and $z$ values of the point cloud. Next, the grid size is adapted to the cloud dimensions. The leaf size is also computed in function of the grid size. Knowing both parameters, the grid is spawned, fitting the point cloud data. As a result, a non-cubic grid is generated. As shown in Figure \ref{fig:objrecog:adaptive}, all voxels have the same size, but they are not necessarily cubic.
+
 It is important to remark that, in both cases (fixed and adaptive), the number of voxels in the grid is fixed. Figures \ref{fig:objrecog:fixed} and \ref{fig:objrecog:adaptive} show examples for both types using $8\times8\times8$ voxels for the sake of a better visualization.
 
 It is also important to notice that each representation serves a purpose. The fixed grid will not always fit the data perfectly so it might end up having sparse zones with no information at all (as seen in Figure \ref{subfig:objrecog:fixed:front} on the first column). However, it can be used right away for sliding box detection. On the contrary, the adaptive grid fits the data to achieve a better representation. Nonetheless, it relies on a proper segmentation of the object to spawn the grid.
@@ -695,7 +695,7 @@ It is also important to notice that each representation serves a purpose. The fi
 
 After spawning the grid to generate a discrete space, we need to determine the values for each cell or voxel of the \acs{3D} tensor. In order to do that, we must encode the geometric information of the point cloud into each occupied cell (see Figure \ref{fig:objrecog:grid_occ}). In other words, we have to summarize as a single value, the information of all points which lie inside a certain voxel. One way to do that is using occupancy measures. For that purpose, we propose two different alternatives: binary occupancy, normalized density.
 
-\begin{figure}[!t]
+\begin{figure}[!htb]
 	\centering
 	\hfill
 	\begin{subfigure}{0.325\textwidth}
@@ -727,7 +727,7 @@ After spawning the grid to generate a discrete space, we need to determine the v
 
 The binary tensor is the simplest representation that can be conceived to encode the shape. Voxels will hold binary values, they will be considered occupied if at least a point lies inside, and empty otherwise. Figure \ref{fig:objrecog:binary_occ} shows an example of this tensor.
 
-\begin{figure}[!hb]
+\begin{figure}[!htb]
 	\centering
 	\hfill
 	\begin{subfigure}{0.325\textwidth}
@@ -761,7 +761,7 @@ Binary representations are simple and require low computational power. However, 
 
 It is important to notice that point density directly depends on the cloud resolution which in turn depends on many factors involving the camera and the scene, e.g., it is common for \acs{RGB-D} to generate denser shapes in closer surfaces. To alleviate this problem, we can normalize the density inside each voxel dividing each value by the maximum density over the whole tensor. An example of normalized density tensor is shown in Figure \ref{fig:objrecog:density_occ}.
 
-\begin{figure}[!t]
+\begin{figure}[!b]
 	\centering
 	\hfill
 	\begin{subfigure}{0.325\textwidth}
@@ -827,11 +827,7 @@ Data was generated in a similar fashion as we did for PointNet. The meshes from 
 
 The partial views generated using the previously described process are not a good simulation of the result that we would obtain by using a low-cost \acs{RGB-D} sensor. Those systems are noisy, so the point clouds produced by them are not a perfect representation of the real-world objects.
 
-In order to properly simulate the behavior of a sensor, a model is needed. In our case, we are dealing with low-cost \acs{RGB-D} sensors such as Microsoft Kinect and Primesense Carmine. A complete noise model for those sensors, specifically for the Kinect device, must take into account occlusion boundaries due to distance between the \ac{IR} projector and the \ac{IR} camera, $8$-bit quantization, $9\times9$ pixel correlation window smoothing, and $z$-axis or depth Gaussian noise \cite{Gschwandtner2011}.
-
-We will make use of a simplification of this model, only taking into account the Gaussian noise since it is the most significant one for the generated partial views. In this regard, the synthetic views are augmented by adding Gaussian noise to the $z$ dimension of the point clouds with mean $\mu=0$ and different values for the standard deviation $\sigma$ to quantify the noise magnitude. Figure \ref{fig:objrecog:noise} shows the effect of this noise over a synthetic partial view of one object of the dataset.
-
-\begin{figure}[!t]
+\begin{figure}[!bh]
 	\centering
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
@@ -859,6 +855,10 @@ We will make use of a simplification of this model, only taking into account the
 	\label{fig:objrecog:noise}
 \end{figure}
 
+In order to properly simulate the behavior of a sensor, a model is needed. In our case, we are dealing with low-cost \acs{RGB-D} sensors such as Microsoft Kinect and Primesense Carmine. A complete noise model for those sensors, specifically for the Kinect device, must take into account occlusion boundaries due to distance between the \ac{IR} projector and the \ac{IR} camera, $8$-bit quantization, $9\times9$ pixel correlation window smoothing, and $z$-axis or depth Gaussian noise \cite{Gschwandtner2011}.
+
+We will make use of a simplification of this model, only taking into account the Gaussian noise since it is the most significant one for the generated partial views. In this regard, the synthetic views are augmented by adding Gaussian noise to the $z$ dimension of the point clouds with mean $\mu=0$ and different values for the standard deviation $\sigma$ to quantify the noise magnitude. Figure \ref{fig:objrecog:noise} shows the effect of this noise over a synthetic partial view of one object of the dataset.
+
 \paragraph{Occlusion Simulation}
 
 In addition to modelling the sensor to improve our synthetic data, it is important to also take the environment into account. In a real-world scenario, objects are not usually perfectly isolated and easily segmented; in fact, it is common for them to be occluded by other elements of the scene.
@@ -867,7 +867,7 @@ The occlusion simulation process consists of picking a random point of the cloud
 
 It is important to notice the randomness of the occlusion process. This means that even with a high $\psi$ it is possible not to remove any important surface information and vice versa. In other words, it is possible for some objects to remove a $50\%$ of their points and still be recognizable because the removed region was not significant at all, e.g., a completely flat surface. However it is possible to render an object unrecognizable by removing a small portion of its points if the randomly picked surface is significant for its geometry. This remark is specially important when testing the robustness of the system. In order to guarantee that an appropriate measure of the robustness against missing information is obtained, a significant amount of testing sets must be generated and their results averaged so that it is highly probable to test against objects which have been occluded all over their surface across the whole testing set.
 
-\begin{figure}[!t]
+\begin{figure}[!b]
 	\centering
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
@@ -1015,8 +1015,6 @@ At last, we tested the best configuration -- binary adaptive grids -- with a \ac
 	\caption{Evolution of training and validation accuracy of the \acs{3D} \acs{CNN} using adaptive binary grids with size $32\times32\times32$.}
 	\label{fig:objrecog:3dcnn:experiments:3d}
 \end{figure}
-
-\newpage
 
 Figure \ref{fig:objrecog:3dcnn:experiments:3d} shows the results of this experiment. As we can observe, we trained the network for five times more iterations than before and even then we couldn't achieve a proper convergence. The training set accuracy kept increasing slowly up to approximately $0.65$ whilst the validation one got stuck around $0.40$ for the whole experiment.
 

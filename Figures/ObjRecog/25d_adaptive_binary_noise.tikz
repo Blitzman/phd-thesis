@@ -2,7 +2,7 @@
   \begin{axis}[
 	  xmode=log,
 	  grid=both,
-	  width=0.5\linewidth,
+	  width=\linewidth,
 	  height=18 em,
       xlabel={Gaussian Noise ($\sigma$)},
       ylabel={Accuracy},
