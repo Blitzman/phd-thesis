@@ -1,15 +1,13 @@
 \chapter{Object Classification}
 \label{cha:objrecog}
 
-\begin{center}
-    \includegraphics[width=0.49\linewidth]{Figures/ObjRecog/cloud}
-\end{center}
-
 \begin{chapterabstract}
 In this chapter, we address the problem of object classification. To approach this challenge, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. More specifically, we leverage deep learning for such task.
 
 The chapter begins introducing and formulating the object classification task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature and datasets in Sections \ref{cha:objrecog:sec:relatedworks} and \ref{cha:objrecog:sec:datasets}. After that, we present our first proposal for 3D object classification, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
 \end{chapterabstract}
+
+\clearpage
 
 \section{Introduction}
 \label{cha:objrecog:sec:introduction}

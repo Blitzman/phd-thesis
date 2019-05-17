@@ -241,6 +241,7 @@
 % User the bibtex backend with the authoryear citation style (which resembles APA)
 \addbibresource{personal.bib}
 \addbibresource{objrecog.bib}
+\addbibresource{tactile.bib}
 % The filename of the bibliography
 \usepackage[autostyle=true]{csquotes}
 % Required to generate language-dependent quotes in the bibliography
