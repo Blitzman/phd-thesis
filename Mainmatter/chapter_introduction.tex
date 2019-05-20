@@ -1,32 +1,33 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-\lipsum[10]
-
 \section{Motivation}
 \label{cha:introduction:sec:motivation}
 
 \section{Approach}
 \label{cha:introduction:sec:approach}
 
+\subsection{Machine Learning in Computer Vision}
+
+\subsection{Machine Learning in Robotics}
+
 \section{Contributions}
 \label{cha:introduction:sec:contributions}
+
+As we already stated, this work concentrates on pushing forward three key aspects of robotic perception: object classification, semantic segmentation, and tactile sensing. In this regard, the contributions of this thesis stem from such areas and are as follows:
+
+\begin{itemize}
+    \item We propose a \acl{CNN} architecture for \acs{3D} object classification which makes use of \acs{3D} representations such as point clouds or meshes by structuring them into a voxel grid. Futhermore, it is tested under difficult conditions such as noise and occlusion to gain insight about real-world situations. We also iterate over that initial architecture, creating a novel slice-based model which significantly improves over other approaches. We show the performance of these models and prove their suitability for real time object classification.
+    \item We perform a comprehensive review of the state of the art of semantic segmentation for image and video using deep learning techniques. In such review, apart from providing details about all existing methods and datasets, we also gather insight about weaknesses and future research. Following that train of thought, we introduce a novel large-scale dataset for various robotic perception tasks with special focus on 3D semantic segmentation.
+    \item Finally, we show a novel \acl{GNN} architecture for tactile sensing which is able to classify the stability of robotic grasps using humanoid hands equipped with tactile sensors whose readings are interpreted as \acs{3D} graphs.
+\end{itemize}
 
 \section{Co-Authored Papers}
 \label{cha:introduction:sec:papers}
 
 This thesis is the result of continuous effort throughout the last years. Such efforts have sometimes crystallized in form of journal publications, conference talks, and poster presentations. A significant part of this thesis consists of extracts from the following co-authored publications.
 
-\subsection{Chapter \ref{cha:objrecog}}
+\subsection{Chapter \ref{cha:objrecog}: 3D Object Classification}
 
 \begin{itemize}
   \item \fullcite{Garcia-Garcia2016c}
@@ -34,7 +35,7 @@ This thesis is the result of continuous effort throughout the last years. Such e
   \item \fullcite{Gomez-Donoso2017b}
 \end{itemize}
 
-\subsection{Chapter \ref{cha:semseg}}
+\subsection{Chapter \ref{cha:semseg}: Semantic Segmentation}
 
 \begin{itemize}
   \item \fullcite{Garcia-Garcia2017}
@@ -44,7 +45,7 @@ This thesis is the result of continuous effort throughout the last years. Such e
   \item \fullcite{Garcia-Garcia2019b}
 \end{itemize}
 
-\subsection{Chapter \ref{cha:tactile}}
+\subsection{Chapter \ref{cha:tactile}: Tactile Sensing}
 
 \begin{itemize}
   \item \fullcite{Garcia-Garcia2019}
@@ -53,7 +54,7 @@ This thesis is the result of continuous effort throughout the last years. Such e
 
 \subsection{Other}
 
-During the years spent working on the main topics of this thesis, several collaborations and side works were carried out that also were published either as journal papers, conference proceedings, or preprints. 
+During the years spent working on the main topics of this thesis, several collaborations and side works were carried out that also were published either as journal papers, conference proceedings, or preprints. Those works, although not strictly related to the content of this thesis, helped in various ways: exchanging ideas that later inspired other concepts, sparking collaborations, and also expanding the knowledge of other interesting areas of research.
 
 \begin{itemize}
   \item \fullcite{Oprea2017b}
