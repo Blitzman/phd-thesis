@@ -162,8 +162,9 @@
 \usepackage{colortbl}
 
 \RequirePackage[labelfont=bf]{caption} % Required for customising the captions
-\setlength{\captionmargin}{42pt}
+%\setlength{\captionmargin}{10pt}
 \usepackage{subcaption}
+\captionsetup{font={normalsize,stretch=1.16}}
 
 \usepackage{amsmath}
 \usepackage{colortbl}
@@ -237,7 +238,7 @@
 \usepackage{palatino}
 % Use the Palatino font by default
 %\usepackage[backend=bibtex,style=authoryear,natbib=true]{biblatex}
-\usepackage[backend=bibtex,natbib=true,citestyle=ieee]{biblatex}
+\usepackage[backend=bibtex,natbib=true,style=ieee]{biblatex}
 % User the bibtex backend with the authoryear citation style (which resembles APA)
 \addbibresource{personal.bib}
 \addbibresource{objrecog.bib}
@@ -529,6 +530,7 @@ breaklinks=true,
   \noindent\ignorespaces}
 {%
   \par\nobreak\normalsize
+  \medskip
   \medskip
   \vskip-\ht\strutbox\noindent
   \textbf{\hrulefill}%
