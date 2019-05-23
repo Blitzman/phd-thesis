@@ -1,4 +1,4 @@
-\chapter{Tactile Sensing}
+\chapter{Grasp Stability Prediction}
 \label{cha:tactile}
 
 \begin{chapterabstract}
@@ -19,11 +19,11 @@
 
 When we humans grasp objects, we intuitively know whether the grip is stable or not even before lifting or manipulating the object. It is not necessary for us to raise our hands or apply any force (either direct such as hitting the object or either indirect such as gravity) in order to determine the object will remain stable between our fingers or our palms. By leveraging our tactile sense, along with our vision and all our intuition and years of experience, we can accurately predict the stability of the grasp for a variety of objects in a wide range of situations. This skill is desirable for any robotic manipulator since it favors the early detection of grasp failures so the robot can react as quick as possible. For instance, a restocking robot working in a store would recognize when an object could slip from its hand and react accordingly and swiftly to avoid a situation in which the object would fall and possibly break down. However easy this task is for a human being, it is not anywhere near as obvious for a robot: there are simply too many variables to take into account for a straightforward solution, e.g., the object's weight, roughness, and geometry; the force of gravity; and the momentum that the object may if we move it to name a few.
 
-The problem of predicting the stability of a grasp is a challenging and ongoing research topic in the field of robotics. The vast majority of the literature makes use of tactile sensors as the main source of data since they provide valuable and abundant information (e.g., temperature or pressure) about the forces that act during the interaction of the robotic hand with the objects \cite{Kappassov2015}. Although methods, datasets, and sensors vary across existing works, all of them agree to distinguish two different states for the grasp: stable, meaning that the object is firmly grasped; or slippery, meaning that the object could slide from the hand.
+The problem of predicting the stability of a grasp is a challenging and ongoing research topic in the field of robotics. The vast majority of the literature, which will be reviewed in depth later in this chapter, makes use of tactile sensors as the main source of data since they provide valuable and abundant information (e.g., temperature or pressure) about the forces that act during the interaction of the robotic hand with the objects \cite{Kappassov2015}. Although methods, datasets, and sensors vary across existing works, all of them agree to distinguish two different states for the grasp: stable, meaning that the object is firmly grasped; or slippery, which means that the object could slide from the hand.
 
-Previous works found in the literature approach this problem following the next methodology: grasp the object, read the tactile sensors equipped in the fingers and/or palm of the hand, calculate custom features that try to characterize these two stability states and learn them in order to make future predictions \cite{Li2014b,Dang2014,Su2015b,Veiga2015}. These proposals treat the tactile readings as classic signals: they pre-process them as if they were arrays, calculate features and learn their characteristics using probabilistic methods. As a consequence, their performance highly depends on the selected characteristics. Moreover, the spatial distribution inherent to the tactile sensor is lost due to the fact of squeezing the data into a one dimensional array.
+Previous works found in the literature approach this problem following the next methodology: grasp the object, read the tactile sensors equipped in the fingers and/or palm of the hand, calculate custom features that try to characterize these two stability states and learn them in order to make future predictions \cite{Li2014b,Dang2014,Su2015b,Veiga2015}. These proposals treat the tactile readings as classic signals: they preprocess them as if they were arrays, calculate features and learn their characteristics using probabilistic methods. As a consequence, their performance highly depends on the selected characteristics. Moreover, the spatial distribution inherent to the tactile sensor is lost due to the fact of squeezing the data into a one dimensional array.
 
-In this chapter, we propose the use of \acp{GNN} for predicting grasp stability. Since these are deep learning models, there is no need to hand-engineer features because the algorithm is designed for learning them by itself. Moreover, graphs can reflect more accurately the real distribution of the electrodes in the sensor as well as their spatial relationships, which should be of great value for learning tactile features. The main contributions of this work can be summarized as follows:
+In this chapter, we propose the use of \acp{GNN} for predicting grasp stability. Since these are deep learning models, there is no need to hand-engineer features because the algorithm is designed for learning them by itself. Moreover, graphs can reflect more accurately the real distribution of the electrodes in the sensor as well as their spatial relationships, which should be of great value for learning tactile features. The main contributions of this chapter can be summarized as follows:
 
 \begin{itemize}
 	\item We process tactile readings using a novel perspective: instead of considering them as 1D arrays or 2D images, we build a 3D graph connecting the multiple sensing points (taxels) of the tactile sensor.
@@ -37,7 +37,18 @@ In this chapter, we propose the use of \acp{GNN} for predicting grasp stability.
 
 \clearpage
 
-\section{Related Works}
+\section{Tactile Sensors}
+
+\begin{figure}[!bht]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Figures/Tactile/biotac_1}
+    \includegraphics[width=0.23\linewidth]{Figures/Tactile/biotac_2}
+    \caption{...}
+\end{figure}
+
+\section{Graph Neural Networks}
+
+\section{Literature Review}
 \label{cha:tactile:sec:relatedworks}
 
 In this section, we review the state of the art of the two main fields related to our work. On the one hand, we describe previous approaches for predicting grasp stability. On the other hand, we explain the most recent and relevant advances in neural networks for graph processing.
@@ -52,6 +63,8 @@ In contrast, Cockbum \emph{et al.} \cite{Cockbum2017} proposed to use autoencode
 A more recent trend suggests the interpretation of tactile sensors as images in order to exploit the potential of \ac{CNN} as feature learners. In some cases, vision-based sensors are used for this purpose. Calandra \emph{et al.} \cite{Calandra2017} used a tactile sensor that contained an internal camera, which recorded the deformation of the gel inside of the sensor throughout its contact with a surface. Then, the recorded tactile images were learnt using a \ac{CNN} in order to predict the grasp outcome. In some other cases, the tactile sensor is not naturally arranged in an array or it does not contain a camera, so a pre-processing is necessary in order to get a tactile image. For example, Zapata-Impata \emph{et al.} \cite{Zapata2018} studied how the readings from a non-matrix like sensor should be arranged in a matrix in order to train a \ac{CNN} for grasp stability prediction. Although such approach showed promising results, the spatial distribution of the real sensor was not accurately reflected because it reduced the \acs{3D} locations of the taxels into \acs{2D} coordinates of a tactile image.
 
 Recently, \acp{CNN} are being combined with \acp{LSTM} for grasp stability prediction. Li \emph{et al.} \cite{Li2018} in their work learnt visual features from a camera-based tactile sensor, similar to the one used by Calandra \emph{et al.} \cite{Calandra2017}, and an external camera pointing to the scene. These features were calculated using a pre-trained \ac{CNN}. Then, both cameras features were concatenated and passed in time sequences to a \ac{LSTM}, which was in charge of detecting slippage. Similarly, Zhang \emph{et al.} \cite{Zhang2018} used another camera-based tactile sensor for grasp stability detection but in this work the authors trained a \ac{ConvLSTM} and they only passed the sensor images to the network.
+
+\subsection{Grasp Stability Datasets}
 
 \subsection{Graph Neural Networks}
 \label{cha:tactile:sec:relatedworks:subsec:gcns}
