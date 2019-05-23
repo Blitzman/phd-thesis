@@ -37,16 +37,31 @@ In this chapter, we propose the use of \acp{GNN} for predicting grasp stability.
 
 \clearpage
 
-\section{Tactile Sensors}
+\section{Background}
 
-\begin{figure}[!bht]
+In order for the reader to properly understand the following information, we provide brief descriptions of two of the most important concepts introduced in this chapter: tactile sensors and \aclp{GNN}. We suggest the well-versed reader to skip the upcoming sections and move on directly onto the literature review in Section \ref{cha:tactile:sec:relatedworks}.
+
+\subsection{Tactile Sensors}
+
+A tactile sensor is a device which is able to measure information that arises from the phyisical interaction with the environment. Most of this kind of sensors are usually modeled or at least loosely inspired by the biological sense of touch: the cutaneous receptors found in the dermis or epidermis which are able to detect stimuli from pain (nociceptors), chemical substances (chemoreceptors), temperature (thermoreceptors), and mechanical stimulation (mechanoreceptors). From all those kind of receptors, mechanoreceptors and thermoreceptors are the most common in artificial tactile sensors used in robotics and computer hardware. Thanks to those receptors, robots can complement vision systems by leveraging additional information received when the object is being grasped. Although the progress made in learning algorithms can certainly lead to robots being able to predict mechanical properties of the objects, e.g., weight, texture, or stiffness, using vision alone, it is not an effective approach for the time being. However, by taking advantage of tactile sensing when interacting with the object, all those properties can be determined with higher success rates.
+
+Tactile sensors for robotics come in different shapes and sizes featuring a wide range of technologies which includes elastoresistive, capacitive, piezoresistive, and even piezoelectric sensors \cite{Dahiya2012}. Arguably, the most common kind of tactile sensors for robotics are the pressure sensor arrays.
+
+Pressure sensor arrays consist of a grid of tactile elements, also known as \emph{tactels}, each one of them being able of providing pressure or force information when objects contact with them or with the sensor at large. One of the most representative examples of such kind of arrays is the BioTac: a finger-like biomimetic tactile sensor which consist of an array of $19$ impedance sensing electrodes in a rigid core that is immersed in an incompressible and conductive liquid which is in turn surrounded by an elastic skin. It works by detecting the impedance changes on the surface of the rigid core as a result of displacements in the liquid when grasping an object (see Figure \ref{fig:tactile:biotac_sensor}).
+
+\begin{figure}[!thb]
     \centering
     \includegraphics[width=0.75\linewidth]{Figures/Tactile/biotac_1}
     \includegraphics[width=0.23\linewidth]{Figures/Tactile/biotac_2}
     \caption{...}
+    \label{fig:tactile:biotac_sensor}
 \end{figure}
 
-\section{Graph Neural Networks}
+It is important to remark that the BioTac sensor is also able to provide temperature and heat flow information thanks to a thermistor on the surface of the rigid core that houses the tactels.
+
+In this work, we will make use of a more advanced version of the BioTac sensor which will introduced later in the document for the sake of keeping the background information reduced to the most basic concepts.
+
+\subsection{Graph Neural Networks}
 
 \section{Literature Review}
 \label{cha:tactile:sec:relatedworks}
