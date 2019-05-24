@@ -51,9 +51,9 @@ Pressure sensor arrays consist of a grid of tactile elements, also known as \emp
 
 \begin{figure}[!thb]
     \centering
-    \includegraphics[width=0.75\linewidth]{Figures/Tactile/biotac_1}
-    \includegraphics[width=0.23\linewidth]{Figures/Tactile/biotac_2}
-    \caption{...}
+    \includegraphics[width=0.65\linewidth]{Figures/Tactile/biotac_1}
+    \includegraphics[width=0.34\linewidth]{Figures/Tactile/biotac_2}
+    \caption{Cross-section of a BioTac sensor \cite{Syntouch2018} and the actual finger-like product. We can observe how the array of impedance sensing electrodes or tactels are housed in a rigid core which integrates a hydrocoustid fluid pressure transducer as well as a thermistor. The whole package is surrounded by an external and elastomeric skin with external texture fingerprints. The incompressible conductive field is located between the skin and the tactels in the rigid core.}
     \label{fig:tactile:biotac_sensor}
 \end{figure}
 
@@ -62,6 +62,20 @@ It is important to remark that the BioTac sensor is also able to provide tempera
 In this work, we will make use of a more advanced version of the BioTac sensor which will introduced later in the document for the sake of keeping the background information reduced to the most basic concepts.
 
 \subsection{Graph Neural Networks}
+
+Graph data has been an extremely useful representation for such domains in which it is important not only to define features for the elements themselves but also to provide rich information about the connections that relate them. Some of the domains that can take advante of such kind of data are: document analysis, protein folding, physics systems modeling, and social networks to name a few. Usually the tasks that are carried out when analyzing or learning on graphs are node classification or regression, link prediction, and clustering \cite{Zhou2018}. Lately, graph analysis has achieved even more impact not only due to the aforementioned applications but also to the reformulation of data that traditionally belonged to other domains, e.g., natural language processing or image understanding, as graph-like structures. Most of those cases take advantage of the fact that graph representations are able to properly capture non-Euclidean domains. Figure \ref{fig:tactile:graph_applications} shows examples of various graph representations for different domains.
+
+\begin{figure}[!thb]
+    \centering
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/molecule.png}
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/mass-spring.png}
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/n-body.png}
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/rigid-body.png}
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/sentence.png}
+    \includegraphics[width=0.49\linewidth]{Figures/Tactile/scene.png}
+    \caption{Different graph representations for non-Euclidean domains: a molecule in which each atom is a node and each bond is an edge, a mass-spring system in which the rope is defined by a sequence of masses represented as nodes in the graph, an $n$-body system in which the nodes are the bodies, a rigid-body system, a sentence which can be decomposed into a tree with words as leaves, and a scene-graph which represents a partitioned image and its connections. Figure extracted from \cite{Battaglia2018}.}
+    \label{fig:tactile:graph_applications}
+\end{figure}
 
 \section{Literature Review}
 \label{cha:tactile:sec:relatedworks}
