@@ -77,21 +77,60 @@ Graph data has been an extremely useful representation for such domains in which
     \label{fig:tactile:graph_applications}
 \end{figure}
 
+However, despite the usefulnes of graph representations, common and successful architectures such as \aclp{CNN} are not able to deal with non-Euclidean data. As a matter of fact, \acp{CNN} are only able to operate on regular and structured Euclidean representations such as images (\acs{2D} grids) or voxel grids (\acs{3D} grids). Therefore, it is not straightforward to generalize other fruitful architectures such as the \ac{CNN} to graphs mainly due to two reasons: it is hard to define localized filters and pooling operations are not trivial \cite{Zhou2018}.
+
+\acfp{GNN} aim to bridge this gap: they are deep learning architectures which are able to operate directly on non-Euclidean graph domains. The foundations of \acp{GNN} were introduced by Scarselli \emph{et al.} \cite{Scarselli2008} as an extension of traditional neural networks for processing graph data. In this chapter, we will focus on a particular \ac{GNN} architecture that extends the traditional \ac{CNN} one to support operations on graph data: the \acf{GCN}. More details about this architecture will be provided later.
+
 \section{Literature Review}
 \label{cha:tactile:sec:relatedworks}
 
-In this section, we review the state of the art of the two main fields related to our work. On the one hand, we describe previous approaches for predicting grasp stability. On the other hand, we explain the most recent and relevant advances in neural networks for graph processing.
+In this section, we review the state of the art of the three main pillars of our work: firstly, we describe previous approaches for predicting grasp stability; secondly, we go through existing datasets which can be used for training grasp stability prediction systems; at last, we explain the most recent and relevant advances in neural networks for graph processing.
 
 \subsection{Grasp Stability Prediction}
 \label{cha:tactile:sec:relatedworks:subsec:grasp-stability-prediction}
 
-In the last years, deep learning models are being applied to the problem of grasp stability prediction using tactile sensors as input. Meier \emph{et al.} \cite{Meier2016a} processed tactile readings using Fourier-related transforms and the resulting vectors were vertically stacked in order to create a matrix. Then, a \ac{CNN} trained with these matrices learnt to predict stability. Although this approach used modern machine learning models, it still had to hand-engineer features.
+In the last years, deep learning models have been successfully applied to the problem of grasp stability prediction using tactile sensors as input.
 
-In contrast, Cockbum \emph{et al.} \cite{Cockbum2017} proposed to use autoencoders to autonomously calculate the relevant characteristics for the task. Afterwards, a dictionary of basis features was built using a sparse encoding algorithm. Finally, the authors trained a \ac{SVM} in order to predict grasp stability using the dictionary. Similarly, Kwiatkowski \emph{et al.} \cite{Kwiatkowski2017} built a composite image by placing the readings of two matrix-like sensors side by side. Then, they used this tactile image as input for a \ac{CNN} along with the proprioceptive data from the robot. As a result, the proposed method calculated by itself the features needed for predicting grasp stability.
+One of the first approaches was taken by Meier \emph{et al.} \cite{Meier2016a}. In this work, they used two piezo-resistive tactile sensor arrays (see Figure \ref{fig:tactile:meier2016}) whose readings were processed to calculate short-time Fourier transforms over a certain window size for each tactel. In this way, they generate spatially arranged stacks of Fourier coefficients to integrate spatial and temporal information in an image-like representation with multiple channels. Then, a \ac{CNN} trained with these matrices is used to predict grasp stability for a dataset of three objects. Furthermore, they also discriminate between rotational and translational slippage.
 
-A more recent trend suggests the interpretation of tactile sensors as images in order to exploit the potential of \ac{CNN} as feature learners. In some cases, vision-based sensors are used for this purpose. Calandra \emph{et al.} \cite{Calandra2017} used a tactile sensor that contained an internal camera, which recorded the deformation of the gel inside of the sensor throughout its contact with a surface. Then, the recorded tactile images were learnt using a \ac{CNN} in order to predict the grasp outcome. In some other cases, the tactile sensor is not naturally arranged in an array or it does not contain a camera, so a pre-processing is necessary in order to get a tactile image. For example, Zapata-Impata \emph{et al.} \cite{Zapata2018} studied how the readings from a non-matrix like sensor should be arranged in a matrix in order to train a \ac{CNN} for grasp stability prediction. Although such approach showed promising results, the spatial distribution of the real sensor was not accurately reflected because it reduced the \acs{3D} locations of the taxels into \acs{2D} coordinates of a tactile image.
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Tactile/meier2016.png}
+    \caption{Objects and robotic setup of Meier \emph{et al.} approach \cite{Meier2016a}. Three different objects were used for training and evaluation: a can, a remote controller, and a glass. Two KUKA LWR robots with piezo-resistive sensor arrays are used to hold a glass. Figure extracted from \cite{Meier2016a}.}
+    \label{fig:tactile:meier2016}
+\end{figure}
 
-Recently, \acp{CNN} are being combined with \acp{LSTM} for grasp stability prediction. Li \emph{et al.} \cite{Li2018} in their work learnt visual features from a camera-based tactile sensor, similar to the one used by Calandra \emph{et al.} \cite{Calandra2017}, and an external camera pointing to the scene. These features were calculated using a pre-trained \ac{CNN}. Then, both cameras features were concatenated and passed in time sequences to a \ac{LSTM}, which was in charge of detecting slippage. Similarly, Zhang \emph{et al.} \cite{Zhang2018} used another camera-based tactile sensor for grasp stability detection but in this work the authors trained a \ac{ConvLSTM} and they only passed the sensor images to the network.
+In contrast, Cockbum \emph{et al.} \cite{Cockbum2017} proposed to use autoencoders to calculate the relevant characteristics for the task. Afterwards, a dictionary of basis features was built using a sparse encoding algorithm. Finally, the authors trained a \ac{SVM} in order to predict grasp stability using the dictionary. Similarly, Kwiatkowski \emph{et al.} \cite{Kwiatkowski2017} built a composite image by placing the readings of two matrix-like sensors side by side. Then, they used this tactile image as input for a \ac{CNN} along with the proprioceptive data from the robot. As a result, the proposed method calculated by itself the features needed for predicting grasp stability. Both of them used the same sensor (shown in Figure \ref{fig:tactile:kwiatkowski2017}): a custom-built array of $4\times 7$ tactels which rely on capacitive sensing to acquire static and dynamic variations in pressure over time.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figures/Tactile/cockbum2017.png}
+    \caption{Custom-built robotic gripper, used by Cockbum \emph{et al.}\cite{Cockbum2017} and Kwiatkowski \emph{et al.}\cite{Kwiatkowski2017}, with tactile sensors grasping a glass and the corresponding pressure image generated by one of them. Figure extracted from \cite{Kwiatkowski2017}.}
+    \label{fig:tactile:kwiatkowski2017}
+\end{figure}
+
+There is an obvious trend in the field that suggests the interpretation of tactile sensors as images in order to exploit the potential of \ac{CNN} as spatial feature learners. In certain cases, even vision-based sensors are used for this purpose. Calandra \emph{et al.} \cite{Calandra2017} used a tactile sensor that contained an internal camera which recorded the deformation of the gel inside the sensor due to its contact with a surface. Some examples of tactile images collected by this sensor, namely GelSight, are shown in Figure \ref{fig:tactile:calandra2017}. The recorded tactile images were utilized to train a \ac{CNN} in order to predict the grasp outcome.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.21\linewidth]{Figures/Tactile/calandrarobot.png}
+    \includegraphics[width=0.78\linewidth, clip, trim=0 0 700 0]{Figures/Tactile/calandragelsight.png}
+    \caption{Robotic gripper used by Calandra \emph{et al.}\cite{Calandra2017} and examples of raw tactile data capture by the custom-built GelSight camera embedded inside the tactile sensor. Figure extracted from \cite{Calandra2017}.}
+    \label{fig:tactile:calandra2017}
+\end{figure}
+
+In some other cases, the tactile sensor is not naturally arranged in an array or it does not contain a camera. This is the case of the BioTacSP sensor \cite{Syntouch2018}. In this case, it is necessary to devise an arrangement and preprocess the tactile readings in order to generate a tactile image which can be fed to a \ac{CNN}. Zapata-Impata \emph{et al.} \cite{Zapata2018} studied how the readings from a non-matrix like sensor should be arranged in a matrix in order to train a \ac{CNN} for grasp stability prediction (see Figure \ref{fig:tactile:impata2018}). Although such approach showed promising results, the spatial distribution of the sensor was not accurately reflected because it reduced the \acs{3D} locations of the tactels into \acs{2D} coordinates of a tactile image.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.3\linewidth]{Figures/Tactile/tactilebrayan1.png}
+    \includegraphics[width=0.3\linewidth]{Figures/Tactile/tactilebrayan2.png}
+    \includegraphics[width=0.7\linewidth]{Figures/Tactile/tactilebrayan3.png}
+    \caption{BioTacSp sensor used by Zapata-Impata \emph{et al.} and the corresponding tactile images generated from the sensor readings using a custom arrangement. Figure extracted from \cite{Zapata2018}.}
+    \label{fig:tactile:impata2018}
+\end{figure}
+
+Recently, a novel trend aims to combine \acp{CNN} with \acp{LSTM} for grasp stability prediction to make them able to process spatio-temporal information. The hypothesis states that, although static information can be successfully used to predict stability, more useful information to better discriminate between stable and unstable grasps can be learnt from temporal data, e.g., whether the object is moving at a dangerous speed. Li \emph{et al.} \cite{Li2018} learnt visual features from a camera-based tactile sensor, similar to the one used by Calandra \emph{et al.} \cite{Calandra2017}, and an external camera pointing towards the scene. These features were calculated using a pre-trained \ac{CNN}. Then, both cameras features were concatenated and passed as time sequences to an \ac{LSTM}, which was in charge of predicting slippage. Similarly, Zhang \emph{et al.} \cite{Zhang2018} used another camera-based tactile sensor for grasp stability detection but in this work the authors trained a \ac{ConvLSTM} and they only passed the sensor images to the network.
 
 \subsection{Grasp Stability Datasets}
 
