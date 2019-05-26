@@ -153,7 +153,7 @@
 
 \usepackage{pdfpages}
 
-\usepackage{tocbibind}
+%\usepackage{tocbibind}
 
 \usepackage{graphicx} % Required to include images
 \graphicspath{{Figures/}{./}} % Specifies where to look for included images
@@ -254,7 +254,7 @@
 %\renewcommand{\gitMark}{Git Info: \gitDirty\, Branch: \gitBranch{}\,@\,\gitAbbrevHash{} \\ Author: \gitAuthorName{}\,-\,\gitAuthorIsoDate{}}
 
 \usepackage{lipsum}
-\usepackage{titlesec}
+%\usepackage{titlesec}
 \usepackage[Lenny]{fncychap}
   \ChNameAsIs
   \ChTitleAsIs
@@ -500,6 +500,9 @@
 
 %----------------------------------------------------------------------------------------
 
+\usepackage{minitoc}
+\setcounter{minitocdepth}{1}
+
 \usepackage{hyperref} % Required for customising links and the PDF
 \hypersetup{pdfpagemode={UseOutlines},
 bookmarksopen=true,
@@ -513,6 +516,8 @@ pdfstartview={FitV},
 unicode,
 breaklinks=true,
 }
+
+\dominitoc
 
 \pdfstringdefDisableCommands{ % If there is an explicit linebreak in a section heading (or anything printed to the pdf-bookmarks), it is replaced by a space
    \let\\\space

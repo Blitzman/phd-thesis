@@ -5,6 +5,8 @@
     \lipsum[2]
 \end{chapterabstract}
 
+\minitoc
+
 \clearpage
 
 \section{Introduction}
@@ -57,9 +59,7 @@ Pressure sensor arrays consist of a grid of tactile elements, also known as \emp
     \label{fig:tactile:biotac_sensor}
 \end{figure}
 
-It is important to remark that the BioTac sensor is also able to provide temperature and heat flow information thanks to a thermistor on the surface of the rigid core that houses the tactels.
-
-In this work, we will make use of a more advanced version of the BioTac sensor which will introduced later in the document for the sake of keeping the background information reduced to the most basic concepts.
+It is important to remark that the BioTac sensor is also able to provide temperature and heat flow information thanks to a thermistor on the surface of the rigid core that houses the tactels. In this work, we will make use of a more advanced version of the BioTac sensor which will introduced later in the appropriate proposal section.
 
 \subsection{Graph Neural Networks}
 
@@ -133,6 +133,26 @@ In some other cases, the tactile sensor is not naturally arranged in an array or
 Recently, a novel trend aims to combine \acp{CNN} with \acp{LSTM} for grasp stability prediction to make them able to process spatio-temporal information. The hypothesis states that, although static information can be successfully used to predict stability, more useful information to better discriminate between stable and unstable grasps can be learnt from temporal data, e.g., whether the object is moving at a dangerous speed. Li \emph{et al.} \cite{Li2018} learnt visual features from a camera-based tactile sensor, similar to the one used by Calandra \emph{et al.} \cite{Calandra2017}, and an external camera pointing towards the scene. These features were calculated using a pre-trained \ac{CNN}. Then, both cameras features were concatenated and passed as time sequences to an \ac{LSTM}, which was in charge of predicting slippage. Similarly, Zhang \emph{et al.} \cite{Zhang2018} used another camera-based tactile sensor for grasp stability detection but in this work the authors trained a \ac{ConvLSTM} and they only passed the sensor images to the network.
 
 \subsection{Grasp Stability Datasets}
+
+Even though significant progress has been made in the area of grasp stability prediction, few publicly accessible datasets are available to enable the development (and fair comparisons) of realiable algorithms for predicting grasp stability using tactile information. Two of the most remarkable and recent works will be reviewed in this section: the \acf{BiGS}\footnote{\url{http://bigs.robotics.usc.edu/}} dataset \cite{Su2015b}, which makes use of the first BioTac sensors; and the BioTacSP Images\footnote{\url{https://github.com/yayaneath/biotac-sp-images}} dataset \cite{Zapata2018} that features the more recent BioTac SP sensor \cite{Syntouch2018}.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Tactile/bigs}
+    \caption{Sample grasp situations from the \ac{BiGS} dataset \cite{Su2015b}. A Barrett arm/hand system with three fingers equipped with BioTac sensors reaches to perform top grasps. It features box, cylindrical and spherical objects; the image shows two examples: cylindrical and box objects.}
+    \label{fig:tactile:bigs}
+\end{figure}
+
+The \ac{BiGS} dataset \cite{Su2015b} features three objects: a cylindrically-shaped box of wipes, a cubically-shaped box of candy, and a spherically-shaped ball. It provides $1000$ grasps ($46\%/54\%$ failures/successes) for the cylindrical object, $500$ ($31\%/69\%$) for the box, and $500$ ($53\%/47\%$) for the spherical one. The dataset was recorded using a Barrett arm/hand system with three fingers in which each one of them is equipped with a BioTac sensor (an array of $19$ electrodes). To capture the data, the robot reaches for the object to perform a top grasp and then performs a range of extensive shaking motions. After that, if the object has fallen, it is considered to be a failed grasp; otherwise, it is considered to be a successful grasp. The dataset provides the following data: raw BioTac electrode values, BioTac pressure sensor values, robot's joint angles, end effector pose, BioTac temperature sensor values, and finger joint angles. Figure \ref{fig:tactile:bigs} shows some samples from this dataset.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Tactile/biotacspimages}
+    \caption{Sample grasps from the BioTacSP Images dataset \cite{Zapata2018}. Six different objects and two orientations (palm down and palm side) are shown. A Shadow hand is equipped with three BioTacSP sensors (thumb, middle, and index).}
+    \label{fig:tactile:biotacspimages}
+\end{figure}
+
+The BioTacSP Images dataset \cite{Zapata2018} follows a similar approach but introduces more variety in shapes and objects. Furthermore, it makes use of the modern BioTacSP sensor (24 tactels) which is also equipped by three fingers in a humanoid Shadow hand (index, middle, and thumb). It contains $41$ objects and follows a similar methodology as \ac{BiGS} to determine if a grasp is successful or not. However, grasps were performed from two orientations: palm down (similar to the top grasp from \ac{BiGS}) and palm side. The dataset contains $1270$ stable grasps and $1279$ unstable ones and it is class-balanced with an average of $62$ grasps per class. For each grasps it provides the $24$ values from the sensor array: one for each tactel. Figure \ref{fig:tactile:biotacspimages} shows some grasping samples.
 
 \subsection{Graph Neural Networks}
 \label{cha:tactile:sec:relatedworks:subsec:gcns}

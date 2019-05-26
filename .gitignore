@@ -8,3 +8,9 @@
 *.blg
 *.lot
 *.out
+*.mtc*
+*.maf
+*.fdb*
+*.lof
+*.fls
+*.synctex.gz
