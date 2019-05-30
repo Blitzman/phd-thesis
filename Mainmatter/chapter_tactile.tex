@@ -2,7 +2,9 @@
 \label{cha:tactile}
 
 \begin{chapterabstract}
-    \lipsum[2]
+    In robotics, tactile sensors provide useful contact data during the interaction with an object which can be used to determine the stability of a grasp. Previous works represented tactile readings as plain feature vectors or matrix-like tactile images. In this chapter, we explore an alternative way of exploiting tactile information to predict grasp stability by leveraging graph-like representations of tactile data, which preserve the actual spatial arrangement of the sensor's tactels and their locality.
+
+    The chapter is structured as follows. Firstly, Section \ref{cha:tactile:sec:introduction} introduces the problem and briefly explains our proposal. Next, in Section \ref{cha:tactile:sec:background}, we provide the reader with background concepts that are useful to better understand the following sections. A literature review of related works is performed in Section \ref{cha:tactile:sec:relatedworks}. Once all the base knowledge is well established, Section \ref{cha:tactile:sec:tactilegcn} describes our proposal and its components. After that, we carry out an extensive set of experiments to validate it in Section \ref{cha:tactile:sec:experiments}. At last, we draw conclusions and suggest future research directions in Section \ref{cha:tactile:sec:conclusion}.
 \end{chapterabstract}
 
 \minitoc
@@ -40,6 +42,7 @@ In this chapter, we propose the use of \acp{GNN} for predicting grasp stability.
 \clearpage
 
 \section{Background}
+\label{cha:tactile:sec:background}
 
 In order for the reader to properly understand the following information, we provide brief descriptions of two of the most important concepts introduced in this chapter: tactile sensors and \aclp{GNN}. We suggest the well-versed reader to skip the upcoming sections and move on directly onto the literature review in Section \ref{cha:tactile:sec:relatedworks}.
 
@@ -196,6 +199,8 @@ Velickovic \emph{et al.} \cite{Velickovic2017} introduced a \emph{Graph Attentio
 
 Fey \emph{et al.} \cite{Fey2018} proposed the \emph{Spline-based Convolutional Operator}, a continuous and spatial kernel that leverages B-spline bases's properties to efficiently filter graph data of arbitrary dimensionality. They prove this method to be successful in digit image graph classification problems using \acs{MNIST} and graph node classification using the Cora dataset.
 
+It is important to remark that, despite the differences between spectral and spatial methods, the borders between those two approaches are being progressively blurred thanks to the unification provided by message passing networks \cite{Gilmer2017}.
+
 Following this success in those similar domains, we intend to use a \acs{GNN} to process tactile sensor readings and predict grasp stability. By doing so, we expect that such architecture is able to better capture the spatial locality and relationships of the tactile sensor readings expressed as graphs instead of other non-spatial (\acs{1D} arrays) or discrete (images) representations.
 
 \section{TactileGCN}
@@ -206,38 +211,41 @@ In this section, we describe our full approach for predicting grasp stability us
 \begin{enumerate}
     \item A robotic setup which consists of a Shadow hand and BioTac Sp sensors, all operated by \ac{ROS}.
     \item A tactile graph generator which takes the sensor readings and generates a proper graph representation for the network.
-    \item A \ac{GNN} architecture to process such graphs and predict graph stability.
+    \item A \ac{GNN} architecture to process such graphs and predict grasp stability.
 \end{enumerate}
 
 \subsection{Robotic Set Up}
 \label{cha:tactile:sec:tactilegcn:subsec:rpobotic-set-up}
 
-In this work, we use the BioTac SP tactile sensors developed by Syntouch \cite{Syntouch2018}. The sensor provides three different sensory modalities: force, pressure, and temperature. In more detail, this biomimetic sensor counts with $24$ electrodes, also named taxels, integrated in just a single phalanx. These electrodes record signals from four emitters in the internal core of the sensor and, therefore, they measure the impedance in the fluid located between the internal core and the external elastic skin of the sensor. The fluid is displaced when the sensor makes contact with a surface, affecting that impedance read by the electrodes. Thus, the sensor can approximate how much pressure is being experienced at each electrode. In addition, the sensor features a hydro-acoustic pressure sensor in order to estimate a general pressure value and it also counts with a thermistor, which is used to detect vibrations and heat flows. The sensor is presented in Figure \ref{fig:biotac-sensor}.
+The robotic setup is the same as the one presented by Zapata-Impata \emph{et al.}\cite{Zapata2018}: we use BioTac SP tactile sensors developed by Syntouch \cite{Syntouch2018}. This newer iteration of the original BioTac sensor provides three different sensory modalities: force, pressure, and temperature. In more detail, this sensor counts with $24$ electrodes or tactels which are integrated in just a single phalanx. These electrodes record signals from four emitters in the internal core of the sensor and, therefore, they measure the impedance in the fluid located between the internal core and the external elastic skin of the sensor in the same fashion as the first BioTac array. The fluid is displaced when the sensor makes contact with a surface thus changing impedance read by the electrodes. In this way, the sensor can approximate how much pressure is being applied at each electrode. In addition, the sensor features a hydro-acoustic pressure sensor in order to estimate a general pressure value and it also counts with a thermistor to detect heat flows although we don't make use of them. The sensor is presented in Figure \ref{fig:biotac-sensor}.
 
 \begin{figure}[!htb]
-	\centering
-	\includegraphics[width = 0.26\textwidth, clip = true, trim = 0 75 0 20]{Figures/Tactile/biotac-sensor.png}
-	\caption{BioTac SP tactile sensor with its 24 electrodes approximated position.}
+    \centering
+    \includegraphics[width = 0.5\textwidth, clip = true, trim = 0 75 0 75]{Figures/Tactile/biotacsp}
+    \includegraphics[width = 0.32\textwidth, clip = true, trim = 0 75 0 20]{Figures/Tactile/biotac-sensor.png}
+	\caption{BioTac SP tactile sensor and the approximate distribution in the 2D plane of its 24 tactile elements.}
 	\label{fig:biotac-sensor}
 \end{figure}
 
-For our work, we use a setup of three BioTac SP sensors in the tip of the index, middle finger, and thumb of a Shadow Dexterous robotic hand developed by the Shadow Robot Company \cite{ShadowRobotCompany2018}. The Shadow hand is an anthropomorphic hand with five fingers and $20$ \ac{DoF} in total. Those features allow the robot to reach a wide range of configurations that are comparable to those of a human hand. Its integration with the BioTac SP sensors is seamless since the sensor readings can be directly obtained using the \ac{ROS} \cite{Quigley2009} framework, in which the Shadow hand works.
+For our work, we use a setup of three BioTac SP sensors in the tip of the index, middle finger, and thumb of a Shadow Dexterous robotic hand developed by the Shadow Robot Company \cite{ShadowRobotCompany2018}. The Shadow hand is an anthropomorphic hand with five fingers and $20$ \ac{DoF} in total. Those features allow the robot to reach a wide range of configurations that are comparable to those of a human hand. Its integration with the BioTac SP sensors is seamless since the sensor readings can be directly obtained using the \ac{ROS} \cite{Quigley2009} framework, in which the Shadow hand works natively.
 
 \subsection{Tactile Graphs}
 \label{cha:tactile:sec:tactilegcn:subsec:tactile-graphs}
 
-In order to feed our \acl{GNN}, we expressed the aforementioned sensor readings in a novel graph representation, namely tactile graphs. Such graphs are triplet $G = (N, E, Y)$ where $N$ is a set of $24$ nodes ${n_0, ..., n_{23}}$ (one for each electrode or taxel in the sensor), $E$ is a set of ordered pair of vertices called edges, and $Y$ is the label or class of the graph (in our case, stable or unstable).
+In order to feed our \acl{GNN}, we expressed the aforementioned sensor readings in a novel graph representation, namely tactile graphs. Such graphs are triplets $G = (N, E, Y)$ where $N$ is a set of $24$ nodes ${n_0, ..., n_{23}}$ (one for each electrode or tactel in the sensor), $E$ is a set of ordered pairs of vertices called edges $e_{ij} = (n_i, n_j)$, and $Y$ is the label or class of the graph (in our case, stable $y_i = 0$ or unstable $y_i = 1$).
 
-Each node $n$ in the graph $G$ represents a taxel and as such, they are characterized by a \acs{3D} position $p_n = (x_n, y_n, z_n)$ and a feature vector $f_n = (f_{n_0}, ..., f_{n_F})$ of arbitrary length $F$.
+Each node $n$ in the graph $G$ represents a tactel and each one of them is characterized by its \acs{3D} position within the sensor's rigid core $p_n = (x_n, y_n, z_n)$ and a feature vector $f_n = (f_{n_0}, ..., f_{n_F})$ of arbitrary length $F$.
 
-Node positions $p_n$ are accurately mapped to the physical taxel $(X, Y, Z)$ coordinates within the sensor. Such positions are specified in Table \ref{table:taxel_coordinates}. Edges or connections are generated following two different approaches: manual or \ac{k-NN}. For the first approach, we manually specified undirected connections following proximity and symmetry criteria. For the second one, we generated directed edges towards each \acl{k-NN} for each node. Figure \ref{fig:graph_3d} shows a \acs{3D} graph representation of a tactile graph.
+Node positions $p_n$ are accurately mapped to the physical tactel $(X, Y, Z)$ coordinates within the sensor. Such positions are specified in Table \ref{table:taxel_coordinates}. Edges or connections are generated following two different approaches: manual or \ac{k-NN}. For the first approach, we manually specified undirected connections following proximity and symmetry criteria. For the second one, we generated undirected edges towards each \acl{k-NN} for each node. Figure \ref{fig:graph_3d} shows a \acs{3D} graph representation of a tactile graph.
+
+Node features $f_n$ correspond to the tactel pressure readings. In the case of the most basic tactile graph, each node has three features, i.e., the pressure reading for each finger: index $f_{n_0}$, middle $f_{n_1}$, and thumb $f_{n_2}$. Figure \ref{fig:sample_graphs} shows visualizations of the three components of the feature vector for sample graphs generated with various values of $k=0$, $k=2$, $k=4$, $k=8$.
 
 \begin{table}[!htb]
     \centering
-    \caption{Actual position of the taxels inside the BioTac SP sensor expressed in Cartesian coordinates $(X,Y,Z)$ in inches.}
+    \caption{Actual position of the tactels inside the BioTac SP sensor expressed in Cartesian coordinates $(X,Y,Z)$ in inches.}
     \begin{tabular}{lccc}
         \hline
-        \textbf{Taxel} & \textbf{X (inches)} & \textbf{Y (inches)} & \textbf{Z (inches)}       \\
+        \textbf{Tactel} & \textbf{X (inches)} & \textbf{Y (inches)} & \textbf{Z (inches)}       \\
         \hline
         1     & 0.386434851  & -0.108966104 & 0.156871012  \\
         2     & 0.318945051  & -0.205042252 & 0.120706090  \\
@@ -270,56 +278,55 @@ Node positions $p_n$ are accurately mapped to the physical taxel $(X, Y, Z)$ coo
 
 \begin{figure}[!htb]
 	\centering
-    \includegraphics[width=0.8\linewidth]{Figures/Tactile/plot3d.png}
-	\caption{3D visualization of the tactile graph layout using the accurate spatial arrangement from the actual BioTac SP sensor. Graph edges correspond to the manually defined connections.}
+    \includegraphics[width=0.35\linewidth]{Figures/Tactile/plot3d.png}
+    \includegraphics[width=0.35\linewidth]{Figures/Tactile/3dgraphtop.png}
+	\caption{Isometric and top-down 3D visualizations of the tactile graph layout using the accurate spatial arrangement from the actual BioTac SP sensor. Graph edges correspond to the manually defined connections.}
 	\label{fig:graph_3d}
 \end{figure}
 
-Node features $f_n$ correspond to the taxel pressure readings. In the case of the most basic tactile graph, each node has three features, i.e., the pressure reading for each finger: index $f_{n_0}$, middle $f_{n_1}$, and thumb $f_{n_2}$. Figure \ref{fig:sample_graphs} shows visualizations of the three components of the feature vector for sample graphs generated with various values of $k=0$, $k=2$, $k=4$, $k=8$.
+\clearpage
 
-\begin{figure}[!htb]
+\begin{figure}[!h]
     \centering
-    \includegraphics[width=\linewidth, clip, trim={90 170 80 50}]{Figures/Tactile/plot-k0.png}
-    \bigskip
-    \includegraphics[width=\linewidth, clip, trim={90 190 80 50}]{Figures/Tactile/plot-k2.png}
-    \bigskip
-    \includegraphics[width=\linewidth, clip, trim={90 190 80 50}]{Figures/Tactile/plot-k4.png}
-    \bigskip
-    \includegraphics[width=\linewidth, clip, trim={90 10 80 50}]{Figures/Tactile/plot-k8.png}
-	\caption{From top to bottom, undirected tactile graphs generated with various \ac{k-NN} configurations: $k=0$ (manually defined edges), $k=2$, $k=4$, and $k=8$. The three features (fingers) $f_{n_0}$, $f_{n_1}$, and $f_{n_2}$ are deocupled into three different plots and represented as contour plots in the XY plane. Nodes or taxels are shown as blue semi-transparent circles whose size depends on the pressure read on them. Undirected edges are represented by black lines. Features are color-coded in the range $[0, 4096]$.}
+    \includegraphics[width=\linewidth, clip, trim={90 200 100 60}]{Figures/Tactile/plot-k0.png}
+    \includegraphics[width=\linewidth, clip, trim={90 200 100 60}]{Figures/Tactile/plot-k2.png}
+    \includegraphics[width=\linewidth, clip, trim={90 200 100 60}]{Figures/Tactile/plot-k4.png}
+	\caption{From top to bottom, undirected tactile graphs generated with various \ac{k-NN} configurations: $k=0$ (manually defined edges), $k=2$, and $k=4$. The three features (fingers) $f_{n_0}$, $f_{n_1}$, and $f_{n_2}$ are deocupled into three different plots and represented as contour plots in the XY plane. Nodes or taxels are shown as blue semi-transparent circles whose size depends on the pressure read on them. Undirected edges are represented by black lines. Features are color-coded in the range $[0, 4096]$.}
 	\label{fig:sample_graphs}
 \end{figure}
+
+\clearpage
 
 \subsection{\acl{GNN}}
 \label{cha:tactile:sec:tactilegcn:subsec:gnn}
 
-Our \acf{GNN} of choice is based on the \ac{GCN} model by Kipf and Welling \cite{Kipf2016}. Such model is arguably one of the most successful, yet simple, approaches to date to generalize a well-established model such as the \ac{CNN} to arbitrarily structured graphs \cite{Bronstein2017}\cite{Schlichtkrull2018}. Their proposal, which is somewhat similar to Defferard's \emph{et al.}, introduce a set of simplifications into a framework of spectral graph convolutions to make them train significantly faster and achieve state-of-the-art levels of accuracy across various classification tasks \cite{Defferrard2016}.
+Our \acf{GNN} of choice is based on the \acf{GCN} model introduced by Kipf and Welling \cite{Kipf2016}. Such architecture is arguably one of the most successful, yet simple, approaches to date that is able to generalize a well-established model such as the \ac{CNN} to arbitrarily structured graphs \cite{Bronstein2017}\cite{Schlichtkrull2018}. Their proposal, which is somewhat similar to Defferard \emph{et al.}\cite{Defferrard2016}, introduces a set of simplifications into a framework of spectral graph convolutions to make them train significantly faster and achieve state-of-the-art levels of accuracy across various classification tasks.
 
-The goal of such models is to learn features on a graph $G = (N, E, Y)$ by taking as input a feature matrix $X$ ($N \times F$ with a feature vector $f_n$ for each node $n$) and a description of the graph structure in the shape of an adjacency matrix $A$ (computed from the set of edges $E$ in the graph). The output is another feature matrix $Z$ ($N \times F'$ with node-level feature vectors $f'_n$ with a predefined number of output features $F'$).
+The goal of such models is to learn features on a graph $G = (N, E, Y)$ by taking as input a feature matrix $X$ ($N \times F$ with a feature vector $f_n$ for each node $n$) and a description of the graph structure in the shape of an adjacency matrix $A$ (computed from the set of edges $E$ in the graph). The output is another feature matrix $Z$ ($N \times F'$ with node-level feature vectors $f'_n$ with a predefined and arbitrary number of output features $F'$).
 
-Each \ac{GCN} layer $H^(l)$ in a network with $L$ layers can be expressed as a non-linear function $H^{(l+1)} = f(H^{(l)}, A)$. The first layer takes the input feature matrix ($H^{(0)} = X$) and the final layer generates the output node-level feature matrix ($Z = H^{(L)}$). Each intermediate layer generates a node-level feature matrix $Z^{(l)}$ which is fed to the next layer. In the case of Kipf and Welling \cite{Kipf2016}, the graph-convolution layer $f(H^{(l), A)}$ is defined, in the most basic instantiation, as $\sigma(AH^{(l)}W^{(l)})$, where $\sigma$ is an activation function of choice and $W^{(l)}$ is the weight matrix for the $l$ layer.
+Each \ac{GCN} layer $H^(l)$ in a network with $L$ layers can be expressed as a non-linear function $H^{(l+1)} = f(H^{(l)}, A)$. The first layer takes the input feature matrix ($H^{(0)} = X$) and the final layer generates the output node-level feature matrix ($Z = H^{(L)}$). Each intermediate layer generates a node-level feature matrix $Z^{(l)}$ which is fed to the next layer. In the case of the architecture proposed by Kipf and Welling \cite{Kipf2016}, the graph-convolution layer $f(H^{(l), A)}$ is defined (in its most basic instance) as $\sigma(AH^{(l)}W^{(l)})$, where $\sigma$ is an activation function of choice and $W^{(l)}$ is the weight matrix for the $l$-th layer.
 
-This basic framework was heavily extended to overcome two limitations: (1) unless there are explicitly defined self-loops in the graph, the multiplication of $A$ only sums up the feature vectors of all the neighboring nodes but not the node itself, and (2) since $A$ is not normalized by default, the multiplication of $A$ has a huge impact on the scale of the feature vectors. Overcoming those two limitations is crucial to improve the model's convergence.
+This basic framework was heavily extended to overcome two limitations\cite{Kipf2016}: (1) unless there are explicitly defined self-loops in the graph, the multiplication of $A$ only sums up the feature vectors of all the neighboring nodes but not the node itself, and (2) since $A$ is not normalized by default, the multiplication of $A$ has a huge impact on the scale of the feature vectors. Overcoming those two limitations is crucial to improve the model's convergence.
 
 In order to fix those two limitations, they first enforced self-loops in the graph by adding the identity matrix to $A$ so the new adjacency matrix is $\hat{A} = A + I$. Secondly, they normalized that adjacency matrix in a row-like fashion by leveraging a symmetric normalization with the diagonal node degree matrix $\hat{D}$ of $\hat{A}$. Those two improvements combined form the layer propagation rule proposed by Kipf and Welling \cite{Kipf2016}: $f(H^{(l)}, A) = \sigma(\hat{D}^{-\frac{1}{2}}\hat{A}\hat{D}^{-\frac{1}{2}}H^{(l)}W^{(l)})$. This is the \emph{GCNConv} operator that we used to build our \ac{GNN}.
 
-However, it is important to remark again that this model produces a feature matrix with node-level feature vectors yet our problem needs to classify the whole graph either as stable or slippery. To produce such binary graph-level classification output we need to introduce pooling operations to reduce the amount of nodes in the graph and/or fully connected layers to perform high-level reasoning.
+However, it is important to remark again that this model produces a feature matrix with node-level feature vectors yet our problem needs to classify the whole graph either as stable or slippery. To produce such binary graph-level classification output we introduced pooling operations to reduce the amount of nodes in the graph and fully connected layers to perform high-level reasoning. However, after preliminary experiments with \emph{Graclus} \cite{Dhillon2007} and \emph{Voxel Grid} \cite{Simonovsky2017} pooling, we found out that our model performed better without them so we removed those layers for our final experiments. We hypothesize that our spatial size is already small enough to reduce it even more.
 
 \section{Experiments}
 \label{cha:tactile:sec:experiments}
 
-We conducted several experiments in order to validate our approach. In this section we describe the dataset we used to carry out such experiments. In addition, we provide all the details of our methodology to ensure the reproducibility of our procedures. At last, we discuss all the experiments that led us to the architecture described in the previous section.
+We conducted several experiments in order to validate our approach. In this section we describe the dataset we used to carry out such experiments. In addition, we provide all the details of our methodology to ensure the reproducibility of our procedures. At last, we discuss all the experiments that led us to the final and best model that makes use of the architecture described in the previous section.
 
 \subsection{Dataset}
 \label{cha:tactile:sec:experiments:subsec:dataset}
 
-The dataset used in our experiments was first introduced in \cite{Zapata2018} as the \emph{BioTac SP Images} dataset. It contains grasp samples performed over $41$ objects with different geometries (i.e. cylinders, spheres, boxes), materials (i.e. wood, plastic, aluminum), stiffness levels (i.e. solid, soft) as well as sizes and weights. Those objects are shown in Figure \ref{fig:dataset_train}. For this work, added $10$ new objects with similar materials but different geometries and stiffness levels (see Figure \ref{fig:dataset_test}). The original $41$ were left for the training set whilst the new ones were separated into a test set. Both sets, training and test, were recorded following these steps:
+The dataset used in our experiments was first introduced in \cite{Zapata2018} as the \emph{BioTac SP Images} dataset. It contains grasp samples performed over $41$ objects with different geometries (i.e. cylinders, spheres, boxes), materials (i.e. wood, plastic, aluminum), stiffness levels (i.e. solid, soft) as well as sizes and weights. Those objects are shown in Figure \ref{fig:dataset_train}. For this work, we added $10$ new objects with similar materials but different geometries and stiffness levels (see Figure \ref{fig:dataset_test}). The original $41$ were left for the training set whilst the new ones were separated into a test set. Both sets, training and test, were recorded following these steps:
 
 \begin{enumerate}
-	\item \textbf{Grasp the test object:} the hand performed a three-fingered grasp that contacted the object with each of the fingers equipped with a tactile sensor.	
-	\item \textbf{Read the sensors:} a single reading was recorded then from each of the sensors at the same time.
-	\item \textbf{Lift the object:} the hand was raised in order to lift the object and check the outcome.
-	\item \textbf{Label the trial:} the previously recorded tactile readings were labeled according to the outcome of the lifting with two classes (stable, i.e., it is completely static, or slip, i.e., either fell from the hand or it moves within it).
+	\item \textbf{Grasp the test object:} the hand performed a three-fingered grasp that contacted the object with each of the fingers equipped with a tactile sensor. We manually placed the object in the hand and then used a robotic controller to gradually close it.
+	\item \textbf{Read the sensors:} a single reading was recorded then from each one of the sensors at the same time.
+	\item \textbf{Lift the object:} the hand was raised in order to lift the object. We held that position for five seconds and then checked the outcome.
+	\item \textbf{Label the trial:} the previously recorded tactile readings were labeled according to the outcome of the lifting with two classes (stable, i.e., it is completely static, or slip, i.e., either fell from the hand or it moves significantly within it).
 \end{enumerate}
 
 \begin{figure}[!htb]
@@ -373,8 +380,7 @@ Table \ref{table:datasets} provides a quantitative summary of the extended datas
 	\end{tabular}
 \end{table}
 
-To the best of our knowledge, there is only one previous work that released a dataset of tactile recordings for the task of grasp stability detection, which is the BiGS dataset \cite{Chebotar2016bigs}. In their work, Chebotar \emph{et al.} recorded 2000 grasps on three standing objects (a cylindrically-shaped box of wipes, a cubically-shaped box of candy and a ball) using a Barret three-fingered hand, which was equipped with three BioTac tactile sensors. Our work extends the BioTac SP
-dataset firstly introduced in \cite{Zapata2018}, counting with more than 4000 training grasps and 1000 test grasps with three BioTac SP tactile sensors recorded using 51 objects and various orientations, both for the objects and the hand. The dataset is freely available at GitHub \footnote{\url{https://github.com/3dperceptionlab/biotacsp-stability-set-v2}}.
+To the best of our knowledge, there is only one previous work that released a dataset of tactile recordings for the task of grasp stability detection, which is the BiGS dataset \cite{Chebotar2016bigs}. As we already reviewed in Section \ref{cha:tactile:sec:relatedworks} Chebotar \emph{et al.} recorded 2000 grasps on three standing objects (a cylindrically-shaped box of wipes, a cubically-shaped box of candy and a ball) using a Barret three-fingered hand, which was equipped with three BioTac tactile sensors. Our work extends the BioTac SP dataset firstly introduced in \cite{Zapata2018}, counting with more than $4000$ training grasps and $1000$ test grasps with three BioTac SP tactile sensors recorded using 51 objects and various orientations, both for the objects and the hand. The dataset is freely available for download at GitHub \footnote{\url{https://github.com/3dperceptionlab/biotacsp-stability-set-v2}}.
 
 \subsection{Experimental Setup}
 
@@ -384,23 +390,28 @@ For most experiments, we report accuracy as our main metric to iterate and draw 
 
 The whole source code and dataset for this work can be downloaded from the corresponding GitHub repository\footnote{\url{https://github.com/3dperceptionlab/tactile-gcn}}.
 
+We will carry out three different sets of experiments: firstly, we will determine which is the best depth and width for the \ac{GCN}-based network; secondly, we will analyze the graph generation strategies to select the best one in terms of accuracy; at last, we will perform generalization tests and compare our approach with a baseline \ac{CNN}.
+
+\clearpage
+
 \subsection{Network Depth and Width}
 
-In these experiments, we investigate the impact of network depth (convolution layers) and width (amount of features per layer). To that end, we have tested ten different models ranging from one to ten \emph{GCNConv} layers with increasing number of features ($8$, $16$, $32$, $48$, $64$). ReLU activations were used after each convolutional layer. Two fully connected layers were also placed at the end of the network (with $128$ and $2$ output features respectively) to produce the classification
-result. We made use of the manually defined graph connections ($k=0$). Figure \ref{fig:experiments_width_depth} shows the results of this set of experiments.
+In these experiments, we investigate the impact of network depth (convolution layers) and width (amount of features per layer). To that end, we have tested ten different models ranging from one to ten \emph{GCNConv} layers with increasing number of features ($8$, $16$, $32$, $48$, $64$): (1) $8$, (2) $8$-$8$, (3) $8$-$8$-$16$, (4) $8$-$8$-$16$-$16$, (5) $8$-$8$-$16$-$16$-$32$, (6) $8$-$8$-$16$-$16$-$32$-$32$, (7) $8$-$8$-$16$-$16$-$32$-$32$-$48$, (8) $8$-$8$-$16$-$16$-$32$-$32$-$48$-$48$, (9) $8$-$8$-$16$-$16$-$32$-$32$-$48$-$48$-$64$, and (10) $8$-$8$-$16$-$16$-$32$-$32$-$48$-$48$-$64$-$64$.
+
+\ac{ReLU} activations were used after each convolutional layer. Two fully connected layers were also placed at the end of the network (with $128$ and $2$ output features respectively) to produce the classification result. We made use of the manually defined graph connections ($k=0$). Figure \ref{fig:experiments_width_depth} shows the results of this set of experiments.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
 \begin{axis}[
     width=0.75\linewidth,
-    height=4cm,
+    height=8cm,
     title={Validation Accuracy vs Network Depth (and Width)},
     xlabel={Network Depth [layers]},
     ylabel={Accuracy [\%/100]},
     xmin=1, xmax=10,
     ymin=0.8, ymax=1,
     xtick={1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
-    ytick={0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0},
+    ytick={0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85, 0.90, 0.95, 1.0},
     legend pos=outer north east,
     grid style={line width=.1pt, draw=gray!10},
     ymajorgrids=true,
@@ -431,24 +442,23 @@ result. We made use of the manually defined graph connections ($k=0$). Figure \r
   \legend{Width 8, Width 16, Width 32, Width 48, Width 64}
 \end{axis}
 \end{tikzpicture}
-  \caption{Results of network depth and width study.}
+  \caption{Results of network depth and width study. The best configuration occurs with five layers of depth and $32$ features width.}
   \label{fig:experiments_width_depth}
 \end{figure}
 
-As we can observe, there is a dependency on both width and depth. Shallow networks tend to perform better than their deep counterparts. However, we can find a sweet spot on the architecture with $5$ layers and $32$ features ($8-8-16-16-32$). Shallower networks are not able to fully capture our problem while deeper ones tend to overfit our training data. Consequently, we will proceed with that network.
+As we can observe, there is a dependency on both width and depth. Shallow networks tend to perform better than their deep counterparts. However, we can find a sweet spot on the architecture with $5$ layers and $32$ features tops($8-8-16-16-32$). Shallower networks are not able to fully capture our problem while deeper ones have been detected to overfit our training data in our experiments. Consequently, we will proceed to the next round of experimentation with the aforementioned $5$-layer network.
 
 \subsection{Graph Connectivity}
 
-For the connectivity experiments we took the previous best network and investigated the effect of graph connectivity. We experimented with manually specified edges ($k=0$) and the \ac{k-NN} strategy with $k = [1, 23]$. As shown in Figure \ref{fig:experiments_connectivity}, the performance of the network degraded as the connectivity of the graph increased in each experiment. Using the \ac{k-NN} strategy, smaller $k$ values achieved greater performance in terms of validation accuracy. However,
-none of them improved the performance ($92.7\%$) yielded by the network trained with the graph created using the manual connectivity ($k = 0$).
+For the connectivity experiments we took the previous best network and investigated the effect of graph generation strategies. We experimented with manually specified edges ($k=0$) and the \ac{k-NN} strategy with $k = [1, 23]$. As shown in Figure \ref{fig:experiments_connectivity}, the performance of the network degraded as the connectivity of the graph increased in each experiment. Using the \ac{k-NN} strategy, smaller $k$ values achieved greater performance in terms of validation accuracy. However, none of them improved the performance ($92.7\%$) yielded by the network trained with the graph created using the manual connectivity ($k = 0$).
 
-In the manually created graph there are electrodes connected by an edge to just one other electrode, some others are connected up to four neighbors and the electrode in the center (24th electrode) is connected to six other points. As a result, there are different degrees of connectivity within the graph that could have given some insight to the network about the importance of each node in order to better learn the problem.
+In the manually created graph there are electrodes connected by an edge to just one other electrode, some others are connected up to four neighbors and the electrode in the center ($24$-th electrode) is connected to six other points. As a result, there are different degrees of connectivity within the graph that could have given some insight to the network about the importance of each node in order to better learn the problem at hand.
 
 \begin{figure}[!htb]
 \begin{tikzpicture}
 \begin{axis}[
     width=\linewidth,
-    height=4cm,
+    height=8cm,
     title={Validation Accuracy vs Connectivity},
     xlabel={Connectivity [$k$]},
     ylabel={Accuracy [\%/100]},
@@ -468,7 +478,7 @@ In the manually created graph there are electrodes connected by an edge to just 
     };
 \end{axis}
 \end{tikzpicture}
-  \caption{Performance of the network according to the connectivity of the graph.}
+  \caption{Network performance of the $5$-layer network according to the connectivity of the graph. $k=0$ means that the manually-defined edges were used instead of the \ac{k-NN} method. Performance drops significantly with more \ac{k-NN} connections. The best validation accuracy is achieved using the manually defined arrangement.}
   \label{fig:experiments_connectivity}
 \end{figure}
 
@@ -478,7 +488,7 @@ In order to prove the generalization capabilities of our system, we trained our 
 
 \begin{table}[!htb]
   \centering
-    \caption{Results of generalization experiments on the testing splits.}
+    \caption{Results of the generalization experiments on the testing splits. The $5$-layer network with manually defined edges was trained on the training set and then tested on the three splits. The network exhibits a pretty stable behavior across all of them although a it suffers a considerable performance drop from the validation accuracy.}
     \label{table:generalization_tests}
     \begin{tabular}{r|cccc}
         \hline
@@ -491,21 +501,44 @@ In order to prove the generalization capabilities of our system, we trained our 
     \end{tabular}
 \end{table}
 
-There is a significant drop in accuracy when dealing with completely unknown objects. Recall that the test set consists of new objects with different geometries and stiffness levels so they are substantially different from the training set. Taking all of this into account, and despite the difficulty of the testing set, we can expect gains from applying regularization and augmentation strategies to increase performance on data whose distribution is not that similar to the training set.
+There is a significant drop in accuracy when dealing with completely unknown objects. Recall that the test set consists of new objects with different geometries and stiffness levels so they are substantially different from the training set. Taking all of this into account, and despite the difficulty of the testing set, we can expect gains from applying regularization and augmentation strategies to increase performance on data whose distribution is not that similar to the training set. We carried out the same generalization test with the best \ac{CNN} configuration found by \citet{Zapata2018}, using it as baseline for comparison purposes. More precisely, we trained a \ac{CNN} with $32$ convolutional $3\times3$ filters followed by a \ac{ReLU} and a fully connected layer of $1024$ neurons. Then, this layer was connected to a softmax layer in order to classify grasps. The input for this network were \acs{2D} tactile images stacked into a $12\times11\times3$ tensor. Results are presented in Table \ref{table:generalization_tests_cnn}.
+
+\begin{table}[h]
+	\centering
+	\caption{Results of the generalization experiments on the testing splits with the baseline \ac{CNN}. Not all splits are equally affected: the network performs significantly better in \emph{down} than in \emph{45} or \emph{side}.}
+	\label{table:generalization_tests_cnn}
+	\medskip
+	\begin{tabular}{r|cccc}
+		\hline
+		\textbf{Test Set} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1}\\
+		\hline
+		Down & 0.829 & 0.936 & 0.717 & 0.812\\
+		45 & 0.763 & 0.860 & 0.639 & 0.734\\
+		Side & 0.708 & 0.858 & 0.515 & 0.643\\
+		\hline
+	\end{tabular}
+\end{table}
+
+Results from Table \ref{table:generalization_tests} and Table \ref{table:generalization_tests_cnn} suggest that \acp{GCN} have a more robust performance with an average F1 score between test sets of $75.6\% \pm 1.1\%$. In contrast, the \ac{CNN} showed a less stable performance with lower average F1 rate ($72.9\% \pm 6.9\%$). This baseline model learned much better how to predict grasps stability from grasps in the \textit{palm down} orientation, even achieving higher rates than the \ac{GCN}. However, its performance dropped on the other two orientations. We hypothesize that, since the input to the \ac{CNN} was a generated \acs{2D} tactile image, orientations highly affected the distribution of stability patterns inside of it. Thanks to the more appropriate representation given by graphs, the \ac{GCN} seems to be robust to these changes in hand orientations, resulting in similar performance rates independently of the test set.
 
 \section{Conclusion}
 \label{cha:tactile:sec:conclusion}
 
-Tactile sensors provide useful information for robotic manipulation tasks like predicting grasp stability. Prior works in the literature tend to compute hand-engineered features that are later used for training a machine learning model. A recent trend process them as images, so deep learning techniques like \acsp{CNN} can calculate relevant characteristics that lets the system distinguish a slippery grasp from a stable one. Inspired by this methodology, we propose in this work a novel approach to tactile data interpretation: we build a graph with the sensor's taxels because this structure keeps more accurately the spatial distribution and the local connectivity of these sensing points. The goodness of these properties and the tactile graph for grasp stability prediction were tested in experimentation.
+Tactile sensors provide useful information for robotic manipulation tasks like grasp stability prediction. Prior works in the literature tend to compute hand-engineered features that are later used for training a machine learning model. A recent trend processes them as images, so deep learning techniques like \acsp{CNN} can learn relevant features by themselves which enable the system to distinguish a slippery grasp from a stable one. Inspired by this methodology, we proposed a novel approach to take advantage of tactile sensing and interpret its information in a sophisticated way: we build a graph with the sensor's tactels, assuming that this structure helps preserving the spatial distribution and the local connectivity of these sensing points. The goodness of these properties and the tactile graph representation for grasp stability prediction were put to test using a \ac{GNN} to process them.
 
-We used three BioTac SP tactile sensors mounted in the tip of the index, middle and thumb of a Shadow Dexterous hand. In order to predict grasp stability using these graph representations of the tactile sensors, we trained a \ac{GCN} with a custom dataset which was captured with more than 50 objects and 3 hand orientations. The robustness of the proposed system was checked by testing the system with novel orientations and objects. In average, the \ac{GCN} yielded a 92.7\% validation accuracy on the prediction of grasp stability with novel objects or orientations.
+We used three BioTac SP tactile sensors mounted in the tip of the index, middle and thumb of a Shadow Dexterous hand. In order to predict grasp stability using these graph representations of the tactile sensors, we trained a \ac{GCN} with a custom dataset. The dataset was a significant extension (with more orientations and a brand new test set which effectively doubled the size of the whole dataset). The robustness of the proposed system was checked by testing the system with novel orientations and objects. In average, the \ac{GCN} yielded a $92.7\%$ validation accuracy on the prediction of grasp stability with novel objects or orientations.
+
+\clearpage
+
+We also proved that the network was able to generalize to unseen samples more robustly than other architectures using \acs{2D} tactile images instead of \acs{3D} graphs. Although our proposal took a greater hit in accuracy in the test set, those drops were more consistent and less orientation-dependent than the performance dropped by the \ac{CNN}.
 
 \subsection{Limitations and Future Works}
 \label{cha:tactile:sec:conclusion:subsec:limitations}
 
-Given the obtained results, graph representations of tactile readings can be successfully used for learning the task of grasp stability prediction. Nevertheless, there are some drawbacks linked to their used. The first limitation of this proposal is the problem of defining the graph connectivity. We had to find a way of defining the location of the taxels as well as their connections in order to define the graph. In the case of using the tactile readings directly, none of this is necessary.
+Given the obtained results, graph representations of tactile readings can be successfully used for learning the task of grasp stability prediction. Nevertheless, there are some drawbacks that must be observed.
 
-Moreover, \ac{GCN} showed to be data hungry models for learning. In a previous work \cite{Zapata2018}, the authors obtained higher validation rates ($94.2\%$) with fewer data samples for training a \ac{CNN}. For this work, it was necessary to capture more data in order to achieve similar accuracy rates in training. Furthermore, generalization to radically new objects has still a lot of room for improvement by leveraging techniques such as L2 regularization, dropout, or data augmentation
-itself.
+The first limitation of this proposal is the problem of defining the graph connectivity. We had to find a way of defining the location of the tactels as well as their connections in order to define the graph. In the case of using the tactile readings directly, none of this is necessary. An open question is whether the location of the tactels benefits from being exactly mapped to the actual location in the real-world sensor or whether it could benefit from other  \acs{3D} topologies.
 
-As a future work, we also plan to decouple the currently unified \ac{GCN} for the three fingers so that each graph is processed by a different network path. Furthermore, we plan to model the noise of each individual taxel and augment each sample on the fly by adding random noise following each taxel's distribution. At last, we plan to extend the architecture to predict grasp stability over temporal sequences by fusing the \ac{GCN} model with \ac{LSTM} networks.
+Moreover, \acp{GCN} showed to be data hungry models for learning. In a previous work \cite{Zapata2018}, the authors obtained higher validation rates ($94.2\%$) with fewer data samples for training a \ac{CNN}. For this work, it was necessary to capture more data in order to achieve similar accuracy rates in training (early experiments suggested that the original dataset from \cite{Zapata2018} was not suitable for this model and we did not achieve those validation rates until we considerably extended the dataset). Furthermore, generalization to radically new objects has still a lot of room for improvement by leveraging techniques such as L2 regularization, dropout, or data augmentation itself.
+
+As a future work, we also plan to decouple the currently unified \ac{GCN} for the three fingers so that each graph is processed by a different network path. Furthermore, we noticed that readings vary significantly across sensors (and even across tactels in the same one) so the same pressure applied to two sensors could generate different readings to some extent; in order to mitigate that, we plan to model the noise of each individual tactel and augment each sample on the fly by adding random noise following each tactel's distribution. At last, we hypothesize that the problem may benefit from temporal information which can help the network capture force dynamics so we plan to extend the architecture to predict grasp stability over temporal sequences by fusing the \ac{GCN} model with \ac{LSTM} networks. 
