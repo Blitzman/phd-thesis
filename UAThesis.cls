@@ -175,6 +175,48 @@
 
 \RequirePackage{xcolor}
 
+\definecolor{rgb0}{RGB}{0,0,0}
+\definecolor{rgb1}{RGB}{0,0,255}
+\definecolor{rgb2}{RGB}{0,255,0}
+\definecolor{rgb3}{RGB}{0,255,255}
+\definecolor{rgb4}{RGB}{255,0,0}
+\definecolor{rgb5}{RGB}{255,0,255}
+\definecolor{rgb6}{RGB}{255,255,0}
+\definecolor{rgb7}{RGB}{255,255,255}
+\definecolor{rgb8}{RGB}{0,0,128}
+\definecolor{rgb9}{RGB}{0,128,0}
+\definecolor{rgb10}{RGB}{0,128,128}
+\definecolor{rgb11}{RGB}{128,0,0}
+\definecolor{rgb12}{RGB}{128,0,128}
+
+\definecolor{rgb13}{RGB}{128,128,0}
+\definecolor{rgb14}{RGB}{128,128,128}
+\definecolor{rgb15}{RGB}{255,96,0}
+\definecolor{rgb16}{RGB}{255,215,180}
+\definecolor{rgb17}{RGB}{170,110,40}
+\definecolor{rgb18}{RGB}{230,190,255}
+\definecolor{rgb19}{RGB}{210,245,60}
+\definecolor{rgb20}{RGB}{170,255,195}
+\definecolor{rgb21}{RGB}{230,25,75}
+\definecolor{rgb22}{RGB}{255,250,200}
+\definecolor{rgb23}{RGB}{0,130,200}
+\definecolor{rgb24}{RGB}{60,180,75}
+\definecolor{rgb25}{RGB}{245,130,48}
+
+\definecolor{rgb26}{RGB}{205,205,0}
+\definecolor{rgb27}{RGB}{255,193,37}
+\definecolor{rgb28}{RGB}{255,0,128}
+\definecolor{rgb29}{RGB}{113,113,198}
+\definecolor{rgb30}{RGB}{202,225,255}
+\definecolor{rgb31}{RGB}{95,158,160}
+\definecolor{rgb32}{RGB}{0,250,154}
+\definecolor{rgb33}{RGB}{205,186,150}
+\definecolor{rgb34}{RGB}{139,69,0}
+\definecolor{rgb35}{RGB}{255,128,96}
+\definecolor{rgb36}{RGB}{142,56,142}
+\definecolor{rgb37}{RGB}{198,113,133}
+\definecolor{rgb38}{RGB}{197,193,170}
+
 \definecolor{uablue50}{RGB}{0,91,130}
 \definecolor{uablue35}{RGB}{166,198,211}
 \definecolor{uablue30}{RGB}{178,206,217}
@@ -242,6 +284,7 @@
 % User the bibtex backend with the authoryear citation style (which resembles APA)
 \addbibresource{personal.bib}
 \addbibresource{objrecog.bib}
+\addbibresource{sim2real.bib}
 \addbibresource{tactile.bib}
 % The filename of the bibliography
 \usepackage[autostyle=true]{csquotes}
