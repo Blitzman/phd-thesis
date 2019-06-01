@@ -2,7 +2,9 @@
 \label{cha:sim2real}
 
 \begin{chapterabstract}
-    Enter the RobotriX, an extremely photorealistic indoor dataset designed to enable the application of deep learning techniques to a wide variety of robotic vision problems. The RobotriX consists of hyperrealistic indoor scenes which are explored by robot agents which also interact with objects in a visually realistic manner in that simulated world. Photorealistic scenes and robots are rendered by Unreal Engine into a virtual reality headset which captures gaze so that a human operator can move the robot and use controllers for the robotic hands; scene information is dumped on a per-frame basis so that it can be reproduced offline to generate raw data and ground truth labels. By taking this approach, we were able to generate a dataset of $38$ semantic classes totaling $8M$ stills recorded at $+60$ frames per second with full HD resolution. For each frame, RGB-D and 3D information is provided with full annotations in both spaces. Thanks to the high quality and quantity of both raw information and annotations, the RobotriX will serve as a new milestone for investigating 2D and 3D robotic vision tasks with large-scale data-driven techniques.
+    Enter the RobotriX, an extremely photorealistic indoor dataset designed to enable the application of deep learning techniques to a wide variety of robotic vision problems. The RobotriX consists of hyperrealistic indoor scenes which are explored by robot agents which also interact with objects in a visually realistic manner in that simulated world. Thanks to the high quality and quantity of both raw information and annotations, the RobotriX will serve as a new milestone for investigating 2D and 3D robotic vision tasks with large-scale data-driven techniques.
+
+    This chapter is structured as follows. Firstly, Section \ref{cha:sim2real:sec:introduction} introduces the need for large-scale data and how synthetic environments can be helpful. Secondly, Section \ref{cha:sim2real:sec:related_works} reviews the state of the art of the sim2real field and also analyzes already existing datasets. Next, Section \ref{cha:sim2real:sec:proposal} provides an in-depth overview of the whole dataset and its generation. At last, Section \ref{cha:sim2real:sec:conclusion} draws conclusions about this work and proposes some future lines of research to improve it.
 \end{chapterabstract}
 
 \minitoc
@@ -12,15 +14,46 @@
 \section{Introduction}
 \label{cha:sim2real:sec:introduction}
 
-Recent years have witnessed an increasing dominance of deep learning techniques targeted at a wide range of robotic vision problems such as scene understanding, depth estimation, optical flow estimation, tracking, and visual grasping among others. Those new approaches have been slowly but surely closing the gap with traditional ones in terms of accuracy and efficiency, surpassing them in more and more cases and situations as those new techniques mature and better data is available. A key requirement for those new approaches to achieve outstanding accuracy while being able to generalize properly to unseen situations is a good dataset. Researchers need large-scale sets of images, which are representative enough for the problem at hand but at the same time include a considerable amount of variability, and complete ground truth for each one of them depending on the needs of the problem. Currently, there is a lack of such data since generating a dataset which satisfies those requirements is hard in practice due to the inherent difficulties of data collection. In this work, we focus on that challenge and aim to provide a unified benchmark for training, evaluating, and reproducing algorithms and methods on a wide spectrum of robotic vision problems.
+Recent years have witnessed an increasing dominance of deep learning techniques targeted at a wide range of robotic vision problems such as scene understanding, depth estimation, optical flow estimation, tracking, and visual grasping among others. Those new approaches have been slowly but surely closing the gap with traditional ones in terms of accuracy and efficiency, surpassing them in more and more cases and situations as those new techniques mature and better data is available. A key requirement for those new approaches to achieve outstanding accuracy while being able to generalize properly to unseen situations is a good dataset. Researchers need large-scale sets of images, which are representative enough for the problem at hand but at the same time include a considerable amount of variability (plus complete ground truth for each one of them depending on the needs of the problem). Currently, there is a lack of such data since generating a dataset which satisfies those requirements is hard in practice due to the inherent difficulties of data collection. In this chapter, we focus on that challenge and aim to provide a unified benchmark (see Figure \ref{fig:sim2real:robotrix}) with abundant data for training, evaluating, and reproducing algorithms and methods on a wide spectrum of robotic vision problems.
 
-The first matter that we must address is scale. The importance of large-scale data when working with data-hungry learning algorithms is critical in order to achieve proper results and generalization. This is due to the fact that collecting and labelling real-world data is a tedious and costly process. However, for a synthetic dataset to be useful, it must resemble reality as much as possible. In this regard, the use of photorealistic rendering solutions is a must. Other issues that we have to take into account are video-related intrinsics such as image resolution, frame rate, as well as the nature of each frame. Various works have highlighted the importance of high-resolution and high frame-rate data for various computer vision applications \cite{Handa2012}\cite{Held2016}. In that sense, our target is providing a high resolution dataset with fairly high frame rate (+60 FPS) and three data modalities for each frame: RGB-D, stereo, and 3D (colored point clouds) simulating the particularities of widespread sensors.
+The first matter that we must address is scale. The importance of large-scale data when working with data-hungry learning algorithms is critical in order to achieve proper results and generalization. Due to the fact that collecting and labeling real-world data is a tedious and costly process, simulated environments are becoming increasingly popular and used as a method to generate high quality annotated data. However, for a synthetic dataset to be useful, it must resemble reality as much as possible: models which are trained using a synthetic distribution must be able to transfer that knowledge to a real-word domain in order for them to be useful. In other words, they must be able to bridge the reality gap: a set of subtle but important discrepancies between synthetic data and real-world observations. In this regard, the use of photorealistic rendering solutions is a must.
 
-Although providing a large-scale and photorealistic dataset with decent ground truth is always highly useful for the community, there is a number of already existing works that do that but with certain shortcomings (low resolution, low frame rate, somewhat artificial scenes, or scarce modalities). Apart from iterating over those features to strengthen them, we wanted to include a set of novel ones which make our proposal truly stand out from the crowd: (1) hands, first person, and room points of view to make the dataset useful for various robotic applications, (2) realistic robot trajectories and head movements (if applicable) controlled by a human operator in \ac{VR}, and (3) visually realistic interactions with objects by using \ac{VR} controllers to move robotic hands with inverse kinematics. Furthermore, we release all the details and tools to allow researchers to generate custom data to fulfill their needs.
+\clearpage
 
-The rest of this paper is organized as follows. Firstly, Section \ref{sec:related_works} reviews the state of the art of each dataset-related features and ground truth information that we mentioned before. Next, Section \ref{sec:overview} provides an in-depth overview of the whole dataset and its generation. At last, Section \ref{sec:conclusion} draws conclusions about this work and proposes some future lines of research to improve it.
+\begin{figure}[!htb]
+    \centering
+    \centering
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_rgb}~
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_rgb_2}\\\ \\
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_depth}~
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_depth_2}\\\ \\
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_mask}~
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_mask_2}\\\ \\
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_bbox}~
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_bbox_2}\\\ \\
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_bbox}~
+    \includegraphics[width=0.48\linewidth]{Figures/Sim2Real/header_bbox_2}
+    \caption{The RobotriX features robots in photorealistic scenes interacting with dynamic objects and various data and ground truth modalities (RGB, depth, instance masks, class masks, 2D/3D bounding boxes, and point clouds).}
+    \label{fig:sim2real:robotrix}
+\end{figure}
+
+\clearpage
+
+Other issues that we have to take into account are video-related intrinsics such as image resolution, frame rate, as well as the nature of each frame. Various works have highlighted the importance of high-resolution and high frame-rate data for various computer vision applications \cite{Handa2012}\cite{Held2016}. In that sense, our target is providing a high resolution dataset with fairly high frame rate (+60 FPS) and three data modalities for each frame: RGB-D, stereo, and 3D (colored point clouds) simulating the particularities of widespread sensors.
+
+Although providing a large-scale and photorealistic dataset with decent ground truth is always highly useful for the community, there is a number of already existing works that do that but with certain shortcomings (low resolution, low frame rate, somewhat artificial scenes, or scarce modalities). Apart from iterating over those features to strengthen them, we wanted to include a set of novel ones which make our proposal truly stand out from the crowd:
+
+\begin{itemize}
+    \item hands, first person, and room points of view to make the dataset useful for various robotic applications.
+    \item realistic robot trajectories and head movements (if applicable) controlled by a human operator in \ac{VR}.
+    \item visually realistic interactions with objects by using \ac{VR} controllers to move robotic hands with inverse kinematics.
+    \item we release all the details and tools to allow researchers to generate custom data to fulfill their needs.
+\end{itemize}
+
+\clearpage
 
 \section{Literature Review}
+\label{cha:sim2real:sec:related_works}
 
 \subsection{Sim2Real}
 
@@ -109,6 +142,7 @@ Although all the aforementioned features are of utmost importance for a dataset,
   \end{table*}
 
 \section{The RobotriX}
+\label{cha:sim2real:sec:proposal}
 
 After analyzing the strong points and weaknesses of the most popular indoor datasets, we aimed to combine the strengths of all of them while addressing their weaknesses and introducing new features. The major contributions of our novel dataset with regard to the current state of the art are:
 
@@ -306,7 +340,7 @@ This initial release of the dataset contains 32 detection classes and 39 semanti
 All the tools, assets, and the dataset itself will be made available at \url{https://github.com/3dperceptionlab/therobotrix}.
 
 \section{Conclusion}
-\label{sec:conclusion}
+\label{cha:sim2real:sec:conclusion}
 
 In this work, we presented The RobotriX, an extremely realistic suite of data and tools designed to boost progress in indoor robotic vision tasks with deep learning by: (1) creating the largest and most realistic synthetic dataset to date; (2) seamlessly integrating realistic robots and scenes within virtual reality to easily generate plausible and useful sequences with interactions; (3) providing video sequences in multiple data modalities with perfect ground truth for solving and pushing forward the state of the art of a wide variety of problems, e.g., object detection, semantic segmentation, depth estimation, object tracking, object pose estimation, visual grasping, and many more. By releasing this dataset, our methodology, and the whole pipeline for generating data, we hope to satisfy the ever-growing need for data of deep learning approaches with easily generated and extremely realistic synthetic sequences which facilitate the deployment of those systems in real-world scenarios. 
 
