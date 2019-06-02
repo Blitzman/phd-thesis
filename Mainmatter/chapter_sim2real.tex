@@ -72,6 +72,21 @@ We already introduced before two of the main approaches that have proven to be e
 
 \subsubsection{Photorealism}
 
+One of the alternatives for reducing the gap from synthetic to real is to try to make the synthetic world as close to reality as possible from the very beginning, i.e., use renderers that achieve photorealistic results combined with fully detailed geometries, textures, and lighting.
+
+Nowadays, most existing graphic engines such as \ac{UE4} or Unity provide means to generate extremely realistic renders if enough time is devoted to the \ac{3D} models, lighting, and texturing. As a proof of that, they are being widely used in context where photorealism is needed such as architectural visualization. All those solutions offer high-fidelty results by leveraging a combination of techniques such as \ac{PBR}, post-processing effects, and complex reflections to name a few.
+
+Nevertheless, despite the high fidelity offered by those approaches, there is still room for improvement in the path towards a completely realistic scene whose graphics accurately represent the physic phenomena that affect light in the real world. A way to solve that problem and generate highly accurate lighting is ray tracing. However, the demanding requirements of executing ray tracing operations in terms of compute power have prevented it from being deployed in real-time or at least interactive scenarios. Although that barrier is not going to hold on for much longer since the introduction of a new generation of \acp{GPU}, primarily by NVIDIA with the novel Turing microarchitecture and the RTX technology, is already demonstrating the possibility of performing ray tracing in real time with consumer-grade computers and engines like Unity (see Figure \ref{fig:tactile:simonovsky}). 
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth, clip, trim=0 275 0 0]{Figures/Sim2Real/unityrt.jpg}
+    \caption{Unity real-time ray tracing using NVIDIA's RTX technology showcased during Unity's GDC 2019 keynote.}
+    \label{fig:sim2real:unityrt}
+\end{figure}
+
+\clearpage
+
 \subsubsection{Domain Randomization}
 
 \subsubsection{Augmentation}
