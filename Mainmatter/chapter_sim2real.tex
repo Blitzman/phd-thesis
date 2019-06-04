@@ -87,7 +87,23 @@ Nevertheless, despite the high fidelity offered by those approaches, there is st
 
 \clearpage
 
-\subsubsection{Domain Randomization}
+\subsubsection{Domain Adaptation}
+
+If we could build a perfect mathematical model of our real-world scenario where we could easily tune and calibrate all the required physical parameters we could train a system in such mathematical model (simulation) and immediately transfer it to the real world. However, performing this kind of perfect system identification is not feasible so we need to leverage other techniques.
+
+Another successful way to bridge the reality gap and transfer the model to the real world is a kind of transfer learning technique known as domain adaptation. The goal of this approach is to update the data distribution in the simulation in order to match the distribution in the real world. To do so, domain adaptation creates a mapping between both distributions while applying regularization terms both of which are enforced by the task model. Most domain adaptation methods rely on unsupervised learning and the vast majority feature adversarial networks of some sort \cite{Pinheiro2018, Sankaranarayanan2018, Hong2018} or embeddings \cite{Murez2018} .
+
+Apart from domain adaptation, another related technique has also proven successful to transfer knowledge from synthetic domains to real ones mostly in the field of robotics: domain randomization \cite{Tremblay2018}. This approach tries to create a huge variety of simulation environments with heavily randomized properties and situations to train a model using all of them. It relies on the expectation that, if the simulated distribution is rich enough, the real world would be one sample within that randomized distribution (see Figure \ref{fig:sim2real:dr}).
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.55\linewidth, clip, trim=0 300 300 0]{Figures/Sim2Real/dr.png}
+    \includegraphics[width=0.25\linewidth, clip, trim=720 200 0 0]{Figures/Sim2Real/dr.png}
+    \caption{Illustration of the domain randomization approach by Tobin \emph{et al.}\cite{Tobin2017}: a varied distribution of training samples is generated (left) so that the real world could just be a sample of such distribution (right).}
+    \label{fig:sim2real:dr}
+\end{figure}
+
+\clearpage
 
 \subsubsection{Augmentation}
 
