@@ -60,7 +60,7 @@ Providing a large-scale and photorealistic dataset with high-quality ground trut
 \section{Literature Review}
 \label{cha:sim2real:sec:related_works}
 
-In this section we review the state of the art of the two topics that are immediately related with our synthetic dataset proposal: firstly, the previous works that exist in the literature about transferring synthetic knowledge to the real-world domain; and secondly, we also analyze the most popular datasets that are available to train data-driven architectures to solve most of the already mentioned robotic vision problems.
+In this section we review the state of the art of the two topics that are immediately related with our synthetic dataset proposal: firstly, the previous works that exist in the literature about transferring synthetic knowledge to the real-world domain; and secondly, we also analyze the most popular indoor robotics datasets that are available to train data-driven architectures to solve most of the already mentioned robotic vision problems.
 
 \subsection{Sim2Real}
 
@@ -68,7 +68,7 @@ The usefulness of synthetic environments and data has been a constant throughout
 
 The real world features such a extreme amount of detail and nuances that it is remarkably difficult for any simulator to capture all its subtleties. Those differences arise because various reasons: first and foremost, renderers are not able to produce images like real-world sensors in a reasonable time frame (it requires extreme attention to detail to recreate all the richness of a real-world scene and many compute hours to reach high levels of fidelity to it), and also, modeling the physical behavior of the sensors and all scene elements to perfection is not usually possible. Most of the time, with exception of simplified situations, the numerous discrepancies between the synthetic domain and the real-world counterpart make it difficult to transfer the knowledge of a model trained in a synthetic environment to a real-life situation.
 
-We already introduced before two of the main approaches that have proven to be effective in the last years: photorealism and domain randomization. However, thanks to the progress made in deep learning architectures, e.g., \acp{GAN} or reinforcement learning, other lines of research are gaining momentum: image augmentation and joint learning.
+We already introduced before two of the main approaches that have proven to be effective in the last years: photorealism and domain adaptation (randomization). However, thanks to the progress made in deep learning architectures, e.g., \acp{GAN} or reinforcement learning, other lines of research are gaining momentum: image augmentation and joint learning.
 
 \subsubsection{Photorealism}
 
@@ -93,7 +93,7 @@ If we could build a perfect mathematical model of our real-world scenario where 
 
 Another successful way to bridge the reality gap and transfer the model to the real world is a kind of transfer learning technique known as domain adaptation. The goal of this approach is to update the data distribution in the simulation in order to match the distribution in the real world. To do so, domain adaptation creates a mapping between both distributions while applying regularization terms both of which are enforced by the task model. Most domain adaptation methods rely on unsupervised learning and the vast majority feature adversarial networks of some sort \cite{Pinheiro2018, Sankaranarayanan2018, Hong2018} or embeddings \cite{Murez2018} .
 
-Apart from domain adaptation, another related technique has also proven successful to transfer knowledge from synthetic domains to real ones mostly in the field of robotics: domain randomization \cite{Tremblay2018}. This approach tries to create a huge variety of simulation environments with heavily randomized properties and situations to train a model using all of them. It relies on the expectation that, if the simulated distribution is rich enough, the real world would be one sample within that randomized distribution (see Figure \ref{fig:sim2real:dr}).
+Apart from domain adaptation, another related technique has also proven successful to transfer knowledge from synthetic domains to real ones mostly in the field of robotics: domain randomization \cite{Tremblay2018, Tobin2017, Mehta2019}. This approach tries to create a huge variety of simulation environments with heavily randomized properties and situations to train a model using all of them. It relies on the expectation that, if the simulated distribution is rich enough, the real world would be one sample within that randomized distribution (see Figure \ref{fig:sim2real:dr}).
 
 \begin{figure}[!htb]
     \centering
@@ -107,15 +107,37 @@ Apart from domain adaptation, another related technique has also proven successf
 
 \subsubsection{Augmentation}
 
+Following the works on domain adaptation and randomization, there is another trend that tries to address the simulation to real transfer: learning to augment. Augmentation is a widely used technique which is applied to almost any dataset to produce new samples in order to improve the generalization capability of a model by training it in a more varied distribution. Pashevich \emph{et al.}~\cite{Pashevich2019} proved that it is useful to learn augmentation functions for synthetic data (see Figure \ref{fig:sim2real:aug}) while learning a robot control policy for a certain task. In that work, they show that depth images can be augmented with learned transformations during policy training and then use that policy in the real world successfully, and even improve accuracy, on three different manipulation tasks.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Sim2Real/aug.png}
+    \caption{A simulated or synthetic depth image (left) is augmented with a sequence of learned transformations during policy learning (right). Image extracted from \cite{Pashevich2019}.}
+    \label{fig:sim2real:aug}
+\end{figure}
+
 % https://medium.com/ai%C2%B3-theory-practice-business/augmenting-synthetic-images-for-sim2real-policy-transfer-981efd238dd3
 
 \subsubsection{Joint Learning}
+
+The last approach we will review is a hybrid one that tries to facilitate the training in a real environment with scarce data by discovering and transferring the knowledge learned from a synthetic simulation (where the system is able to learn from large-scale data to avoid overfitting to the small amount of available real data) \cite{Zhu2019}. The proposed framework integrates two reinforcement learning models (one for the synthetic environment and another one for the real images) with a policy network and adversarial feature adaptation (see Figure \ref{fig:sim2real:joint}).
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Sim2Real/jointlearning.png}
+    \caption{Overview of the joint reinforcement transfer approach proposed by Zhu \emph{et al.}~\cite{Zhu2019}. The architecture contains a reinforcement learning path for each modality (synthetic and real). Adversarial loss is applied on top of the discriminator $D$. Image extracted from \cite{Zhu2019}.}
+    \label{fig:sim2real:joint}
+\end{figure}
 
 % https://medium.com/ai%C2%B3-theory-practice-business/ai-scholar-sim2real-joint-reinforcement-transfer-for-3d-indoor-navigation-3c614c05ade4
 
 \subsection{Datasets}
 
-Synthetic image datasets have been used for a long time to benchmark vision algorithms \cite{Butler2012}. Recently, their importance has been highlighted for training and evaluating machine learning models for robotic vision problems \cite{Brodeur2017, Ros2016, Mahler2017dex}. Due to the increasing demand for annotated data, fostered by the rise of deep learning, real-world datasets are having a hard time to keep up since generating ground truth for them can be tedious and error-prone. Many indoor synthetic datasets have been proposed in the literature and some of them have been successfully used to train and validate deep architectures. In certain cases, it has even been proven that artificial data can be highly beneficial and increase the accuracy of state-of-the-art models on challenging real-world benchmarks and problems \cite{Shrivastava2017,Barbosa2018, Ros2016}. However, synthetic datasets have their own problems and existing ones can be improved in many ways. In this section, we review the most important aspects that make an indoor dataset suitable for training deep learning architectures: scale, photorealism, video, modalities, resolution, interactions, trajectories, and its design method. In addition, we also review the ground truth provided by them to determine their quality and which problems can be addressed by using that data. At last, we put our proposal in context by briefly enumerate its contributions and how our dataset improves and extends existing works.
+Synthetic image datasets have been used for a long time to benchmark vision algorithms \cite{Butler2012}. Recently, their importance has been highlighted for training and evaluating machine learning models for robotic vision problems \cite{Brodeur2017, Ros2016, Mahler2017dex}. Due to the increasing demand for annotated data, fostered by the rise of deep learning, real-world datasets are having a hard time to keep up since generating ground truth for them can be tedious and error-prone. Many indoor synthetic datasets have been proposed in the literature and some of them have been successfully used to train and validate deep architectures. In certain cases, it has even been proven that artificial data can be highly beneficial and increase the accuracy of state-of-the-art models on challenging real-world benchmarks and problems \cite{Shrivastava2017,Barbosa2018, Ros2016}. However, synthetic datasets have their own problems and existing ones can be improved in many ways. In this section, we review the most important aspects that make an indoor dataset suitable for training deep learning architectures: scale, photorealism, video, modalities, resolution, interactions, trajectories, and its design method. In addition, we also review the ground truth provided by them to determine their quality and which problems can be addressed by using that data.
+
+The criteria that we used in this brief review of features (see Table \ref{table:sim2real:dataset_features} for a summarized view of those features for the most popular and promising indoor datasets and environments that are already public) are the following ones:
+
+\clearpage
 
 \begin{table*}[!t]
     \centering
@@ -146,31 +168,56 @@ Synthetic image datasets have been used for a long time to benchmark vision algo
       \hline
       \end{tabular}
     }
-    \label{table:dataset_features}
     \caption{Summary of features of realistic/synthetic indoor datasets and synthetic indoor environments. The criteria are: \emph{scale} (the number of individual frames provided by the dataset and the amount of possible layouts or room configurations, note that environments do not provide frames), \emph{realism} (quantified on a scale of one to five according to the combination of texturing quality, rendering photorealism, and object geometry; we also include the rendering engine), \emph{video} (whether the dataset provides video data or not, the number of sequences and the average framerate; for the environments the framerate indicates how many actions/renderings can be performed per frame), \emph{modalities} (the data modalities provided by the dataset or environment), \emph{resolution} (the image resolution, in pixels, of the RGB frames), \emph{interaction} (the ways the environment or the dataset provides some kind of interaction with the world: no interaction at all, just physics simulations, actionable objects or human-like interaction with physics and virtual hands), \emph{trajectories} (how the camera trajectories are generated for video data: synthetic, simulated or human-like trajectories), and \emph{design} (how the scenes or layouts are designed: real-world, manually, or random/synthesized).}
+    \label{table:sim2real:dataset_features}
   \end{table*}
-
-The criteria that we used in this brief review of features (see Table \ref{table:dataset_features} for a summarized view of those features for the most popular and promising indoor datasets and environments that are already public) are the following ones:
 
 \begin{itemize}
   \item \emph{Scale}: Data-driven algorithms such as deep learning approaches rely on massive amount of data to achieve unprecedented accuracy levels. Furthermore, massive amounts of information are not only needed to make those systems able to learn properly but also to give them the ability to generalize their knowledge to unseen situations. We measure scale according to the number of frames and possible layouts or room configurations (note that environments do not provide frames per-se so they are potentially infinite and that quantification makes no sense).
+  \begin{figure}
+    \centering
+    \includegraphics[width=\linewidth, clip, trim=0 20 0 0]{Figures/Sim2Real/suncg}
+    \caption{SunCG dataset. Synthetic house layouts (left) and synthetic depth and volumetric ground truth provided by the dataset (right).}
+    \label{fig:sim2real:suncg}
+  \end{figure}
   \item \emph{Photorealism}: Recently, synthetic approaches have gained so much popularity since generating ground truth for them is an easy and automated task. Many successful stories have proven that artificial data can be used to train deep architectures for a wide variety of problems \cite{Ros2016,Lin2016,Mahendran2016,Jiang2017,Mueller2017,Zhang16}. Furthermore, some of them have highlighted the fact that training machine learning algorithms on virtual worlds even improves accuracy when they are applied to real-world scenarios \cite{Johnson-Roberson2016} \cite{Tobin2017}. In any case, the dataset will be more useful as it is closer to reality. We quantify realism on a scale of one to five according to the combination of texturing quality, rendering photorealism, object geometry, and layout coherence.
   \item \emph{Sequences}: Some problems can only be approached or at least they get much easier if video sequences are provided with a certain amount of \ac{FPS} is reached. For instance, object tracking mechanisms based on recurrent networks \cite{Held2016} or temporally coherent segmentation models \cite{Shelhamer2016} benefit from higher frame rates which provide smoother changes without huge differences between frames. In this regard, we report whether the dataset provides video data or not, the number of sequences and the average framerate; for the environments the framerate indicates how many actions/renderings can be performed per frame.
+  \begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth, clip, trim=0 0 0 0]{Figures/Sim2Real/scenenet}
+    \caption{SceneNet RGB-D dataset. Render samples from the dataset with objects sampled from ShapeNets~\cite{Wu2015} and layouts from SceneNet~\cite{Handa2015}.}
+    \label{fig:sim2real:scenenet}
+  \end{figure}
   \item \emph{Modalities}: There is certain importance in providing as many data modalities as possible. On the one hand, some problems can only be addressed if data from a particular nature is available, e.g., depth information is needed to make a system learn to estimate depth in a supervised manner. On the other hand, even if a problem can be solved using a concrete data modality, having more sources of information available might foster the development of alternative ways of fusing that extra data to boost performance. For all the reviewed datasets, we report the kind of data modalities that they provide.
+  \begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.49\linewidth]{Figures/Sim2Real/ai2thor1}
+    \includegraphics[width=0.44\linewidth]{Figures/Sim2Real/ai2thor2}
+    \caption{AI2-THOR environment. Render samples from the environment (left) and examples of the push and open binary actions (right).}
+    \label{fig:sim2real:ai2thor}
+  \end{figure}
   \item \emph{Resolution}: Vision systems usually benefit from larger image sizes since higher resolution means better image quality and thus more robust features to be learned. One notorious success case of high-resolution imaging in deep learning is the case of Baidu Vision's system \cite{Wu2015b} which introduced a novel multi-scale and high-resolution model to achieve the best score on the well-known ImageNet challenge \cite{Russakovsky2015} by the time they published the work. However, this is not always true and for some applications it is important to find balance in the tradeoff between accuracy and performance when processing large images. We indicate the image resolution for each dataset and environment.
   \item \emph{Interaction}: Despite the importance of hand pose estimation and object interaction in many applications, e.g., grasping and dexterous manipulation, this aspect is often neglected. The main reason about this scarcity is the difficulty of generating annotations for the hand joints and moving objects. In some cases, interaction is reduced to simple actions with binary states. We report the kind of interaction that is performed on each dataset (physics simulations for collisions, actionable items, or full object interaction with robotic hands).
+  \begin{figure}[!htb]
+    \centering
+    \includegraphics[width=\linewidth]{Figures/Sim2Real/minos}
+    \caption{Overview of the MINOS enviroment where a dataset layer provides layouts from SunCG and Matterport3D to a server which takes a set of configuration files for the environment, agent, and sensors. The server can be accessed through a web client or a Python \ac{API}.}
+    \label{fig:sim2real:minos}
+  \end{figure}
   \item \emph{Trajectories}: For sequences, the way trajectories are generated plays an important role in the quality or applicability of the dataset. In order to make the dataset distribution as close as possible to the application scenario one, the camera trajectory should be similar too. Real-world datasets usually leverage handheld or head-mounted devices to generate human-like trajectories and, in the case of a robot, capture devices are usually mounted in the same place where they will work when deployed. Synthetic datasets must devise strategies to place and orient cameras in a coherent manner. For each dataset that provides video sequences, we report the way those trajectories are generated.
   \item \emph{Design}: The design of scene layouts is another factor that must be taken into account to make the dataset as similar as possible to the real-world. This means that scenes must be coherent, i.e., objects and lights must be positioned according to actual room layouts. Generating coherent rooms with plausible configurations synthetically to achieve large-scale data is a hard task and only \emph{SceneNet}\cite{Handa2015} and \emph{SceneNet RGB-D}\cite{McCormac2017} approached the room design problem algorithmically; their results are plausible but oftentimes not really representative of what a real-world room would look like due to artificial object positioning and orientations. For this feature, we report whether the design is real, manual or algorithmic/synthetic.
 \end{itemize}
 
+Figures \ref{fig:sim2real:suncg}, \ref{fig:sim2real:scenenet}, \ref{fig:sim2real:ai2thor}, and \ref{fig:sim2real:minos} show some samples and overviews for the SunCG~\cite{Song2016}, SceneNet RGB-D~\cite{Handa2015}, AI2-THOR~\cite{Kolve2017}, and MINOS~\cite{Savva2017} datasets and environments respectively.
+
 Although all the aforementioned features are of utmost importance for a dataset, ground truth is the cornerstone that will dictate the usefulness of the data. It determines the problems that can be solved by using the available data.  Table \ref{table:dataset_ground_truth} shows the ground truth information provided by each one of the reviewed datasets including ours, which completes and offers more annotations than the state of the art.
 
-\begin{table*}[!t]
+\begin{table*}[!b]
     \centering
     \resizebox{\linewidth}{!}{
     \begin{tabular}{|r|c|c|c|c|c|c|c|c|c|c|}
       \hline
-      \textbf{Dataset} & \textbf{2D BBox} & \textbf{2D Segm. Class} & \textbf{2D Segm. Inst.} & \textbf{3D BBox} & \textbf{3D Segm. Class} & \textbf{3D Segm. Inst.} & \textbf{3D Object Pose} & \textbf{Camera Pose} & \textbf{Hand Pose} & \textbf{Depth}\\
+      \textbf{Dataset} & \textbf{2D BBox} & \textbf{2D Class} & \textbf{2D Instance} & \textbf{3D BBox} & \textbf{3D Class} & \textbf{3D Instance} & \textbf{3D Object Pose} & \textbf{Camera Pose} & \textbf{Hand Pose} & \textbf{Depth}\\
       \hline
       \hline
       NYU-D-V2 \cite{Silberman2012} & & $\bullet$ & $\bullet$ & & & & & $\sim$\footnotemark & & $\bullet$ \\
@@ -193,7 +240,7 @@ Although all the aforementioned features are of utmost importance for a dataset,
       \hline
     \end{tabular}}
     \smallskip
-    \caption{Overview of ground truth information provided by the reviewed datasets and environments in Table \ref{table:dataset_features}. The reviewed annotations are: 2D bounding boxes (bounding boxes for each object specified in the RGB or depth image space), 2D segmentation per class (region-based or per-pixel semantic labels specifying object classes), 2D segmentation per instance (same as before but adding instance identification), 3D bounding boxes (bounding boxes per each object specified in the 3D representation space), 3D segmentation per class (face-based or per-point class specifying object classes), 3D segmentation per instance (same as before but adding instance identification), 3D object pose (position and orientation for each object in the frame, either directly specified or inferable from scene pose), camera pose (position and orientation of the capture device or virtual camera), hand pose (position and orientation for each hand, if present, and their joints), depth (distance of scene objects from the viewpoint)}
+    \caption{Overview of ground truth information provided by the reviewed datasets and environments in Table \ref{table:sim2real:dataset_features}. The reviewed annotations are: 2D bounding boxes (bounding boxes for each object specified in the RGB or depth image space), 2D segmentation per class (region-based or per-pixel semantic labels specifying object classes), 2D segmentation per instance (same as before but adding instance identification), 3D bounding boxes (bounding boxes per each object specified in the 3D representation space), 3D segmentation per class (face-based or per-point class specifying object classes), 3D segmentation per instance (same as before but adding instance identification), 3D object pose (position and orientation for each object in the frame, either directly specified or inferable from scene pose), camera pose (position and orientation of the capture device or virtual camera), hand pose (position and orientation for each hand, if present, and their joints), depth (distance of scene objects from the viewpoint)}
     \label{table:dataset_ground_truth}
   \end{table*}
 
