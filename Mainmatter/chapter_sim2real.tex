@@ -249,69 +249,72 @@ Although all the aforementioned features are of utmost importance for a dataset,
 \section{The RobotriX}
 \label{cha:sim2real:sec:proposal}
 
-After analyzing the strong points and weaknesses of the most popular indoor datasets, we aimed to combine the strengths of all of them while addressing their weaknesses and introducing new features. The major contributions of our novel dataset with regard to the current state of the art are:
+After analyzing the strong points and weaknesses of the most popular indoor datasets, we aimed to combine the strengths of all of them while addressing their weaknesses and introducing new features as we already mentioned in the introduction.
 
-
-
-We will provide a detailed description of its main features and how did we achieve them: hyper-photorealism by combining a powerful rendering engine with extremely detailed scenes and realistic robot movements and trajectories. We will also provide an overview of the data collection pipeline: the online sequence recording procedure and the offline data and ground truth generation process. Furthermore, we will list the contents of the dataset and the tools that we provide as open-source software for the robotics research community.
+In this section, we will provide a detailed description of its main features and how we achieved them: photorealism by combining a powerful rendering engine with extremely detailed scenes and realistic robot movements. We will also provide an overview of the data collection pipeline: the online sequence recording procedure and the offline data and ground truth generation process. Furthermore, we will list the contents of the dataset and the tools that we provide as open-source software for the robotics research community.
 
 \subsection{Photorealistic Rendering}
 
 The rendering engine we chose to generate photorealistic RGB images is \acf{UE4}\footnote{\url{http://www.unrealengine.com}}. The reasons for this choice are the following ones: (1) it is arguably one of the best game engines able to produce extremely realistic renderings, (2) beyond gaming, it has become widely adopted by VR developers and architectural visualization experts so a whole lot of tools, examples, documentation, and assets are available; (3) due to its impact, many hardware solutions offer plugins for \ac{UE4} that make them work out-of-the-box; and (4) Epic Games provides the full C++ source code and updates to it so the full suite can be easily used and modified.
 
-Arguably, the most attractive feature of \ac{UE4} that made us take that decision is its capability to render photorealistic scenes like the one shown in Figure \ref{fig:realistic_rendering} in real time. Some \ac{UE4} features that enable this realism are: physically-based materials, pre-calculated bounce light via Lightmass, stationary lights using IES profiles, post-processing, and reflections.
-
 \begin{figure}[!hbt]
-  \centering
-  %\includegraphics[width=0.9\linewidth]{realistic_rendering.jpg}
-  \caption{Snapshot of the daylight room setup for the \emph{Realistic Rendering} released by Epic Games to show off the rendering capabilities of \ac{UE4}.}
-  \label{fig:realistic_rendering}
-\end{figure}
+    \centering
+    \includegraphics[width=0.495\linewidth]{Figures/Sim2Real/realistic_rendering.jpg}
+    \includegraphics[width=0.495\linewidth]{Figures/Sim2Real/realistic_rendering_night.jpg}
+    \caption{Snapshot of the room setup (daylight on the left and night on the right) for the \emph{Realistic Rendering} released by Epic Games to show off the rendering capabilities of \ac{UE4}.}
+    \label{fig:sim2real:realistic_rendering}
+  \end{figure}
+
+Arguably, the most attractive feature of \ac{UE4} that made us take that decision is its capability to render photorealistic scenes like the one shown in Figure \ref{fig:sim2real:realistic_rendering} in real time. Some \ac{UE4} features that enable this realism are: physically-based materials, pre-calculated bounce light via Lightmass, stationary lights using IES profiles, post-processing, and reflections.
 
 It is also important to remark that we do have strict real-time constraints for rendering during sequence recording since we need to immerse a human agent in virtual reality to record the sequences. \ac{UE4} is engineered for virtual reality with a specific rendering solution for it named \emph{Forward Renderer}. That renderer is able to generate images that meet our quality standards at 90 \ac{FPS} thanks to high-quality lighting features, \ac{MSAA}, and instanced stereo rendering.
 
 \subsection{Scenes}
 
-To complement the rendering engine and achieve the desired level of photorealism we needed coherent indoor scenes with extreme attention to detail. UE4Arch \footnote{\url{https://ue4arch.com/}} is a company devoted to creating hyper-realistic and real-time architecture visualizations with \ac{UE4}. We take advantage of various house projects and assets created by that company to populate our dataset with rich environments and layouts. Figure \ref{fig:ue4arch} shows a sample project from UE4Arch.
+To complement the rendering engine and achieve the desired level of photorealism we needed coherent indoor scenes with extreme attention to detail. UE4Arch \footnote{\url{https://ue4arch.com/}} is a company devoted to creating hyper-realistic and real-time architecture visualizations with \ac{UE4}. We take advantage of various house projects and assets created by that company to populate our dataset with rich environments and layouts. Figure \ref{fig:sim2real:ue4arch} shows a sample project from UE4Arch.
 
 \begin{figure}[!th]
   \centering
-  %\includegraphics[width=\linewidth]{ue4arch.jpg}
+  \includegraphics[width=\linewidth]{Figures/Sim2Real/ue4arch.jpg}
   \caption{Viennese Apartment archviz project snapshot by UE4Arch.}
-  \label{fig:ue4arch}
+  \label{fig:sim2real:ue4arch}
 \end{figure}
 
 \subsection{Robot Integration}
 
 Seamlessly integrating robots in our scenes and making them controllable in \ac{VR} by a human agent to record sequences requires three issues to be solved: (1) gaze and head movement with first person \ac{PoV}, (2) inverse kinematics to be able to move them with motion controllers and reach for objects, and (3) locomotion to displace the robot within the scene.
 
-The first issue is solved by using the Oculus Rift headset to control the robot's head movement and render its first person \ac{PoV}. Inverse kinematics for the virtual robot are manually implemented with \ac{FABRIK}, a built-in inverse kinematics solver in \ac{UE4} that works on a chain of bones of arbitrary length. Locomotion is handled by thumbsticks on the Oculus Touch  motion controllers. By doing this we are able to integrate any robot in FBX format such as Unreal's mannequin or the well-known Pepper by Aldebaran (see Figure \ref{fig:robot_integration}).
+The first issue is solved by using the headset to control the robot's head movement and render its first person \ac{PoV}. Inverse kinematics for the virtual robot are manually implemented with \ac{FABRIK}, a built-in inverse kinematics solver in \ac{UE4} that works on a chain of bones of arbitrary length. Locomotion is handled by thumbsticks on the headset's motion controllers. By doing this we are able to integrate any robot in FBX format such as Unreal's mannequin or the well-known Pepper by Aldebaran (see Figure \ref{fig:sim2real:robot_integration}).
 
 \begin{figure}[!htb]
   \centering
-  %\includegraphics[width=0.49\linewidth]{pepper_bg}
-  %\includegraphics[width=0.49\linewidth]{mannequin_bg}
-  \caption{Pepper and Mannequin integrated with colliders and constraints.}
-  \label{fig:robot_integration}
+  \includegraphics[width=0.49\linewidth]{Figures/Sim2Real/pepper_bg.png}
+  \includegraphics[width=0.49\linewidth]{Figures/Sim2Real/mannequin_bg.png}
+  \caption{Integrated Pepper and Mannequin with colliders and constraints.}
+  \label{fig:sim2real:robot_integration}
 \end{figure}
-
-\clearpage
 
 \subsection{Object Interaction}
 
-One key aspect of the dataset is the simulation of realistic interactions with objects. On the one hand, we need to simulate basic physics to move, push, pull, or lift objects in the scene. On the other hand, for small props we need to provide a way to grasp them if they fit in the robot's hand for a more complex interaction.
-
-To solve this issue we leverage \ac{UE4}'s built-in physics engine. Complex surfaces such as the robot's hands or its body and certain objects are modeled with single convex hulls as collider primitives. Simpler geometries are just approximated with less sophisticated primitives such as spheres or boxes. Those objects which are susceptible of being manipulated are properly weighted to resemble their real-world physical behavior. Furthermore, we implemented a simple yet visually appealing grasping approach to ease object interaction and make it look as realistic as possible: firstly, each hand is animated to have a pose blending from open to closed (this blending or interpolation is controlled by the analog triggers from each Oculus Touch); second, for each object that is small enough to be grabbed, we check which hand bones collide with it; if the five fingers and the palm collide with the object, we attach that object to the hand and stop simulating its physics so that it is stable in the hand; once those collisions are no longer happening, the object is detached and its physics are enabled again. Figure \ref{fig:object_interaction} shows the hand colliders and examples of interaction and grasping.
+One key aspect of the dataset is the simulation of realistic interactions with objects. On the one hand, we need to simulate basic physics to move, push, pull, or lift objects in the scene. On the other hand, for small props we need to provide a way to grasp them if they fit in the robot's hand for a more complex interaction. Built-in solutions within \ac{UE4} offer usable but far from realistic tools to perform this task. Most of them oversimplify the process with coarse collision detection and poor adjustments which make them unsuitable for our purposes.
 
 \begin{figure}[!htb]
-  \centering
-  %\includegraphics[width=0.9\linewidth]{handColliders}\\
-  %\includegraphics[width=0.3\linewidth]{frame1}
-  %\includegraphics[width=0.3\linewidth]{frame2}
-  %\includegraphics[width=0.3\linewidth]{frame3}
-  \caption{Single convex hull colliders for \ac{UE4}'s mannequin robotic hand and a example of object interaction and grasping.}
-  \label{fig:object_interaction}
+    \centering
+    \includegraphics[width=0.6\linewidth]{Figures/Sim2Real/distanceCalculusMod.png}
+    \caption{UnrealGrasp enables realistic interaction in real time by automatically fitting the hand to any arbitrary object shape and orientation.}
+    \label{fig:sim2real:unrealgrasp}
 \end{figure}
+
+To solve this issue we leverage UE4's built-in physics engine. Complex surfaces such as the robot's hands or its body and certain objects are modeled with single convex hulls as collider primitives. Simpler geometries are just approximated with less sophisticated primitives such as spheres or boxes. Those objects which are susceptible of being manipulated are properly weighted to resemble their real-world physical behavior. Furthermore, we implemented a simple yet visually appealing grasping approach to ease object interaction and make it look as realistic as possible (see Figure~\ref{fig:sim2real:unrealgrasp}): firstly, each hand is animated to have a pose blending from open to closed; secondly, for each object small enough to be grabbed, we check which hand bones collide (via triggers as shown in Figure \ref{fig:sim2real:triggers}) attach that object to the hand and stop simulating its physics; once those collisions are no longer happening, the object is detached and physics are enabled again. Further details and an evaluation of the system can be consulted in \cite{Oprea2019}.
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.8\linewidth]{Figures/Sim2Real/capsuletriggers}
+    \caption{Capsule triggers (in green) and sphere triggers (in purple).}
+    \label{fig:sim2real:triggers}
+\end{figure}
+
+\clearpage
 
 \subsection{Sequence Recording and Data Collection}
 
@@ -319,49 +322,45 @@ To record and generate all the data for this dataset, we made extensive use of a
 
 In order to generate the dataset, we first collect data in an online and interactive manner by immersing human agents in the virtual indoor environment so that they can freely move, look, and interact with the scene (respecting robot constraints). In this stage, we use UnrealROX with \ac{UE4} to render our scene into an Oculus/HTC Vive Pro \ac{VR} headset worn by a person equipped with motion controllers for hand movement. During this phase, we gather all the information that we would need to replay the whole sequence offline to collect data and generate annotations without lagging the rendering process.
 
-This data collection process is performed by an actor in \ac{UE4} which \emph{ticks} on every rendered frame and asynchronously dumps to a text file the $SE(3)$ pose (location and rotation) of every object and camera in the scene. It also dumps the full pose for each bone of the robot. This text file just contains a timestamp for each frame and the aforementioned raw information to have a minimal impact on performance. In fact, this process allows us to render at 80+ \ac{FPS} thanks to asynchronous and threaded writes to files. After the whole sequence is recorded, the text file is converted to JSON for better interpretability. Figure \ref{fig:sequence_recording} shows a diagram of this sequence recording procedure.
+This data collection process is performed by an actor in \ac{UE4} which \emph{ticks} on every rendered frame and asynchronously dumps to a text file the $SE(3)$ pose (location and rotation) of every object and camera in the scene. It also dumps the full pose for each bone of the robot. This text file just contains a timestamp for each frame and the aforementioned raw information to have a minimal impact on performance. In fact, this process allows us to render at 80+ \ac{FPS} thanks to asynchronous and threaded writes to files. After the whole sequence is recorded, the text file is converted to JSON for better interpretability.
 
 
 \begin{figure}[!hbt]
   \centering
-  %\includegraphics[width=\linewidth]{ucv_rgb}\\
-  \smallskip
-  %\includegraphics[width=0.4935\linewidth]{ucv_mask}
-  %\includegraphics[width=0.4935\linewidth]{ucv_depth}
+  \includegraphics[width=0.32\linewidth]{Figures/Sim2Real/seq_rgb}\\
+  \includegraphics[width=0.33\linewidth]{Figures/Sim2Real/seq_mask}
+  \includegraphics[width=0.33\linewidth]{Figures/Sim2Real/seq_depth}
   \caption{RGB, instance segmentation masks, and depth map generated with UnrealROX for a synthetic scene rendered in \acf{UE4}.}
-  \label{fig:unrealcv_overview}
+  \label{fig:sim2real:unrealrox_overview}
 \end{figure}
 
-After that we use the playback component of UnrealROX to reproduce sequences frame by frame by setting the corresponding poses for the robot and all objects and cameras. Once the frame is exactly as it was when we recorded the sequence, we just generate all the needed data offline by requesting the appropriate information such as RGB images, depth maps, or segmentation masks through the interface. Figure \ref{fig:unrealcv_overview} shows some examples of raw data generated with UnrealROX.
+After that, we use the playback component of UnrealROX to reproduce sequences frame by frame by setting the corresponding poses for the robot and all objects and cameras. Once the frame is exactly as it was when we recorded the sequence, we just generate all the needed data offline by requesting the appropriate information such as RGB images, depth maps, or segmentation masks through the interface. Figure \ref{fig:sim2real:unrealrox_overview} shows some examples of raw data generated with UnrealROX.
 
 \subsection{Ground Truth Generation}
 
-After collecting RGB, depth, and instance segmentation masks for each frame of a sequence, we can use that data to generate annotations. In our dataset release, we only include that raw data from the sequence and certain configuration files generated by the client in order to be able to produce ground truth annotations offline and on demand. We decoupled the data collection and the ground truth generation processes for a simple reason: practicality. In this way, to use the dataset researchers only need to download the RGB, depth, instance segmentation masks, and the generator code to locally generate whichever annotation their problems require in the appropriate format instead of fetching the full bundle in a predefined one. The generator takes that raw data and additional information generated by the client (camera configuration, object classes, colors, and instance mapping) and outputs 2D/3D bounding boxes in VOC format, point clouds, 2D/3D class segmentation masks, and 3D instance segmentation masks (hand pose and camera pose information is embedded in the sequence recording). Figure \ref{fig:ground_truth} shows some examples of ground truth generation.
+After collecting RGB, depth, and instance segmentation masks for each frame of a sequence, we can use that data to generate annotations. In our dataset release, we only include that raw data from the sequence and certain configuration files generated by the client in order to be able to produce ground truth annotations offline and on demand. We decoupled the data collection and the ground truth generation processes for a simple reason: practicality. In this way, to use the dataset researchers only need to download the RGB, depth, instance segmentation masks, and the generator code to locally generate whichever annotation their problems require in the appropriate format instead of fetching the full bundle in a predefined one. The generator takes that raw data and additional information generated by the client (camera configuration, object classes, colors, and instance mapping) and outputs 2D/3D bounding boxes in VOC format, point clouds, 2D/3D class segmentation masks, and 3D instance segmentation masks (hand pose and camera pose information is embedded in the sequence recording). Figure \ref{fig:sim2real:ground_truth} shows some examples of ground truth generation.
+
+\clearpage
 
 \begin{figure}[!htb]
     \centering
-    % \includegraphics[width=0.325\linewidth]{rgb0}
-    % \includegraphics[width=0.325\linewidth]{rgb1}
-    % \includegraphics[width=0.325\linewidth]{rgb2}\\
-    % \smallskip
-    % \includegraphics[width=0.325\linewidth]{depth0}
-    % \includegraphics[width=0.325\linewidth]{depth1}
-    % \includegraphics[width=0.325\linewidth]{depth2}\\
-    % \smallskip
-    % \includegraphics[width=0.325\linewidth]{mask0}
-    % \includegraphics[width=0.325\linewidth]{mask1}
-    % \includegraphics[width=0.325\linewidth]{mask2}\\
-    % \smallskip
-    % \includegraphics[width=0.325\linewidth]{cmask0}
-    % \includegraphics[width=0.325\linewidth]{cmask1}
-    % \includegraphics[width=0.325\linewidth]{cmask2}\\
-    % \smallskip
-    % \includegraphics[width=0.325\linewidth]{bbox0}
-    % \includegraphics[width=0.325\linewidth]{bbox1}
-    % \includegraphics[width=0.325\linewidth]{bbox2}\\
-    \caption{Ground truth generation examples (from top to bottom: RGB, depth, instance masks, class masks, and bounding boxes).}
-    \label{fig:ground_truth}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/rgb0.jpg}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/rgb1.jpg}\\
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/depth0}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/depth1}\\
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/mask0}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/mask1}\\
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/cmask0}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/cmask1}\\
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/bbox0.jpg}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/bbox1.jpg}\\
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/3dbbox0}
+    \includegraphics[width=0.45\linewidth]{Figures/Sim2Real/3dbbox1}\\
+    \caption{Data examples (from top to bottom: RGB, depth, instance masks, class masks, and 2D/3D bounding boxes).}
+    \label{fig:sim2real:ground_truth}
   \end{figure}
+
+\clearpage
 
 \subsection{Content}
 
@@ -393,7 +392,7 @@ After collecting RGB, depth, and instance segmentation masks for each frame of a
   \label{table:classes}
 \end{table*}
 
-Using this pipeline, we generated a dataset of $512$ sequences recorded on $16$ room layouts (some samples are shown in Figure \ref{fig:scenes}) at $+60$ \ac{FPS} with a duration that spans between one and five minutes. That means a total of approximately $8$ million individual frames. For each one of those frames we provide the following data:
+Using this pipeline, we generated a dataset of $512$ sequences recorded on $16$ room layouts at $+60$ \ac{FPS} with a duration that spans between one and five minutes. That means a total of approximately $8$ million individual frames. For each one of those frames we provide the following data:
 
 \begin{itemize}
   \item 3D poses for the cameras, objects, and joints.
@@ -404,27 +403,6 @@ Using this pipeline, we generated a dataset of $512$ sequences recorded on $16$ 
 
 And also annotations:
 
-\begin{figure}[!tb]
-  \centering
-%   \includegraphics[width=0.325\linewidth]{scene2_1}
-%   \includegraphics[width=0.325\linewidth]{scene0_0}
-%   \includegraphics[width=0.325\linewidth]{scene1_0}\\
-%   \smallskip
-%   \includegraphics[width=0.325\linewidth]{scene1_1}
-%   \includegraphics[width=0.325\linewidth]{scene2_5}
-%   \includegraphics[width=0.325\linewidth]{scene0_2}\\
-%   \smallskip
-%   \includegraphics[width=0.325\linewidth]{scene0_1}
-%   \includegraphics[width=0.325\linewidth]{scene1_2}
-%   \includegraphics[width=0.325\linewidth]{scene2_4}\\
-%   \smallskip
-%   \includegraphics[width=0.325\linewidth]{scene3_0}
-%   \includegraphics[width=0.325\linewidth]{scene3_1}
-%   \includegraphics[width=0.325\linewidth]{scene3_2}\\
-  \caption{Snapshots of photorealistic scenes in the dataset.}
-  \label{fig:scenes}
-\end{figure}
-
 \begin{itemize}
   \item 2D class mask @ $1920\times1080$ in 24-bits PNG.
   \item 2D/3D object instance oriented bounding boxes.
@@ -432,14 +410,15 @@ And also annotations:
   \item 3D instance/class mask.
 \end{itemize}
 
-This initial release of the dataset contains 32 detection classes and 39 semantic ones. These categories were selected from the most common and useful household goods in indoor environments for social robots. Note that semantic classes include structural elements such as walls that are not usually targets for detection that commonly focuses on relatively small and interactive objects. Table \ref{table:classes} shows both detection and semantic splits with their associated codes and colors.
-
-All the tools, assets, and the dataset itself will be made available at \url{https://github.com/3dperceptionlab/therobotrix}.
+This initial release of the dataset contains 32 detection classes and 39 semantic ones. These categories were selected from the most common and useful household goods in indoor environments for social robots. Note that semantic classes include structural elements such as walls that are not usually targets for detection that commonly focuses on relatively small and interactive objects. Table \ref{table:classes} shows both detection and semantic splits with their associated codes and colors. All the tools, assets, and the dataset itself are available at \url{https://github.com/3dperceptionlab/therobotrix}.
 
 \section{Conclusion}
 \label{cha:sim2real:sec:conclusion}
 
-In this work, we presented The RobotriX, an extremely realistic suite of data and tools designed to boost progress in indoor robotic vision tasks with deep learning by: (1) creating the largest and most realistic synthetic dataset to date; (2) seamlessly integrating realistic robots and scenes within virtual reality to easily generate plausible and useful sequences with interactions; (3) providing video sequences in multiple data modalities with perfect ground truth for solving and pushing forward the state of the art of a wide variety of problems, e.g., object detection, semantic segmentation, depth estimation, object tracking, object pose estimation, visual grasping, and many more. By releasing this dataset, our methodology, and the whole pipeline for generating data, we hope to satisfy the ever-growing need for data of deep learning approaches with easily generated and extremely realistic synthetic sequences which facilitate the deployment of those systems in real-world scenarios. 
+In this chapter, we presented The RobotriX, an extremely realistic suite of data and tools designed to boost progress in indoor robotic vision tasks with deep learning by: (1) creating the largest and most realistic synthetic dataset to date; (2) seamlessly integrating realistic robots and scenes within virtual reality to easily generate plausible and useful sequences with interactions; (3) providing video sequences in multiple data modalities with perfect ground truth for solving and pushing forward the state of the art of a wide variety of problems, e.g., object detection, semantic segmentation, depth estimation, object tracking, object pose estimation, visual grasping, and many more. By releasing this dataset, our methodology, and the whole pipeline for generating data, we hope to satisfy the ever-growing need for data of deep learning approaches with easily generated and extremely realistic synthetic sequences which facilitate the deployment of those systems in real-world scenarios. 
+
+\subsection{Limitations and Future Works}
+\label{cha:sim2real:sec:conclusion:subsec:limitations}
 
 As future works we plan on adding more complexity to the data and extend the range of problems that can benefit from it. For instance, we want to add non-rigid objects which can be simulated with \acl{UE4} physics such as elastic bodies, fluids, or clothes for the robots to interact with. We also want to automatically generate semantic descriptions for each frame to provide ground truth for captioning and question answering. In addition, we also want to add simulated force sensors on robotic hands to provide annotations for more sophisticated grasping tasks.
 
