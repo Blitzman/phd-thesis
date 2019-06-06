@@ -143,6 +143,15 @@
 
 \usepackage{tikz} % Tikz pictures
 \usetikzlibrary{positioning}
+\usetikzlibrary{arrows}
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{arrows.meta,arrows}
+\tikzstyle{block} = [draw, rectangle, minimum height=3em, minimum width=6em]
+\tikzstyle{edge} = [draw, ->, line width= 0.1em]
+\tikzstyle{sum} = [draw, circle, node distance=1.5cm]
+\tikzstyle{input} = [coordinate]
+\tikzstyle{output} = [coordinate]
+\tikzstyle{pinstyle} = [pin edge={to-,thin,black}]
 
 \usepackage{pgf}
 \usepackage{pgfplots}
@@ -171,6 +180,11 @@
 \usepackage{pgfplots}
 \usepackage{pgfplotstable}
 \usepackage{tabularx}
+
+\usepackage{amssymb}% http://ctan.org/pkg/amssymb
+\usepackage{pifont}% http://ctan.org/pkg/pifont
+\newcommand{\cmark}{\ding{51}}
+\newcommand{\xmark}{\ding{55}}
 \usepackage{booktabs}
 
 \RequirePackage{xcolor}
@@ -285,6 +299,7 @@
 \addbibresource{personal.bib}
 \addbibresource{objrecog.bib}
 \addbibresource{sim2real.bib}
+\addbibresource{segmentation.bib}
 \addbibresource{tactile.bib}
 % The filename of the bibliography
 \usepackage[autostyle=true]{csquotes}
