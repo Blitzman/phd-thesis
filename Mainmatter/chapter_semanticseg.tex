@@ -2,8 +2,12 @@
 \label{cha:semseg}
 
 \begin{chapterabstract}
-Image semantic segmentation is more and more being of interest for computer vision and machine learning researchers. Many applications on the rise need accurate and efficient segmentation mechanisms: autonomous driving, indoor navigation, and even virtual or augmented reality systems to name a few. This demand coincides with the rise of deep learning approaches in almost every field or application target related to computer vision, including semantic segmentation or scene understanding. This paper provides a review on deep learning methods for semantic segmentation applied to various application areas. Firstly, we formulate the semantic segmentation problem and define the terminology of this field as well as interesting background concepts. Next, the main datasets and challenges are exposed to help researchers decide which are the ones that best suit their needs and goals. Then, existing methods are reviewed, highlighting their contributions and their significance in the field. We also devote a part of the paper to review common loss functions and error metrics for this problem. Finally, quantitative results are given for the described methods and the datasets in which they were evaluated, following up with a discussion of the results. At last, we point out a set of promising future works and draw our own conclusions about the state of the art of semantic segmentation using deep learning techniques.
+Image semantic segmentation is more and more being of interest for computer vision and machine learning researchers. Many applications on the rise need accurate and efficient segmentation mechanisms: autonomous driving, indoor navigation, and even virtual or augmented reality systems to name a few. This demand coincides with the rise of deep learning approaches in almost every field or application target related to computer vision, including semantic segmentation or scene understanding. This chapter provides a review on deep learning methods for semantic segmentation applied to various application areas.
+
+The chapter is structured as follows. Firstly, in Section \ref{cha:semseg:sec:introduction} we formulate the semantic segmentation problem and describe background concepts. Next, Section \ref{cha:semseg:sec:datasets} exposes the main datasets and challenges to help researchers decide which are the ones that best suit their needs and goals. Then, in Section \ref{cha:semseg:sec:methods} methods are reviewed, highlighting their contributions and their significance in the field. Next, quantitative results are given in Section \ref{cha:semseg:sec:discussion}, following up with a discussion of the results. At last, we point out a set of promising future works and draw our own conclusions about the state of the art of semantic segmentation using deep learning techniques in Section \ref{cha:semseg:sec:conclusion}.
 \end{chapterabstract}
+
+\minitoc
 
 \clearpage
 
@@ -14,7 +18,7 @@ Nowadays, semantic segmentation -- applied to still 2D images, video, and even 3
 
 \begin{figure}[!b]
 	\centering
-	%\includegraphics[width=0.8\linewidth]{example_rework.eps}
+	\includegraphics[width=0.8\linewidth]{Figures/Segmentation/example_rework.eps}
 	\caption{Evolution of object recognition or scene understanding from coarse-grained to fine-grained inference: classification, detection or localization, semantic segmentation, and instance segmentation.}
 	\label{fig:background_evolution}
 \end{figure}
@@ -30,10 +34,10 @@ The key contributions of our work are as follows:
 	\item A discussion about the aforementioned results, as well as a list of possible future works that might set the course of upcoming advances, and a conclusion summarizing the state of the art of the field.
 \end{itemize}
 
-The remainder of this chapter is organized as follows. Firstly, Section \ref{sec:background} introduces the semantic segmentation problem as well as notation and conventions commonly used in the literature. Other background concepts such as common deep neural networks are also reviewed.  Next, Section \ref{sec:material-methods} describes existing datasets, challenges, and benchmarks. It also reviews existing methods following a bottom-up complexity order based on their contributions. This section focuses on describing the theory and highlights of those methods rather than performing a quantitative evaluation. Finally, Section \ref{sec:discussion} presents a brief discussion on the presented methods based on their quantitative results on the aforementioned datasets. In addition, future research directions are also laid out. At last, Section \ref{sec:conclusion} summarizes the paper and draws conclusions about this work and the state of the art of the field.
+The remainder of this chapter is organized as follows. Firstly, Section \ref{cha:semseg:sec:background} introduces the semantic segmentation problem as well as notation and conventions commonly used in the literature and background concepts. Next, Section \ref{cha:semseg:sec:datasets} describes existing datasets, challenges, and benchmarks. Section \ref{cha:semseg:sec:methods} reviews existing methods. Finally, Section \ref{cha:semseg:sec:discussion} presents a brief discussion on the presented methods based on their quantitative results on the aforementioned datasets. In addition, future research directions are also laid out. At last, Section \ref{cha:semseg:sec:conclusion} summarizes the chapter and draws conclusions about this work and the state of the art of the field.
 
 \section{Terminology and Background Concepts}
-\label{sec:background}
+\label{cha:semseg:sec:background}
 
 In order to properly understand how semantic segmentation is tackled by modern deep learning architectures, it is important to know that it is not an isolated field but rather a natural step in the progression from coarse to fine inference. The origin could be located at classification, which consists of making a prediction for a whole input, i.e., predicting which is the object in an image or even providing a ranked list if there are many of them. Localization or detection is the next step towards fine-grained inference, providing not only the classes but also additional information regarding the spatial location of those classes, e.g., centroids or bounding boxes. Providing that, it is obvious that semantic segmentation is the natural step to achieve fine-grained inference, its goal: make dense predictions inferring labels for every pixel; this way, each pixel is labeled with the class of its enclosing object or region. Further improvements can be made, such as instance segmentation (separate labels for different instances of the same class) and even part-based segmentation (low-level decomposition of already segmented classes into their components). Figure \ref{fig:background_evolution} shows the aforementioned evolution. In this review, we will mainly focus on generic scene labeling, i.e., per-pixel class segmentation, but we will also review the most important methods on instance and part-based segmentation.
 
@@ -43,33 +47,33 @@ Apart from the problem formulation, it is important to remark some background co
 
 \subsection{Common Deep Network Architectures}
 
-As we previously stated, certain deep networks have made such significant contributions to the field that they have become widely known standards. It is the case of AlexNet, \acs{VGG}-16, GoogLeNet, and ResNet. Such was their importance that they are currently being used as building blocks for many segmentation architectures. For that reason, we will devote this section to review them.
+As we previously stated, certain deep networks have made such significant contributions to the field that they have become widely known standards. It is the case of AlexNet, \acs{VGG}-16, GoogLeNet, and ResNet. Such was their importance that they are currently being used as building blocks for many segmentation architectures. We will devote this section to review them.
 
 \subsubsection{AlexNet}
 
-AlexNet was the pioneering deep \acs{CNN} that won the \acs{ILSVRC}-2012 with a TOP-5 test accuracy of $84.6\%$ while the closest competitor, which made use of traditional techniques instead of deep architectures, achieved a $73.8\%$ accuracy in the same challenge. The architecture presented by Krizhevsky \emph{et al.} \cite{Krizhevsky2012} was relatively simple. It consists of five convolutional layers, max-pooling ones, \acp{ReLU} as non-linearities, three fully-connected layers, and dropout. Figure \ref{fig:alexnet} shows that \acs{CNN} architecture.
+AlexNet was the pioneering deep \acs{CNN} that won the \acs{ILSVRC}-2012 with a TOP-5 test accuracy of $84.6\%$ while the closest competitor, which made use of traditional techniques instead of deep architectures, achieved a $73.8\%$ accuracy in the same challenge. The architecture presented by Krizhevsky \emph{et al.} \cite{Krizhevsky2012} was relatively simple:five convolutional layers, max-pooling ones, \acp{ReLU} as non-linearities, three fully-connected layers, and dropout (see Figure \ref{fig:semseg:alexnet}).
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=\linewidth]{alexnet_rework.eps}
+	\includegraphics[width=0.9\linewidth]{Figures/Segmentation/alexnet_rework.eps}
 	\caption{AlexNet \acl{CNN} architecture. Figure reproduced from \cite{Krizhevsky2012}.}
-	\label{fig:alexnet}
+	\label{fig:semseg:alexnet}
 \end{figure}
 
 \subsubsection{\acs{VGG}}
 
-\ac{VGG} is a \ac{CNN} model introduced by the \acf{VGG} from the University of Oxford. They proposed various models and configurations of deep \acp{CNN} \cite{Simonyan2014}, one of them was submitted to the \ac{ILSVRC}-2013. That model, also known as \acs{VGG}-16 due to the fact that it is composed by $16$ weight layers, became popular thanks to its achievement of $92.7\%$ TOP-5 test accuracy. Figure \ref{fig:vgg16} shows the configuration of \acs{VGG}-16. The main difference between \acs{VGG}-16 and its predecessors is the use of a stack of convolution layers with small receptive fields in the first layers instead of few layers with big receptive fields. This leads to less parameters and more non-linearities in between, thus making the decision function more discriminative and the model easier to train.
+\acs{VGG} is a \ac{CNN} model introduced by the \acf{VGG} from the University of Oxford. They proposed various models and configurations of deep \acp{CNN} \cite{Simonyan2014}, one of them was submitted to the \ac{ILSVRC}-2013. That model, also known as \acs{VGG}-16 due to the fact that it is composed by $16$ weight layers, became popular thanks to its achievement of $92.7\%$ TOP-5 test accuracy. Figure \ref{fig:segmentation:vgg16} shows the configuration of \acs{VGG}-16. The main difference between \acs{VGG}-16 and its predecessors is the use of a stack of convolution layers with small receptive fields in the first layers instead of few layers with big receptive fields. This leads to less parameters and more non-linearities in between, thus making the decision function more discriminative and the model easier to train.
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=0.8\linewidth]{vgg16.eps}
-  \caption{\acs{VGG}-16 \acs{CNN} architecture. Figure extracted from \cite{Noh2015}.}
-	\label{fig:vgg16}
+	\includegraphics[width=0.8\linewidth]{Figures/Segmentation/vgg16.eps}
+    \caption{\acs{VGG}-16 \acs{CNN} architecture. Figure extracted from \cite{Noh2015}.}
+	\label{fig:segmentation:vgg16}
 \end{figure}
 
 \subsubsection{GoogLeNet}
 
-GoogLeNet is a network introduced by Szegedy \emph{et al.} \cite{Szegedy2015} which won the \ac{ILSVRC}-2014 challenge with a TOP-5 test accuracy of $93.3\%$. This \acs{CNN} architecture is characterized by its complexity, emphasized by the fact that it is composed by $22$ layers and a newly introduced building block called \emph{inception} module (see Figure \ref{fig:inception-module}). This new approach proved that \acs{CNN} layers could be stacked in more ways than a typical sequential manner. In fact, those modules consist of a \ac{NiN} layer, a pooling operation, a large-sized convolution layer, and small-sized convolution layer. All of them are computed in parallel and followed by $1\times1$ convolution operations to reduce dimensionality. Thanks to those modules, this network puts special consideration on memory and computational cost by significantly reducing the number of parameters and operations.
+GoogLeNet is a network introduced by Szegedy \emph{et al.} \cite{Szegedy2015} which won the \ac{ILSVRC}-2014 challenge with a TOP-5 test accuracy of $93.3\%$. This \acs{CNN} architecture is characterized by its complexity, emphasized by the fact that it is composed by $22$ layers and a newly introduced building block called \emph{inception} module (see Figure \ref{fig:segmentation:inception-module}). This new approach proved that \acs{CNN} layers could be stacked in more ways than a typical sequential manner. In fact, those modules consist of a \ac{NiN} layer, a pooling operation, a large-sized convolution layer, and small-sized convolution layer. All of them are computed in parallel and followed by $1\times1$ convolution operations to reduce dimensionality. Thanks to those modules, this network puts special consideration on memory and computational cost by significantly reducing the number of parameters and operations.
 
 \begin{figure}[!hbt]
 \centering
@@ -100,13 +104,13 @@ GoogLeNet is a network introduced by Szegedy \emph{et al.} \cite{Szegedy2015} wh
 	\end{tikzpicture}
 }
 	\caption{Inception module with dimensionality reduction from the GoogLeNet architecture. Figure reproduced from \cite{Szegedy2015}.}
-	\label{fig:inception-module}
+	\label{fig:segmentation:inception-module}
 \end{figure}
 
 
 \subsubsection{ResNet}
 
-Microsoft's ResNet\cite{He2016} is specially remarkable thanks to winning \ac{ILSVRC}-2016 with $96.4\%$ accuracy. Apart from that fact, the network is well-known due to its depth ($152$ layers) and the introduction of residual blocks (see Figure \ref{fig:resnet-block}). The residual blocks address the problem of training a really deep architecture by introducing identity skip connections so that layers can copy their inputs to the next layer.
+Microsoft's ResNet\cite{He2016} is specially remarkable thanks to winning \ac{ILSVRC}-2016 with $96.4\%$ accuracy. Apart from that fact, the network is well-known due to its depth ($152$ layers) and the introduction of residual blocks (see Figure \ref{fig:segmentation:resnet-block}). The residual blocks address the problem of training a really deep architecture by introducing identity skip connections so that layers can copy their inputs to the next layer.
 
 \begin{figure}[!hbt]
 	\centering
@@ -124,21 +128,21 @@ Microsoft's ResNet\cite{He2016} is specially remarkable thanks to winning \ac{IL
 	\draw[-] (inputedge) -| node [yshift=-2cm, align=center] {$\chi$\\identity}(midpoint);
 	\draw[->] (midpoint) -- node {$relu$} (sum.east);
 	\end{tikzpicture}
-	\caption{Residual block from the ResNet architecture. Figure reproduced from \cite{He2016}.}
-	\label{fig:resnet-block}
+	\caption{Residual block from ResNet. Figure reproduced from \cite{He2016}.}
+	\label{fig:segmentation:resnet-block}
 \end{figure}
 
 The intuitive idea behind this approach is that it ensures that the next layer learns something new and different from what the input has already encoded (since it is provided with both the output of the previous layer and its unchanged input). In addition, this kind of connections help overcoming the vanishing gradients problem.
 
 \subsubsection{ReNet}
 
-In order to extend \acp{RNN} architectures to multi-dimensional tasks, Graves et al. \cite{Graves2007} proposed a \ac{MDRNN} architecture which replaces each single recurrent connection from standard \acsp{RNN} with $d$ connections, where $d$ is the number of spatio-temporal data dimensions. Based on this initial approach, Visin el al. \cite{Visin2015} proposed ReNet architecture in which instead of multidimensional \acsp{RNN}, they have been using usual sequence \acsp{RNN}. In this way, the number of \acsp{RNN} is scaling linearly at each layer regarding to the number of dimensions $d$ of the input image ($2d$). In this approach, each convolutional layer (convolution + pooling) is replaced with four \acsp{RNN} sweeping the image vertically and horizontally in both directions as we can see in Figure \ref{fig:renet}.
+In order to extend \acp{RNN} architectures to multi-dimensional tasks, Graves et al. \cite{Graves2007} proposed a \ac{MDRNN} architecture which replaces each single recurrent connection from standard \acsp{RNN} with $d$ connections, where $d$ is the number of spatio-temporal data dimensions. Based on this initial approach, Visin el al. \cite{Visin2015} proposed ReNet architecture in which instead of multidimensional \acsp{RNN}, they have been using usual sequence \acsp{RNN}. In this way, the number of \acsp{RNN} is scaling linearly at each layer regarding to the number of dimensions $d$ of the input image ($2d$). In this approach, each convolutional layer (convolution + pooling) is replaced with four \acsp{RNN} sweeping the image vertically and horizontally in both directions as we can see in Figure \ref{fig:segmentation:renet}.
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=0.5\linewidth]{renet_rework.eps}
+	\includegraphics[width=0.5\linewidth]{Figures/Segmentation/renet_rework.eps}
 	\caption{One layer of ReNet architecture modeling vertical and horizontal spatial dependencies. Extracted from \cite{Visin2015}.}
-	\label{fig:renet}
+	\label{fig:segmentation:renet}
 \end{figure}
 
 \subsection{Transfer Learning and Fine-tuning}
@@ -164,6 +168,7 @@ It typically consist of applying a set of transformations in either data or feat
 Augmentations are specially helpful for small datasets, and have proven their efficacy with a long track of success stories. For instance, in \cite{Shen2016}, a dataset of $1500$ portrait images is augmented synthesizing four new scales ($0.6, 0.8, 1.2, 1.5$), four new rotations ($-45, -22, 22, 45$), and four gamma variations ($0.5, 0.8, 1.2, 1.5$) to generate a new dataset of $19000$ training images. That process allowed them to raise the accuracy of their system for portrait segmentation from $73.09$ to $94.20$ \ac{IoU} when including that augmented dataset for fine-tuning.
 
 \section{Datasets}
+\label{cha:semseg:sec:datasets}
 
 In this section we present the main content of this paper: an in-depth review of existing datasets and methods together with an evaluation of their quality, relevance, and impact in the field. Both of them are presented according to a well thought taxonomy of the research completed in the area.
 
@@ -283,12 +288,10 @@ Pure \acl{3D} databases are scarce, this kind of datasets usually provide \ac{CA
 \end{itemize}
 
 \section{Methods}
-\label{sec:methods}
+\label{cha:semseg:sec:methods}
 
-\begin{table*}[!t]
+\begin{table*}[!b]
 	\centering
-	\caption{Summary of semantic segmentation methods based on deep learning.}
-	\label{table:methods}
 	\resizebox{\linewidth}{!}{
 	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|}
 		\hline
@@ -330,49 +333,52 @@ Pure \acl{3D} databases are scarce, this kind of datasets usually provide \ac{CA
 		End2End Vox2Vox\cite{Tran2016} & \acs{C3D} & $\star\star$ & $\star$ & $\star$ & \xmark & $\star\star\star$ & \xmark & \xmark & \xmark & 3D convolutions/deconvolutions for sequences\\
 		SegmPred \cite{Luc2017} & Own multi-scale net & $\star\star$ & $\star$ & $\star$ & \xmark & $\star\star\star$ & \xmark & \xmark & \cmark & Predicting future frames in the space of semantic segmentation\\
 		\hline
-	\end{tabular}}
+    \end{tabular}}
+    \caption{Summary of semantic segmentation methods.}
+    \label{table:semseg:methods}
 \end{table*}
 
 The relentless success of deep learning techniques in various high-level computer vision tasks -- in particular, supervised approaches such as \acfp{CNN} for image classification or object detection \cite{Krizhevsky2012}\cite{Simonyan2014}\cite{Szegedy2015} --  motivated researchers to explore the capabilities of such networks for pixel-level labelling problems like semantic segmentation. The key advantage of these deep learning techniques, which gives them an edge over traditional methods, is the ability to learn appropriate feature representations for the problem at hand, e.g., pixel labelling on a particular dataset, in an end-to-end fashion instead of using hand-crafted features that require domain expertise, effort, and often too much fine-tuning to make them work on a particular scenario.
 
-\begin{figure}[!hbt]
+\begin{figure}[!b]
 	\centering
-	%\includegraphics[width=\linewidth]{convolutionalization.eps}
-	%\includegraphics[width=0.86\linewidth]{fcn.eps}
-	\caption{\acl{FCN} figure by Long \emph{et al.}\cite{Long2015}. Transforming a classification-purposed \ac{CNN} to produce spatial heatmaps by replacing fully connected layers with convolutional ones. Including a deconvolution layer for upsampling allows dense inference and learning for per-pixel labeling.}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/convolutionalization.eps}
+	\includegraphics[width=0.86\linewidth]{Figures/Segmentation/fcn.eps}
+	\caption{\acl{FCN} figure by Long \emph{et al.}\cite{Long2015}. Transforming a classification-purposed \ac{CNN} to produce spatial heatmaps by replacing fully connected layers with convolutional ones. Including a deconvolution layer for upsampling allows dense inference and learning for pixel labeling.}
 	\label{fig:convolutionalization}
 \end{figure}
-\begin{figure*}[!t]
-	\centering
-	%\includegraphics[width=0.8\linewidth]{graph.eps}
-	\caption{Visualization of the reviewed methods.}
-	\label{fig:graph}
-\end{figure*}
 
 Currently, the most successful state-of-the-art deep learning techniques for semantic segmentation stem from a common forerunner: the \emph{\acf{FCN}} by Long \emph{et al.}\cite{Long2015}. The insight of that approach was to take advantage of existing \acp{CNN} as powerful visual models that are able to learn hierarchies of features. They transformed those existing and well-known classification models -- AlexNet\cite{Krizhevsky2012}, \ac{VGG} (16-layer net)\cite{Simonyan2014}, GoogLeNet\cite{Szegedy2015}, and ResNet \cite{He2016} -- into fully convolutional ones by replacing the fully connected layers with convolutional ones to output spatial maps instead of classification scores. Those maps are upsampled using fractionally strided convolutions (also named deconvolutions \cite{Zeiler2011}\cite{Zeiler2014}) to produce dense per-pixel labeled outputs. This work is considered a milestone since it showed how \acp{CNN} can be trained end-to-end for this problem, efficiently learning how to make dense predictions for semantic segmentation with inputs of arbitrary sizes. This approach achieved a significant improvement in segmentation accuracy over traditional methods on standard datasets like PASCAL \ac{VOC}, while preserving efficiency at inference. For all those reasons, and other significant contributions, the \ac{FCN} is the cornerstone of deep learning applied to semantic segmentation. The convolutionalization process is shown in Figure \ref{fig:convolutionalization}.
 
-Despite the power and flexibility of the \acs{FCN} model, it still lacks various features which hinder its application to certain problems and situations: its inherent spatial invariance does not take into account useful global context information, no instance-awareness is present by default, efficiency is still far from real-time execution at high resolutions, and it is not completely suited for unstructured data such as \acs{3D} point clouds or models. Those problems will be reviewed in this section, as well as the state-of-the-art solutions that have been proposed in the literature to overcome those hurdles. Table \ref{table:methods} provides a summary of that review. It shows all reviewed methods (sorted by appearance order in the section), their base architecture, their main contribution, and a classification depending on the target of the work: accuracy, efficiency, training simplicity, sequence processing, multi-modal inputs, and \acs{3D} data. Each target is graded from one to three stars ($\star$) depending on how much focus puts the work on it, and a mark (\xmark) if that issue is not addressed. In addition, Figure \ref{fig:graph} shows a graph of the reviewed methods for the sake of visualization.
+Despite the power and flexibility of the \acs{FCN} model, it still lacks various features which hinder its application to certain problems and situations: its inherent spatial invariance does not take into account useful global context information, no instance-awareness is present by default, efficiency is still far from real-time execution at high resolutions, and it is not completely suited for unstructured data such as \acs{3D} point clouds or models. Those problems will be reviewed in this section, as well as the state-of-the-art solutions that have been proposed in the literature to overcome those hurdles. Table \ref{table:segmentation:methods} provides a summary of that review. It shows all reviewed methods (sorted by appearance order in the section), their base architecture, their main contribution, and a classification depending on the target of the work: accuracy, efficiency, training simplicity, sequence processing, multi-modal inputs, and \acs{3D} data. Each target is graded from one to three stars ($\star$) depending on how much focus puts the work on it, and a mark (\xmark) if that issue is not addressed. In addition, Figure \ref{fig:graph} shows a graph of the reviewed methods for the sake of visualization.
+
+\begin{figure}[!b]
+	\centering
+	\includegraphics[width=\linewidth]{Figures/Segmentation/graph.eps}
+	\caption{Visualization of the reviewed methods. Considering the \ac{FCN} as the forerunner of all of them (at least from its basic idea), they all stem in various directions depending on their focus: most of them try to integrate context knowledge in one way or another while others tackle other problems such as instance segmentation, video sequences, and even \ac{3D} data.}
+	\label{fig:graph}
+\end{figure}
 
 \subsection{Decoder Variants}
 
 Apart from the \acs{FCN} architecture, other variants were developed to transform a network whose purpose was classification to make it suitable for segmentation. Arguably, \acs{FCN}-based architectures are more popular and successful, but other alternatives are also remarkable. In general terms, all of them take a network for classification, such as \acs{VGG}-16, and remove its fully connected layers. This part of the new segmentation network often receives the name of encoder and produce low-resolution image representations or feature maps. The problem lies on learning to decode or map those low-resolution images to pixel-wise predictions for segmentation. This part is named decoder and it is usually the divergence point in this kind of architectures.
 
-SegNet\cite{Badrinarayanan2015} is a clear example of this divergence (see Figure \ref{fig:segnet}). The decoder stage of SegNet is composed by a set of upsampling and convolution layers which are at last followed by a softmax classifier to predict pixel-wise labels for an output which has the same resolution as the input image. Each upsampling layer in the decoder stage corresponds to a max-pooling one in the encoder part. Those layers upsample feature maps using the max-pooling indices from their corresponding feature maps in the encoder phase. The upsampled maps are then convolved with a set of trainable filter banks to produce dense feature maps. When the feature maps have been restored to the original resolution, they are fed to the softmax classifier to produce the final segmentation.
+SegNet\cite{Badrinarayanan2015} is a clear example of this divergence (see Figure \ref{fig:semseg:segnet}). The decoder stage of SegNet is composed by a set of upsampling and convolution layers which are at last followed by a softmax classifier to predict pixel-wise labels for an output which has the same resolution as the input image. Each upsampling layer in the decoder stage corresponds to a max-pooling one in the encoder part. Those layers upsample feature maps using the max-pooling indices from their corresponding feature maps in the encoder phase. The upsampled maps are then convolved with a set of trainable filter banks to produce dense feature maps. When the feature maps have been restored to the original resolution, they are fed to the softmax to produce the final segmentation.
 
 \begin{figure}[!hbt]
-	%\includegraphics[width=\linewidth]{segnet.eps}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/segnet.eps}
 	\caption{SegNet architecture with an encoder and a decoder followed by a softmax classifier for pixel-wise classification. Figure extracted from \cite{Badrinarayanan2015}.}
-	\label{fig:segnet}
+	\label{fig:semseg:segnet}
 \end{figure}
 
-On the other hand, \acs{FCN}-based architectures make use of learnable deconvolution filters to upsample feature maps. After that, the upsampled feature maps are added element-wise to the corresponding feature map generated by the convolution layer in the encoder part. Figure \ref{fig:segnetvsfcn} shows a comparison of both approaches.
+On the other hand, \acs{FCN}-based architectures make use of learnable deconvolution filters to upsample feature maps. After that, the upsampled feature maps are added element-wise to the corresponding feature map generated by the convolution layer in the encoder part. Figure \ref{fig:semseg:segnetvsfcn} shows a comparison of both approaches.
 
-U-Net \cite{Ronneberger2015} is another example of a Fully Convolutional Neural Network that has been used for image segmentation. It was initially proposed for biomedical image segmentation, but in the last years it has also been successfully used in other applications, such as aerial imagery \cite{Zhang2017} and regular foreground/background segmentation problems. It consists of a contracting path (downsampling) which captures context and a symmetric expanding path (upsampling) that enables precise localization. The architecture also has skip connections that allow the decoder at each stage to learn relevant features from the contracting path.
+U-Net \cite{Ronneberger2015} is another example of a \acf{FCN} that has been used for image segmentation. It was initially proposed for biomedical image segmentation, but in the last years it has also been successfully used in other applications, such as aerial imagery \cite{Zhang2017} and regular foreground/background segmentation problems. It consists of a contracting path (downsampling) which captures context and a symmetric expanding path (upsampling) that enables precise localization. The architecture also has skip connections that allow the decoder at each stage to learn relevant features from the contracting path.
 
 \begin{figure}[!hbt]
-	%\includegraphics[width=\linewidth]{segnetvsfcn_rework.eps}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/segnetvsfcn_rework.eps}
 	\caption{Comparison of SegNet (left) and \acs{FCN} (right) decoders. While SegNet uses max-pooling indices from the corresponding encoder stage to upsample, \acs{FCN} learns deconvolution filters to upsample (adding the corresponding feature map from the encoder stage). Figure reproduced from \cite{Badrinarayanan2015}.}
-	\label{fig:segnetvsfcn}
+	\label{fig:semseg:segnetvsfcn}
 \end{figure}
 
 \subsection{Integrating Context Knowledge}
@@ -387,42 +393,42 @@ Many approaches can be taken to make \acp{CNN} aware of that global information:
 
 As we mentioned before, the inherent invariance to spatial transformations of \ac{CNN} architectures limits the very same spatial accuracy for segmentation tasks. One possible and common approach to refine the output of a segmentation system and boost its ability to capture fine-grained details is to apply a post-processing stage using a \acf{CRF}. \acp{CRF} enable the combination of low-level image information -- such as the interactions between pixels \cite{Rother2004}\cite{Shotton2009} -- with the output of multi-class inference systems that produce per-pixel class scores. That combination is especially important to capture long-range dependencies, which \acp{CNN} fail to consider, and fine local details.
 
-The DeepLab models \cite{Chen2014a}\cite{Chen2016} make use of the fully connected pairwise \ac{CRF} by Krähenbühl and Koltun\cite{Koltun2011}\cite{Kraehenbuehl2013} as a separated post-processing step in their pipeline to refine the segmentation result. It models each pixel as a node in the field and employs one pairwise term for each pair of pixels no matter how far they lie (this model is known as dense or fully connected factor graph). By using this model, both short and long-range interactions are taken into account, rendering the system able to recover detailed structures in the segmentation that were lost due to the spatial invariance of the \ac{CNN}. Despite the fact that usually fully connected models are inefficient, this model can be efficiently approximated via probabilistic inference. Figure \ref{fig:crf-deeplab} shows the effect of this \ac{CRF}-based post-processing on the score and belief maps produced by the DeepLab model.
+The DeepLab models \cite{Chen2014a}\cite{Chen2016} make use of the fully connected pairwise \ac{CRF} by Krähenbühl and Koltun\cite{Koltun2011}\cite{Kraehenbuehl2013} as a separated post-processing step in their pipeline to refine the segmentation result. It models each pixel as a node in the field and employs one pairwise term for each pair of pixels no matter how far they lie (this model is known as dense or fully connected factor graph). By using this model, both short and long-range interactions are taken into account, rendering the system able to recover detailed structures in the segmentation that were lost due to the spatial invariance of the \ac{CNN}. Despite the fact that usually fully connected models are inefficient, this model can be efficiently approximated via probabilistic inference. Figure \ref{fig:semseg:crf-deeplab} shows the effect of this \ac{CRF}-based post-processing on the score and belief maps.
 
-\begin{figure}[!t]
+\begin{figure}[!hb]
 	\hfill
 	\begin{subfigure}{0.19\linewidth}
-		%\includegraphics[width=\linewidth]{scmapgt.eps}\\
-		%\includegraphics[width=\linewidth]{beliefgt.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/scmapgt.eps}\\
+		\includegraphics[width=\linewidth]{Figures/Segmentation/beliefgt.eps}
 		\caption{GT}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.19\linewidth}
-		%\includegraphics[width=\linewidth]{scmap001.eps}\\
-		%\includegraphics[width=\linewidth]{belief001.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/scmap001.eps}\\
+		\includegraphics[width=\linewidth]{Figures/Segmentation/belief001.eps}
 		\caption{\ac{CNN}out}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.19\linewidth}
-		%\includegraphics[width=\linewidth]{scmap002.eps}\\
-		%\includegraphics[width=\linewidth]{belief002.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/scmap002.eps}\\
+		\includegraphics[width=\linewidth]{Figures/Segmentation/belief002.eps}
 		\caption{\ac{CRF}it1}
-	\end{subfigure}		
+	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.19\linewidth}
-		%\includegraphics[width=\linewidth]{scmap003.eps}\\
-		%\includegraphics[width=\linewidth]{belief003.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/scmap003.eps}\\
+		\includegraphics[width=\linewidth]{Figures/Segmentation/belief003.eps}
 		\caption{\ac{CRF}it2}
-	\end{subfigure}		
+	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.19\linewidth}
-		%\includegraphics[width=\linewidth]{scmap004.eps}\\
-		%\includegraphics[width=\linewidth]{belief004.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/scmap004.eps}\\
+		\includegraphics[width=\linewidth]{Figures/Segmentation/belief004.eps}
 		\caption{\ac{CRF}it10}
-	\end{subfigure}	
+	\end{subfigure}
 	\hfill
-	\caption{\ac{CRF} refinement per iteration as shown by the authors of DeepLab\cite{Chen2014a}. The first row shows the score maps (inputs before the softmax function) and the second one shows the belief maps (output of the softmax function).}
-	\label{fig:crf-deeplab}
+	\caption{\ac{CRF} refinement as shown by the authors of DeepLab\cite{Chen2014a}. The first row shows the score maps and the second one shows the belief maps.}
+	\label{fig:semseg:crf-deeplab}
 \end{figure}
 
 The material recognition in the wild network by Bell \emph{et al.}\cite{Bell2015} makes use of various \acp{CNN} trained to identify patches in the \ac{MINC} database. Those \acp{CNN} are used on a sliding window fashion to classify those patches. Their weights are transferred to the same networks converted into \acp{FCN} by adding the corresponding upsampling layers. The outputs are averaged to generate a probability map. At last, the same \ac{CRF} from DeepLab, but discretely optimized, is applied to predict and refine the material at every pixel.
@@ -431,39 +437,39 @@ Another significant work applying a \ac{CRF} to refine the segmentation of a \ac
 
 \subsubsection{Dilated Convolutions}
 
-Dilated convolutions, also named \emph{à-trous} convolutions, are a generalization of Kronecker-factored convolutional filters \cite{Zhou2015} which support exponentially expanding receptive fields without losing resolution. In other words, dilated convolutions are regular ones that make use of upsampled filters. The dilation rate $l$ controls that upsampling factor. As shown in Figure \ref{fig:dilated-convolution}, stacking $l$-dilated convolution makes the receptive fields grow exponentially while the number of parameters for the filters keeps a linear growth. This means that dilated convolutions allow efficient dense feature extraction on any arbitrary resolution. As a side note, it is important to remark that typical convolutions are just $1$-dilated convolutions.
+Dilated convolutions, also named \emph{à-trous} convolutions, are a generalization of Kronecker-factored convolutional filters \cite{Zhou2015} which support exponentially expanding receptive fields without losing resolution. In other words, dilated convolutions are regular ones that make use of upsampled filters. The dilation rate $l$ controls that upsampling factor. As shown in Figure \ref{fig:semseg:dilated-convolution}, stacking $l$-dilated convolution makes the receptive fields grow exponentially while the number of parameters for the filters keeps a linear growth. This means that dilated convolutions allow efficient dense feature extraction on any arbitrary resolution. As a side note, it is important to remark that typical convolutions are just $1$-dilated convolutions.
 
 \begin{figure}[!hbt]
 	\hfill
 	\begin{subfigure}{0.30\linewidth}
-		%\includegraphics[width=\linewidth]{dilated_conv1_rework.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/dilated_conv1_rework.eps}
 		\caption{$1$-dilated}
 		\label{fig:dilated-convolution:1}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.30\linewidth}
-		%\includegraphics[width=\linewidth]{dilated_conv2_rework.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/dilated_conv2_rework.eps}
 		\caption{$2$-dilated}
 		\label{fig:dilated-convolution:2}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.30\linewidth}
-		%\includegraphics[width=\linewidth]{dilated_conv3_rework.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/dilated_conv3_rework.eps}
 		\caption{$3$-dilated}
 		\label{fig:dilated-convolution:3}
 	\end{subfigure}
 	\hfill
 	\caption{As shown in \cite{Yu2015}, dilated convolution filters with various dilation rates: (\protect\subref{fig:dilated-convolution:1}) $1$-dilated convolutions in which each unit has a $3\times3$ receptive fields, (\protect\subref{fig:dilated-convolution:2}) $2$-dilated ones with $7\times7$ receptive fields, and (\protect\subref{fig:dilated-convolution:3}) $3$-dilated convolutions with $15\times15$ receptive fields.}
-	\label{fig:dilated-convolution}
+	\label{fig:semseg:dilated-convolution}
 \end{figure}
 
-In practice, it is equivalent to dilating the filter before doing the usual convolution. That means expanding its size, according to the dilation rate, while filling the empty elements with zeros. In other words, the filter weights are matched to distant elements which are not adjacent if the dilation rate is greater than one. Figure \ref{fig:dilated-convolution-filter} shows examples of dilated filters.
+In practice, it is equivalent to dilating the filter before doing the usual convolution. That means expanding its size, according to the dilation rate, while filling the empty elements with zeros. In other words, the filter weights are matched to distant elements which are not adjacent if the dilation rate is greater than one. Figure \ref{fig:semseg:dilated-convolution-filter} shows examples of dilated filters.
 
 \begin{figure}[!hbt]
 	\centering
-	%includegraphics[width=\linewidth]{dilatedconvolutions_rework.eps}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/dilatedconvolutions_rework.eps}
 	\caption{Filter elements (green) matched to input elements when using $3\times3$ dilated convolutions with various dilation rates. From left to right: $1, 2, $ and $3$.}
-	\label{fig:dilated-convolution-filter}
+	\label{fig:semseg:dilated-convolution-filter}
 \end{figure}
 
 The most important works that make use of dilated convolutions are the multi-scale context aggregation module by Yu \emph{et al.}\cite{Yu2015}, the already mentioned DeepLab (its improved version)\cite{Chen2016}, and the real-time network ENet\cite{Paszke2016}. All of them use combinations of dilated convolutions with increasing dilation rates to have wider receptive fields with no additional cost and without overly downsampling the feature maps. Those works also show a common trend: dilated convolutions are tightly coupled to multi-scale context aggregation as we will explain in the following section.
@@ -472,62 +478,62 @@ The most important works that make use of dilated convolutions are the multi-sca
 
 Another possible way to deal with context knowledge integration is the use of multi-scale predictions. Almost every single parameter of a \acs{CNN} affects the scale of the generated feature maps. In other words, the very same architecture will have an impact on the number of pixels of the input image which correspond to a pixel of the feature map. This means that the filters will implicitly learn to detect features at specific scales (presumably with certain invariance degree). Furthermore, those parameters are usually tightly coupled to the problem at hand, making it difficult for the models to generalize to different scales. One possible way to overcome that obstacle is to use multi-scale networks which generally make use of multiple networks that target different scales and then merge the predictions to produce a single output.
 
-Raj \emph{et al.}\cite{Raj2015} propose a multi-scale version of a fully convolutional \acs{VGG}-16. That network has two paths, one that processes the input at the original resolution and another one which doubles it. The first path goes through a shallow convolutional network. The second one goes through the fully convolutional \acs{VGG}-16 and an extra convolutional layer. The result of that second path is upsampled and combined with the result of the first path. That concatenated output then goes through another set of convolutional layers to generate the final output. As a result, the network becomes more robust to scale variations.
-
-Roy \emph{et al.}\cite{Roy2016} take a different approach using a network composed by four multi-scale \acp{CNN}. Those four networks have the same architecture introduced by Eigen \emph{et al.} \cite{Eigen2015}. One of those networks is devoted to finding semantic labels for the scene. That network extracts features from a progressively coarse-to-fine sequence of scales (see Figure \ref{fig:eigen-multiscale}).
-
 \begin{figure}[!htb]
 	\centering
-	%\includegraphics[width=0.86\linewidth]{eigenmultiscale.eps}
+	\includegraphics[width=0.86\linewidth]{Figures/Segmentation/eigenmultiscale.eps}
 	\caption{Multi-scale \acs{CNN} architecture proposed by Eigen \emph{et al.}\cite{Eigen2015}. The network progressively refines the output using a sequence of scales to estimate depth, normals, and also perform semantic segmentation over an \acs{RGB} input. Figure extracted from \cite{Eigen2015}.}
-	\label{fig:eigen-multiscale}
+	\label{fig:semseg:eigen-multiscale}
 \end{figure}
+
+Raj \emph{et al.}\cite{Raj2015} propose a multi-scale version of a fully convolutional \acs{VGG}-16. That network has two paths, one that processes the input at the original resolution and another one which doubles it. The first path goes through a shallow convolutional network. The second one goes through the fully convolutional \acs{VGG}-16 and an extra convolutional layer. The result of that second path is upsampled and combined with the result of the first path. That concatenated output then goes through another set of convolutional layers to generate the final output. As a result, the network becomes more robust to scale variations.
+
+Roy \emph{et al.}\cite{Roy2016} take a different approach using a network composed by four multi-scale \acp{CNN}. Those four networks have the same architecture introduced by Eigen \emph{et al.} \cite{Eigen2015}. One of those networks is devoted to finding semantic labels for the scene. That network extracts features from a progressively coarse-to-fine sequence of scales (see Figure \ref{fig:semseg:eigen-multiscale}).
 
 Another remarkable work is the network proposed by Bian \emph{et al.}\cite{Bian2016}. That network is a composition of $n$ \acp{FCN} which operate at different scales. The features extracted from the networks are fused together (after the necessary upsampling with an appropriate padding) and then they go through an additional convolutional layer to produce the final segmentation. The main contribution of this architecture is the two-stage learning process which involves, first, training each network independently, then the networks are combined and the last layer is fine-tuned. This multi-scale model allows to add an arbitrary number of newly trained networks in an efficient manner.
 
 \subsubsection{Feature Fusion}
 
-Another way of adding context information to a fully convolutional architecture for segmentation is feature fusion. This technique consists of merging a global feature (extracted from a previous layer in a network) with a more local feature map extracted from a subsequent layer. Common architectures such as the original \acs{FCN} make use of skip connections to perform a late fusion by combining the feature maps extracted from different layers (see Figure \ref{fig:skipconnections}).
+Another way of adding context information to a fully convolutional architecture for segmentation is feature fusion. This technique consists of merging a global feature (extracted from a previous layer in a network) with a more local feature map extracted from a subsequent layer. Common architectures such as the original \acs{FCN} make use of skip connections to perform a late fusion by combining the feature maps extracted from different layers (see Figure \ref{fig:semseg:skipconnections}).
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=0.4\linewidth]{sharpmaskskip.eps}
+	\includegraphics[width=0.45\linewidth]{Figures/Segmentation/sharpmaskskip.eps}
 	\caption{Skip-connection-like architecture, which performs late fusion of feature maps as if making independent predictions for each layer and merging the results. Figure extracted from \cite{Pinheiro2016}.}
-	\label{fig:skipconnections}
+	\label{fig:semseg:skipconnections}
 \end{figure}
 
 Another approach is performing early fusion. This approach is taken by ParseNet\cite{Liu2015} in their context module. The global feature is unpooled to the same spatial size as the local feature and then they are concatenated to generate a combined feature that is used in the next layer or to learn a classifier. Figure \ref{fig:parsenet-module} shows a representation of that process.
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=0.8\linewidth]{parsenetmodule.eps}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/parsenetmodule.eps}
 	\caption{ParseNet context module overview in which a global feature (from a previous layer) is combined with the feature of the next layer to add context information. Figure extracted from \cite{Liu2015}.}
 	\label{fig:parsenet-module}
 \end{figure}
 
 This feature fusion idea was continued by Pinheiro \emph{et al.} in their SharpMask network \cite{Pinheiro2016}, which introduced a progressive refinement module to incorporate features from the previous layer to the next in a top-down architecture. This work will be reviewed later since it is mainly focused on instance segmentation.
 
-In contrast to the pooling operation performed by ParseNet to incorporate global features and in addition to dilated \acsp{FCN} \cite{Chen2014a}\cite{Yu2015}, pyramid pooling empirically demonstrates the capability of global feature extraction by different-region-based context aggregation \cite{Zhao2016}. Figure \ref{fig:pspnet} shows \acfp{PSPNet} \footnote{\url{https://github.com/hszhao/PSPNet}} which provide a pyramid parsing module focused into feature fusion at four different pyramid scales in order to embed global contexts from complex scenes. Pyramid levels and size of each level can be arbitrarily modified. The better performance of \acs{PSPNet} facing \acsp{FCN}-based models lies to: (1) the lack of ability in collecting contextual information, (2) the absence of category relationships and (3) not using sub-regions. This approach achieves state-of-the-art performance on various datasets. 
+In contrast to the pooling operation performed by ParseNet to incorporate global features and in addition to dilated \acsp{FCN} \cite{Chen2014a}\cite{Yu2015}, pyramid pooling empirically demonstrates the capability of global feature extraction by different-region-based context aggregation \cite{Zhao2016}. Figure \ref{fig:semseg:pspnet} shows \acfp{PSPNet} \footnote{\url{https://github.com/hszhao/PSPNet}} which provide a pyramid parsing module focused into feature fusion at four different pyramid scales in order to embed global contexts from complex scenes. Pyramid levels and size of each level can be arbitrarily modified. The better performance of \acs{PSPNet} facing \acsp{FCN}-based models lies to: (1) the lack of ability in collecting contextual information, (2) the absence of category relationships and (3) not using sub-regions. This approach achieves state-of-the-art performance on various datasets. 
 
 \begin{figure*}[!hbt]
 	\centering
-	%\includegraphics[width=\textwidth]{pspnet.eps}
+	\includegraphics[width=\textwidth]{Figures/Segmentation/pspnet.eps}
 	\caption{\acs{PSPNet} architecture. Initial feature maps (b) are extracted from input images (a) by using a pretrained ResNet \cite{He2016} alongside dilated network strategy. Pyramid pooling module (c) covers from the whole, half of to small regions of the image. Finally, initial feature map is concatenated with pooling module output and applying a convolution layer final predicted maps (d) are generated. Figure extracted from \cite{Zhao2016}.}
-	\label{fig:pspnet}
+	\label{fig:semseg:pspnet}
 \end{figure*}
 
 \subsubsection{\aclp{RNN}}
 
 \begin{figure*}[!t]
 	\centering
-	%\includegraphics[width=\linewidth]{reseg_base.eps}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/reseg_base.eps}
 	\caption{Representation of ReSeg network. VGG-16 convolutional layers are represented by the blue and yellow first layers. The rest of the architecture is based on the ReNet approach with fine-tuning purposes. Figure extracted from \cite{Visin2016}.}
-	\label{fig:reseg-network}
+	\label{fig:semseg:reseg-network}
 \end{figure*}
 
 As we noticed, \acp{CNN} have been successfully applied to multi-dimensional data, such as images. Nevertheless, these networks rely on hand specified kernels limiting the architecture to local contexts. Taking advantage of its topological structure, \aclp{RNN} have been successfully applied for modeling short- and long-temporal sequences. In this way and by linking together pixel-level and local information, \acp{RNN} are able to successfully model global contexts and improve semantic segmentation. However, one important issue is the lack of a natural sequential structure in images and the focus of standard vanilla \acp{RNN} architectures on one-dimensional inputs.  
 	
-Based on ReNet model for image classification Visin \emph{et al.}\cite{Visin2015} proposed an architecture for semantic segmentation called ReSeg \cite{Visin2016} represented in Figure \ref{fig:reseg-network}. In this approach, the input image is processed with the first layers of the \acs{VGG}-16 network \cite{Simonyan2014}, feeding the resulting feature maps into one or more ReNet layers for fine-tuning. Finally, feature maps are resized using upsampling layers based on transposed convolutions. In this approach \acp{GRU} have been used as they strike a good performance balance regarding memory usage and computational power. Vanilla \acsp{RNN} have problems modeling long-term dependencies mainly due to the vanishing gradients problem. Several derived models such as \ac{LSTM} networks \cite{Hochreiter1997} and \acp{GRU} \cite{Cho2014} are the state-of-art in this field to avoid such problem. 
+Based on ReNet model for image classification Visin \emph{et al.}\cite{Visin2015} proposed an architecture for semantic segmentation called ReSeg \cite{Visin2016} represented in Figure \ref{fig:semseg:reseg-network}. In this approach, the input image is processed with the first layers of the \acs{VGG}-16 network \cite{Simonyan2014}, feeding the resulting feature maps into one or more ReNet layers for fine-tuning. Finally, feature maps are resized using upsampling layers based on transposed convolutions. In this approach \acp{GRU} have been used as they strike a good performance balance regarding memory usage and computational power. Vanilla \acsp{RNN} have problems modeling long-term dependencies mainly due to the vanishing gradients problem. Several derived models such as \ac{LSTM} networks \cite{Hochreiter1997} and \acp{GRU} \cite{Cho2014} are the state-of-art in this field to avoid such problem. 
 
 Inspired on the same ReNet architecture, a novel \ac{LSTM-CF} model for scene labeling was proposed by \cite{ZhenLi2016}. In this approach, they use two different data sources: \acs{RGB} and depth. The \acs{RGB} pipeline relies on a variant of the DeepLab architecture \cite{Chen2014} concatenating features at three different scales to enrich feature representation (inspired by \cite{Li2016}). The global context is modeled vertically over both, depth and photometric data sources, concluding with a horizontal fusion in both direction over these vertical contexts.
 
@@ -545,14 +551,14 @@ For this purpose, Hariharan et al. \cite{Hariharan2014} proposed a \ac{SDS} meth
 
 Later, Pinheiro et al. \cite{Pinheiro2015} presented DeepMask model, an object proposal approach based on a single ConvNet. This model predicts a segmentation mask for an input patch and the likelihood of this patch for containing an object. The two tasks are learned jointly and computed by a single network, sharing most of the layers except last ones which are task-specific. 
 
-Based on the DeepMask architecture as a starting point due to its effectiveness, the same authors presented a novel architecture for object instance segmentation implementing a top-down refinement process \cite{Pinheiro2016} and achieving a better performance in terms of accuracy and speed. The goal of this process is to efficiently merge low-level features with high-level semantic information from upper network layers. The process consisted in different refinement modules stacked together (one module per pooling layer), with the purpose of inverting pooling effect by generating a new upsampled object encoding. Figure \ref{fig:sharpmask-refinement-module} shows the refinement module in SharpMask.
-
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=0.75\linewidth]{sharpmaskmodule.eps}
+	\includegraphics[width=0.75\linewidth]{Figures/Segmentation/sharpmaskmodule.eps}
 	\caption{SharpMask's top-down architecture with progressive refinement using their signature modules. That refinement merges spatially rich information from lower-level features with high-level semantic cues encoded in upper layers. Figure extracted from \cite{Pinheiro2015}.}
-	\label{fig:sharpmask-refinement-module}
+	\label{fig:semseg:sharpmask-refinement-module}
 \end{figure}
+
+Based on the DeepMask architecture as a starting point due to its effectiveness, the same authors presented a novel architecture for object instance segmentation implementing a top-down refinement process \cite{Pinheiro2016} and achieving a better performance in terms of accuracy and speed. The goal of this process is to efficiently merge low-level features with high-level semantic information from upper network layers. The process consisted in different refinement modules stacked together (one module per pooling layer), with the purpose of inverting pooling effect by generating a new upsampled object encoding. Figure \ref{fig:semseg:sharpmask-refinement-module} shows the refinement module in SharpMask.
 
 Another approach, based on Fast R-CNN as a starting point and using DeepMask object proposals instead of Selective Search was presented by Zagoruyko et al \cite{Zagoruyko2016}. This combined system called MultiPath classifier, improved performance over COCO dataset and supposed three modifications to Fast R-CNN: improving localization with an integral loss, provide context by using foveal regions and finally skip connections to give multi-scale features to the network. The system achieved a 66\% improvement over the baseline Fast R-CNN.
 
@@ -574,15 +580,15 @@ Ma \emph{et al.}\cite{Ma2017} propose a novel approach for object-class segmenta
 
 \acs{3D} geometric data such as point clouds or polygonal meshes are useful representations thanks to their additional dimension which provides methods with rich spatial information that is intuitively useful for segmentation. However, the vast majority of successful deep learning segmentation architectures -- \acp{CNN} in particular -- are not originally engineered to deal with unstructured or irregular inputs such as the aforementioned ones. In order to enable weight sharing and other optimizations in convolutional architectures, most researchers have resorted to 3D voxel grids or projections to transform unstructured and unordered point clouds or meshes into regular representations before feeding them to the networks. For instance, Huang \emph{et al.}\cite{Huang2016} take a point cloud and parse it through a dense voxel grid, generating a set of occupancy voxels which are used as input to a 3D \acs{CNN} to produce one label per voxel. They then map back the labels to the point cloud. Although this approach has been applied successfully, it has some disadvantages like quantization, loss of spatial information, and unnecessarily large representations. For that reason, various researchers have focused their efforts on creating deep architectures that are able to directly consume unstructured \acs{3D} point sets or meshes.
 
-PointNet\cite{Qi2016} is a pioneering work which presents a deep neural network that takes raw point clouds as input, providing a unified architecture for both classification and segmentation. Figure \ref{fig:pointnetarchitecture} shows that two-part network which is able to consume unordered point sets in 3D.
+PointNet\cite{Qi2016} is a pioneering work which presents a deep neural network that takes raw point clouds as input, providing a unified architecture for both classification and segmentation. Figure \ref{fig:semseg:pointnetarchitecture} shows that two-part network which is able to consume unordered point sets in 3D.
 
-As we can observe, PointNet is a deep network architecture that stands out of the crowd due to the fact that it is based on fully connected layers instead of convolutional ones. The architecture features two subnetworks: one for classification and another for segmentation. The classification subnetwork takes a point cloud and applies a set of transforms and \acp{MLP} to generate features which are then aggregated using max-pooling to generate a global feature which describes the original input cloud. That global feature is classified by another \ac{MLP} to produce output scores for each class. The segmentation subnetwork concatenates the global feature with the per-point features extracted by the classification network and applies another two \acp{MLP} to generate features and produce output scores for each point. As an improvement, the same authors proposed PointNet++ \cite{Qi2017} which is able to capture local features with increasing context scales by using metric space distances.
+As we can observe, PointNet is a deep network architecture that stands out of the crowd due to the fact that it is based on fully connected layers instead of convolutional ones. The architecture features two subnetworks: one for classification and another for segmentation. The classification subnetwork takes a point cloud and applies a set of transforms and \acp{MLP} to generate features which are then aggregated using max-pooling to generate a global feature which describes the original input cloud. That global feature is classified by another \ac{MLP} to produce output scores for each class. The segmentation subnetwork concatenates the global feature with the per-point features extracted by the classification network and applies another two \acp{MLP} to generate features and produce output scores for each point. As an improvement, the same authors proposed PointNet++ \cite{Qi2017} which is able to capture local features with increasing context by using metric space distances.
 
 \begin{figure*}[!t]
 	\centering
-	%\includegraphics[width=0.9\linewidth]{pointnetarchitecture_rework}
+	\includegraphics[width=0.9\linewidth]{Figures/Segmentation/pointnetarchitecture_rework}
 	\caption{The PointNet unified architecture for point cloud classification and segmentation. Figure reproduced from \cite{Qi2016}.}
-	\label{fig:pointnetarchitecture}
+	\label{fig:semseg:pointnetarchitecture}
 \end{figure*}
 
 Another remarkable work to deal with point clouds as graphs and directly apply convolutions without any kind of discretization is the \ac{DGCNN} \cite{Wang2018}. This novel architecture proposes a new neural network module, namely \emph{EdgeConv}, which operates directly over the point cloud and incorporates several important properties (local neighborhood information, it can be stacked, and it is able to capture long-distance properties). That module is easily pluggable into existing architectures and has been proven to capture and exploit fine-grained and global properties of point clouds expressed as graphs.
@@ -591,57 +597,57 @@ Another remarkable work to deal with point clouds as graphs and directly apply c
 
 As we have observed, there has been a significant progress in single-image segmentation. However, when dealing with image sequences, many systems rely on the naïve application of the very same algorithms in a frame-by-frame manner. This approach works, often producing remarkable results. Nevertheless, applying those methods frame by frame is usually non-viable due to computational cost. In addition, those methods completely ignore temporal continuity and coherence cues which might help increase the accuracy of the system while reducing its execution time.
 
-Arguably, the most remarkable work in this regard is the clockwork \ac{FCN} by Shelhamer \emph{et al.}\cite{Shelhamer2016}. This network is an adaptation of a \ac{FCN} to make use of temporal cues in video to decrease inference time while preserving accuracy. The clockwork approach relies on the following insight: feature velocity -- the temporal rate of change of features in the network -- across frames varies from layer to layer so that features from shallow layers change faster than deep ones. Under that assumption, layers can be grouped into stages, processing them at different update rates depending on their depth. By doing this, deep features can be persisted over frames thanks to their semantic stability, thus saving inference time. Figure \ref{fig:clockworkfcn} shows the network architecture of the clockwork \ac{FCN}.
+Arguably, the most remarkable work in this regard is the clockwork \ac{FCN} by Shelhamer \emph{et al.}\cite{Shelhamer2016}. This network is an adaptation of a \ac{FCN} to make use of temporal cues in video to decrease inference time while preserving accuracy. The clockwork approach relies on the following insight: feature velocity -- the temporal rate of change of features in the network -- across frames varies from layer to layer so that features from shallow layers change faster than deep ones. Under that assumption, layers can be grouped into stages, processing them at different update rates depending on their depth. By doing this, deep features can be persisted over frames thanks to their semantic stability, thus saving inference time. Figure \ref{fig:semseg:clockworkfcn} shows the network architecture of the clockwork \ac{FCN}.
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=\linewidth]{clockworkfcn}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/clockworkfcn}
 	\caption{The clockwork \acs{FCN} with three stages and their corresponding clock rates. Figure extracted from \cite{Shelhamer2016}.}
-	\label{fig:clockworkfcn}
+	\label{fig:semseg:clockworkfcn}
 \end{figure}
 
-It is important to remark that the authors propose two kinds of update rates: fixed and adaptive. The fixed schedule just sets a constant time frame for recomputing the features for each stage of the network. The adaptive schedule fires each clock on a data-driven manner, e.g., depending on the amount of motion or semantic change. Figure \ref{fig:clockworkfcn-adaptive} shows an example of this adaptive scheduling.
+It is important to remark that the authors propose two kinds of update rates: fixed and adaptive. The fixed schedule just sets a constant time frame for recomputing the features for each stage of the network. The adaptive schedule fires each clock on a data-driven manner, e.g., depending on the amount of motion or semantic change. Figure \ref{fig:semseg:clockworkfcn-adaptive} shows an example of this adaptive scheduling.
 
 \begin{figure}[!hbt]
 	\centering
-	%\includegraphics[width=\linewidth]{clockworkfcn-adaptive}
+	\includegraphics[width=\linewidth]{Figures/Segmentation/clockworkfcn-adaptive}
 	\caption{Adaptive clockwork method proposed by Shelhamer \emph{et al.}\cite{Shelhamer2016}. Extracted features persists during static frames while they are recomputed for dynamic ones. Figure extracted from \cite{Shelhamer2016}.}
-	\label{fig:clockworkfcn-adaptive}
+	\label{fig:semseg:clockworkfcn-adaptive}
 \end{figure}
 
 Zhang \emph{et al.}\cite{Zhang2014} took a different approach and made use of a \acs{3D}\acs{CNN}, which was originally created for learning features from volumes, to learn hierarchical spatio-temporal features from multi-channel inputs such as video clips. In parallel, they over-segment the input clip into supervoxels. Then they use that supervoxel graph and embed the learned features in it. The final segmentation is obtained by applying graph-cut\cite{Boykov2001} on the supervoxel graph.
 
-Another remarkable method, which builds on the idea of using 3D convolutions, is the deep end-to-end voxel-to-voxel prediction system by Tran \emph{et al.}\cite{Tran2016}. In that work, they make use of the \ac{C3D} network introduced by themselves on a previous work \cite{Tran2015}, and extend it for semantic segmentation by adding deconvolutional layers at the end. Their system works by splitting the input into clips of $16$ frames, performing predictions for each clip separately. Its main contribution is the use of 3D convolutions. Those convolutions make use of \acl{3D} filters which are suitable for spatio-temporal feature learning across multiple channels, in this case frames. Figure \ref{fig:2dvs3dconvolutions} shows the difference between 2D and 3D convolutions applied to multi-channel inputs, proving the usefulness of the 3D ones for video segmentation.
+Another remarkable method, which builds on the idea of using 3D convolutions, is the deep end-to-end voxel-to-voxel prediction system by Tran \emph{et al.}\cite{Tran2016}. In that work, they make use of the \ac{C3D} network introduced by themselves on a previous work \cite{Tran2015}, and extend it for semantic segmentation by adding deconvolutional layers at the end. Their system works by splitting the input into clips of $16$ frames, performing predictions for each clip separately. Its main contribution is the use of 3D convolutions. Those convolutions make use of \acl{3D} filters which are suitable for spatio-temporal feature learning across multiple channels, in this case frames. Figure \ref{fig:semseg:2dvs3dconvolutions} shows the difference between 2D and 3D convolutions applied to multi-channel inputs, proving the usefulness of the 3D ones for video segmentation.
 
 \begin{figure}[!hbt]
 	\centering
 	\begin{subfigure}{0.49\linewidth}
-		%\includegraphics[width=\linewidth]{2dconvolutionframes.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/2dconvolutionframes.eps}
 		\caption{2D Convolution}
 		\label{fig:2dvs3dconvolutions:2dconvolution}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.49\linewidth}
-		%\includegraphics[width=\linewidth]{3dconvolution.eps}
+		\includegraphics[width=\linewidth]{Figures/Segmentation/3dconvolution.eps}
 		\caption{3D Convolution}
 		\label{fig:2dvs3dconvolutions:3dconvolution}
 	\end{subfigure}
 	\caption{Difference between 2D and 3D convolutions applied on a set of frames. (\protect\subref{fig:2dvs3dconvolutions:2dconvolution}) 2D convolutions use the same weights for the whole depth of the stack of frames (multiple channels) and results in a single image. (\protect\subref{fig:2dvs3dconvolutions:3dconvolution}) 3D convolutions use 3D filters and produce a 3D volume as a result of the convolution, thus preserving temporal information of the frame stack.}
-	\label{fig:2dvs3dconvolutions}
+	\label{fig:semseg:2dvs3dconvolutions}
 \end{figure}
 
-Novel approaches such as SegmPred model proposed by Luc et al. \cite{Luc2017} are able to predict semantic segmentation maps of not yet observed video frames in the future. This model consists in a two-scale architecture which is trained in both, adversarial and non-adversarial ways in order to deal with blurred predicted results. Model inputs have been previously per-frame annotated and consists in the softmax output layer pre-activations. Model performance drops when predicting more than a few frames in the future. However, this approach is able to model the object dynamics on the semantic segmentation maps, which remains an open challenge for current computer vision systems.
+Novel approaches such as \emph{SegmPred} model proposed by Luc et al. \cite{Luc2017} are able to predict semantic segmentation maps of not yet observed video frames in the future. This model consists in a two-scale architecture which is trained in both, adversarial and non-adversarial ways in order to deal with blurred predicted results. Model inputs have been previously per-frame annotated and consists in the softmax output layer pre-activations. Model performance drops when predicting more than a few frames in the future. However, this approach is able to model the object dynamics on the semantic segmentation maps, which remains an open challenge for current computer vision systems.
 
 \subsection{Loss functions for semantic segmentation}
 
 Particular choices of the loss function can strongly affect deep models accuracy and their learning process. For training image and patch-based classification models, we find that the vast majority of research works and applications simply use a cross entropy loss function. However, for regression models, we find that L1 and L2 losses are the most common functions. In this work, we are targeting a slightly different problem, pixel-based classification. An important issue to consider when moving from image or patch-based classification to pixel-based classification is that the last one is more prone to suffer the data imbalance problem. Reviewing existing works in the literature we found that categorical cross entropy and the dice similarity coefficient are the main loss functions used for training semantic segmentation models. We also found different variations for these methods, such as combining both in a weighted manner. For example, ReLayNet \cite{Roy2017} is trained to optimize a joint loss function comprising of weighted categorical cross-entropy and Dice similarity score. Another common variation that has been used in existing works is the use of a weighted scheme for the categorical cross entropy itself. Ronneberger et al \cite{Ronneberger2015} precompute a weight map for the categorical cross entropy loss. It is also very common when we have a single background class and few foreground classes, in that case, the data imbalance problem becomes overwhelming. Several previous approaches resorted to loss functions based on sample re-weighting where foreground regions are given more importance than background ones during learning. However, other approaches only optimize the dice similarity score instead \cite{Milletari2016}. More recently, a new variant has been presented, it is a loss strategy coined as Focal Loss \cite{Lin2017b}, that adds a factor $\gamma$ to the standard cross entropy criterion. It basically reduces the relative loss for well-classified pixels and puts more focus on hard, misclassified ones. A similar strategy can be applied for refining object boundaries, which often contain misclassified pixels.
  
-Reviewing loss functions used in existing architectures for semantic segmentation, we find that the FCN \cite{Long2015} was trained using a per-pixel multinomial logistic loss and was validated with the standard metric of mean pixel intersection over union. The more recent DeepLab \cite{Chen2016} architecture, similarly to FCN, uses as a loss function the sum of cross-entropy terms for each spatial position in the CNN output map. In this case, the original input is subsampled by $8$ and all positions are equally weighted in the loss function. PSPNet \cite{Zhao2016} also uses the cross-entropy loss function, but in this work, two loss functions are optimized during the training of the network. Apart from the main branch using cross-entropy loss to train the final classifier, another classifier is applied after the fourth stage. The optimization of these two functions is performed in a weighted manner, applying different weights to each loss function and therefore balancing the auxiliary loss function. SegmPred \cite{Luc2017} model relies on \ac{GDL},  designed to sharpen results by penalizing high-frequency mismatches such as errors along the object boundaries. Using \ac{GDL} alongside L1 loss function, SegmPred model results significantly improved by sharpening its outputs. 
+Reviewing loss functions used in existing architectures for semantic segmentation, we find that \ac{FCN} \cite{Long2015} was trained using a per-pixel multinomial logistic loss and was validated with the standard metric of mean pixel intersection over union. The more recent DeepLab \cite{Chen2016} architecture, similarly to \ac{FCN}, uses as a loss function the sum of cross-entropy terms for each spatial position in the \ac{CNN} output map. PSPNet \cite{Zhao2016} also uses the cross-entropy loss function, but in this work, two loss functions are optimized during the training of the network. Apart from the main branch using cross-entropy loss to train the final classifier, another classifier is applied after the fourth stage. The optimization of these two functions is performed in a weighted manner, applying different weights to each loss function and therefore balancing the auxiliary loss function. SegmPred \cite{Luc2017} model relies on \ac{GDL}, designed to sharpen results by penalizing high-frequency mismatches such as errors along the object boundaries. Using \ac{GDL} alongside L1 loss function, SegmPred model results significantly improved by sharpening its outputs. 
 
 In general, the particular choice of the loss function will depend on the type, amount of classes and samples that your dataset contains for each class. Moreover, it is important to consider the number of pixels that are hard to classify pixels in your dataset (compared to the total amount in the ground truth segmentation masks). Based on those aspects, some of the previously presented approaches may help you facing the data imbalance problem and therefore, provide you with a more accurate model for semantic segmentation.
 
 \section{Discussion}
-\label{sec:discussion}
+\label{cha:semseg:sec:discussion}
 
 In the previous section we reviewed the existing methods from a literary and qualitative point of view, i.e., we did not take any quantitative result into account. In this Section we are going to discuss the very same methods from a numeric standpoint. First of all, we will describe the most popular evaluation metrics that can be used to measure the performance of semantic segmentation systems from three aspects: execution time, memory footprint, and accuracy. Next, we will gather the results of the methods on the most representative datasets using the previously described metrics. After that, we will summarize and draw conclusions about those results. At last, we enumerate possible future research lines that we consider significant for the field.
 
@@ -684,16 +690,16 @@ Many evaluation criteria have been proposed and are frequently used to assess th
 
 Of all metrics described above, the \ac{MIoU} stands out of the crowd as the most used metric due to its representativeness and simplicity. Most challenges and researchers make use of that metric to report their results.
 
+\clearpage
+
 \subsection{Results}
 
-As we stated before, Section \ref{sec:methods} provided a functional description of the reviewed methods according to their targets. Now we gathered all the quantitative results for those methods as stated by their authors in their corresponding papers (see Table \ref{table:results}. These results are organized into three parts depending on the input data used by the methods: \acs{2D} \acs{RGB} or \acs{2.5D} \acs{RGB-D} images, volumetric \acs{3D}, or video sequences.
+As we stated before, Section \ref{cha:semseg:sec:methods} provided a functional description of the reviewed methods according to their targets. Now we gathered all the quantitative results for those methods as stated by their authors in their corresponding papers (see Table \ref{table:semseg:results}. These results are organized into three parts depending on the input data used by the methods: \acs{2D} \acs{RGB} or \acs{2.5D} \acs{RGB-D} images, volumetric \acs{3D}, or video sequences.
 
 The most used datasets have been selected for that purpose. It is important to remark the heterogeneity of the papers in the field when reporting results. Although most of them try to evaluate their methods in standard datasets and provide enough information to reproduce their results, also expressed in widely known metrics, many others fail to do so. That leads to a situation in which it is hard or even impossible to fairly compare methods.
 
 \begin{table}[!htb]
   \centering
-  \caption{Accuracy results for the most relevant methods and datasets.}
-  \label{table:results}
   \resizebox{\linewidth}{!}{
   \begin{tabular}{|r|c|c|c|c|c|c|c|||c|c|c|||c|c|||c|}
     \hline
@@ -722,6 +728,8 @@ The most used datasets have been selected for that purpose. It is important to r
     SegmPred \cite{Luc2017} \footnote{This model is focused on predicting future frames in the space of semantic segmentation, thus a direct comparison with the other methods listed in this table would not be fair.} & - & - & - & \textbf{46.80} & \textbf{59.40} & - & - & - & - & - & - & - & - \\
     \hline
   \end{tabular}}
+  \caption{Accuracy results for the most relevant methods and datasets.}
+  \label{table:semseg:results}
 \end{table}
 
 Furthermore, we also came across the fact few authors provide information about other metrics rather than accuracy. Despite the importance of other metrics, most of the papers do not include any data about execution time nor memory footprint. In some cases that information is provided, but no reproducibility information is given so it is impossible to know the setup that produced those results which are of no use.
@@ -778,9 +786,9 @@ Based on the reviewed research, which marks the state of the art of the field, w
 \end{itemize}
 
 \section{Conclusion}
-\label{sec:conclusion}
+\label{cha:semseg:sec:conclusion}
 
-To the best of our knowledge, this is the first review paper in the literature which focuses on semantic segmentation using deep learning. In comparison with other surveys, this paper is devoted to such rising topic as deep learning, covering the most advanced and recent work on that front.
+To the best of our knowledge, this is the first review in the literature which focuses on semantic segmentation using deep learning. In comparison with other surveys, this review is devoted to such a rising topic as deep learning, covering the most advanced and recent work on that front.
 
 We formulated the semantic segmentation problem and provided the reader with the necessary background knowledge about deep learning for the task. We covered the contemporary literature of datasets and methods, providing a comprehensive survey of $28$ datasets and $29$ methods.
 
