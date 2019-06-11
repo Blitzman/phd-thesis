@@ -1,0 +1,70 @@
+\usetikzlibrary{arrows}
+\usetikzlibrary{arrows.meta}
+
+\newcommand\cubeslice[6]
+{
+	\tikzset{cubeline/.style={uablue50, ultra thick}}
+
+    \def\sliceoff{#5}
+    \def\side{#4}
+    \def\slice{#6}
+
+    % draw sliceoff
+    \ifnum\slice=1
+      \filldraw[color=uablue50, opacity=0.5] (#1 em, #2 em + \sliceoff em, #3 em) -- (#1 em, #2 em + \sliceoff em, #3 em + \side em) -- (#1 em + \side em, #2 em + \sliceoff em, #3 em + \side em) -- (#1 em + \side em, #2 em + \sliceoff em, #3 em) -- cycle;
+     \draw[dashed, uablue50] (#1 em, #2 em + \sliceoff em, #3 em) -- (#1 em, #2 em + \sliceoff em, #3 em + \side em) -- (#1 em + \side em, #2 em + \sliceoff em, #3 em + \side em) -- (#1 em + \side em, #2 em + \sliceoff em, #3 em)-- cycle;
+    \fi
+	% Draw sliceX
+    \ifnum\slice=2
+      \filldraw[color=uablue50, opacity=0.5] (#1 em + \sliceoff em, #2 em, #3 em) -- (#1 em + \sliceoff em, #2 em, #3 em + \side em) -- (#1 em + \sliceoff em, #2 em + \side em, #3 em + \side em) -- (#1 em + \sliceoff em, #2 em + \side em, #3 em) -- cycle;
+     \draw[dashed, uablue50] (#1 em + \sliceoff em, #2 em, #3 em) -- (#1 em + \sliceoff em, #2 em, #3 em + \side em) -- (#1 em + \sliceoff em, #2 em + \side em, #3 em + \side em) -- (#1 em + \sliceoff em, #2 em + \side em, #3 em) -- cycle;
+    \fi
+	% Draw sliceY
+    \ifnum\slice=3
+      \filldraw[color=uablue50, opacity=0.5] (#1 em, #2 em, #3 em + \sliceoff em) -- (#1 em, #2 em + \side em, #3 em + \sliceoff em) -- (#1 em + \side em, #2 em + \side em, #3 em + \sliceoff em) -- (#1 em + \side em, #2 em, #3 em + \sliceoff em) -- cycle;
+     \draw[dashed, uablue50] (#1 em, #2 em, #3 em + \sliceoff em) -- (#1 em, #2 em + \side em, #3 em + \sliceoff em) -- (#1 em + \side em, #2 em + \side em, #3 em + \sliceoff em) -- (#1 em + \side em, #2 em, #3 em + \sliceoff em)-- cycle;
+    \fi
+
+    % draw cube 
+	\draw [cubeline] (#1 em, #2 em, #3 em) -- (#1 em, #2 em + \side em, #3 em);
+	\draw [cubeline] (#1 em, #2 em, #3 em) -- (#1 em, #2 em, #3 em + \side em);
+	\draw [cubeline] (#1 em, #2 em, #3 em) -- (#1 em + \side em, #2 em, #3 em);
+    \draw [cubeline] (#1 em + \side em, #2 em, #3 em) -- (#1 em + \side em,  #2 em + \side em, #3 em) -- (#1 em, #2 em + \side em, #3 em);
+    \draw [cubeline] (#1 em, #2 em, #3 em + \side em) -- (#1 em + \side em, #2 em, #3 em + \side em) -- (#1 em + \side em, #2 em + \side em, #3 em + \side em) -- (#1 em, #2 em + \side em,  #3 em + \side em) -- (#1 em,  #2 em, #3 em + \side em);
+    \draw [cubeline] (#1 em + \side em, #2 em, #3 em) -- (#1 em + \side em, #2 em, #3 em + \side em);
+    \draw [cubeline] (#1 em + \side em, #2 em + \side em, #3 em) -- (#1 em + \side em, #2 em +\side em, #3 em + \side em);
+    \draw [cubeline] (#1 em, #2 em + \side em, #3 em) -- (#1 em, #2 em + \side em,  #3 em + \side em);
+}
+
+\begin{tikzpicture}[,]
+	\cubeslice{0}{0}{0}{0.5}{0.25}{2}
+	\cubeslice{0}{0.75}{0}{0.5}{0.25}{1}
+	\cubeslice{0}{1.5}{0}{0.5}{0.25}{3}
+   \node[anchor=south west] at (-60 em, -4 em) {\includegraphics[width=48 em] {Figures/ObjRecog/lonchanet/chairn_1.png}};
+	\node[anchor=south west] (view1) at (24 em, -5 em) {\includegraphics[width=18 em]{Figures/ObjRecog/lonchanet/1.jpg}};
+	\node[anchor=south west] (view2) at (24 em, 17 em) {\includegraphics[width=18 em]{Figures/ObjRecog/lonchanet/2.jpg}};
+	\node[anchor=south west] (view3) at (24 em, 39 em) {\includegraphics[width=18 em]{Figures/ObjRecog/lonchanet/3.jpg}};
+   \node[right=8 em of view3, minimum height=9.6 em, minimum width=32 em, draw=uablue50, ultra thick] (lenet3) {\larger \larger \larger \larger \larger \larger GoogLeNet};
+   \node[right=8 em of view2, minimum height=9.6 em, minimum width=32 em, draw=uablue50, ultra thick] (lenet2){\larger \larger \larger \larger \larger \larger GoogLeNet};
+   \node[right=8 em of view1, minimum height=9.6 em, minimum width=32 em, draw=uablue50, ultra thick] (lenet1){\larger \larger \larger \larger \larger \larger GoogLeNet};
+  \draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (view1.east) to (lenet1.west);
+  \draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (view2.east) to (lenet2.west);
+  \draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (view3.east) to (lenet3.west);
+  \node[anchor=south west, uablue50, fill=uablue30, minimum width=2 em, minimum height=64 em, right=8 em of lenet2] (concat) {};
+\draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (lenet1.east) to ([xshift=8em]lenet1.east);
+  \draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (lenet2.east) to ([xshift=8em]lenet2.east);
+  \draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (lenet3.east) to ([xshift=8em]lenet3.east);
+\node[right=8 em of concat, minimum height=9.6 em, minimum width=32 em, draw=uablue50, ultra thick] (softmax) {\larger \larger \larger \larger \larger \larger FC + softmax};
+\node[right=-0.1 em of softmax, minimum height=48 em, minimum width=10 em, draw=uablue50, ultra thick] (output) {};
+\node[right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Desk};
+\node[yshift=-4.8 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Table};
+\node[yshift=-9.6 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger NStand};
+\node[yshift=-14.4 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Bed};
+\node[yshift=-19.2 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Toilet};
+\node[yshift=-24 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Dresser};
+\node[yshift=-28.8 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Bathtub};
+\node[yshift=-33.6 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Sofa};
+\node[yshift=-38.4 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, ultra thick] {\larger \larger \larger \larger  \larger Monitor};
+\node[yshift=-43.2 em, right=0 em of output.north, anchor=north, minimum height=4.8em, minimum width=10 em, draw=uablue50, fill=uablue30, ultra thick] {\larger \larger \larger \larger  \larger Chair};
+\draw[uablue50, -{Latex[scale=2.0]}, ultra thick] (concat.east) to (softmax.west);
+\end{tikzpicture}
