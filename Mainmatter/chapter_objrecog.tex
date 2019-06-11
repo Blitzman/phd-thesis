@@ -2,27 +2,29 @@
 \label{cha:objrecog}
 
 \begin{chapterabstract}
-In this chapter, we address the problem of object classification. To approach this challenge, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. More specifically, we leverage deep learning for such task.
+In this chapter, we address the problem of object classification. To approach this challenge, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. Specifically, we leverage deep learning for such task.
 
 The chapter begins introducing and formulating the object classification task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature and datasets in Sections \ref{cha:objrecog:sec:relatedworks} and \ref{cha:objrecog:sec:datasets}. After that, we present our first proposal for 3D object classification, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
 \end{chapterabstract}
+
+\minitoc
 
 \clearpage
 
 \section{Introduction}
 \label{cha:objrecog:sec:introduction}
 
-Object classification is fundamental to computer vision and despite the progress achieved during the last years, it still remains a challenging area of research. Arguably, most of the interest in object classification is due to its usefulness for robotics.
+Object classification is fundamental to computer vision and despite the progress achieved during the last years, it still remains a challenging area of research. Arguably, most of the interest in object classification is due to its usefulness for robotics in real-world and everyday situations.
 
-In that regard, recognizing objects is one of the problems that must be solved to achieve total visual scene understanding. Such deeper and better knowledge of the environment eases and enables the execution of a wide variety of more complex tasks. For instance, accurately recognizing objects in a room can be extremely useful for any robotic system that navigates within indoor environments. Due to the unstructured nature of those environments, autonomous robots need to do reasoning grounded in the dynamic real world. In other words, they need to understand the information captured by their sensors to perform tasks such as grasping, navigation, mapping, or even providing humans with information about their surroundings. Identifying the classes to which objects belong is one key step to enhance the aforementioned capabilities.
+In that regard, recognizing objects is one of the problems that must be solved to achieve total visual scene understanding. Such deeper and better knowledge of the environment eases and enables the execution of a wide variety of more complex tasks. For instance, accurately recognizing objects in a room can be extremely useful for any robotic system that navigates within indoor environments to locate themselves or to perform tasks within such scenarios. Due to the unstructured nature of those environments, autonomous robots need to do reasoning grounded in the dynamic real world. In other words, they need to understand the information captured by their sensors to perform tasks such as grasping, navigation, mapping, or even providing humans with information about their surroundings. Identifying the classes to which objects belong is one key step to enhance the aforementioned capabilities.
 
 Despite the easy intuitive interpretation of the problem, its inherent difficulty can be misleading. We humans recognize numerous objects in difficult settings (e.g., different points of view, occlusion, or clutter) with little to no effort. However, approaching that problem is not that easy for a computer and taking into account all the possible settings and combinations of external factors renders this task a difficult one to solve efficiently and with high precision (which is often required in numerous application scenarios).
 
 From a formal point of view, the object classification task can be formulated as follows: given an image $\mathcal{I}^{H\times W}$ in which an object $\mathcal{O}$ appears, which can be either a gray-scale or RGB array of $W$ pixels in width and $H$ pixels in height, the goal is to predict the class of the object $\mathcal{L_O}$ from a set of $N$ predefined object classes $\mathcal{L} = \{\mathcal{L}_0, \mathcal{L}_1, ..., \mathcal{L}_{N-1}\}$.
 
-Most of the classic literature of this topic tackled such problem by devising hand-crafted feature descriptors that are extracted on certain keypoints detected over the bidimensional image and later used either to compare them against pre-existing object descriptors in a database to match them to a certain class or either to feed them as input to a shallow machine learning architecture that learns to classify those descriptors to predict the class of the object that appears in the image. That paradigm shifted recently due to the success of deep learning architectures that are able to exploit their feature learning capabilities to avoid the need of hand engineering descriptors while achieving unprecedented accuracy levels. Furthermore, the adoption and spread of depth sensors has also added a literally new dimension to learn from to boost performance. The approaches introduced in this thesis are part of that cutting-edge trend that takes advantage of the additional geometric information facilitated by commodity range scanners to perform learning over them using deep architectures. A more detailed review of the field, from the very beginning to the current trends using 3D data and deep neural networks, is performed in Section \ref{cha:objrecog:sec:relatedworks}.
+Most of the classic literature on this topic tackled such problem by devising hand-crafted feature descriptors that are extracted on certain keypoints detected over the bidimensional image and later used either to compare them against pre-existing object descriptors in a database to match them to a certain class or either to feed them as input to a shallow machine learning architecture that learns to classify those descriptors to predict the class of the object that appears in the image. That paradigm shifted recently due to the success of deep learning architectures that are able to exploit their feature learning capabilities to avoid the need of hand engineering descriptors while achieving unprecedented accuracy levels. Furthermore, the adoption and spread of depth sensors has also added a literally new dimension to learn from to boost performance. The approaches introduced in this thesis are part of that cutting-edge trend that takes advantage of the additional geometric information facilitated by commodity range scanners to perform learning over them using deep architectures. A more detailed review of the current state field, from the very beginning to the current trends using 3D data and deep neural networks, is carried out in Section \ref{cha:objrecog:sec:relatedworks}.
 
-Apart from the methods, data also plays a key role in object classification. As methods have evolved, so have datasets. Due to the increasing needs imposed by data-driven approaches, datasets have grown larger, more varied, and richer. That progress has enabled the development of new ways of solving the problem, e.g., using three-dimensional data. Section \ref{cha:objrecog:sec:datasets} briefly reviews the evolution of such datasets and describes the data that will be used throughout this chapter. 
+Apart from the methods, data also play a key role in object classification. As methods have evolved, so have datasets. Due to the increasing needs imposed by data-driven approaches, datasets have grown larger, more varied, and richer. That progress has enabled the development of new ways of solving the object class recognition problem, e.g., using three-dimensional data. Section \ref{cha:objrecog:sec:datasets} briefly reviews the most remarkable datasets and describes the data that will be used throughout this chapter. 
 
 After reviewing the literature and introducing the data we are going to use, we start describing our first approach to perform object classification using 3D data, namely PointNet, capable of learning object classes from point clouds discretized as occupancy grids with uniform voxel grids in the tridimensional space. Section \ref{cha:objrecog:sec:pointnet} describes this architecture, its data representation, and also benchmarks it on a standard 3D object classification dataset to validate it.
 
@@ -30,9 +32,9 @@ Following that, Section \ref{cha:objrecog:sec:study} analyzes how noise and occl
 
 At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned from the initial PointNet proposal and the extensive study to introduce a novel slice-based architecture to tackle the 3D object class recognition problem, LonchaNet, which achieved state of the art results in a standard benchmark.
 
-In the end, Section \ref{cha:objrecog:sec:conclusion} concludes this chapter by summarizing the insights gathered while discussing the proposed approaches. Furthermore, we also our main flaws and how to improve upon them besides from proposing new proposing future lines of research for 3D object classification.
+In the end, Section \ref{cha:objrecog:sec:conclusion} concludes this chapter by summarizing the insights gathered while discussing the proposed approaches. Furthermore, we also expose our main flaws and how to improve upon them besides from proposing new proposing future lines of research for 3D object classification.
 
-\section{Related Works}
+\section{Literature Review}
 \label{cha:objrecog:sec:relatedworks}
 
 Since the very beginning of computer vision, a considerable amount of effort has been directed towards achieving robust object recognition systems \cite{Andreopoulos2013}. This was mainly due to the fact that recognizing objects is a key capability required by robots to operate autonomously in unstructured, real-world environments. That continuous endeavor configured object classification as an ever-evolving area which has followed the general trend of computer vision, i.e., moving from hand-crafted features to trainable feature extractors, and which has also benefited from the improvements on imaging hardware, e.g., depth information from range scanners. In this section, we briefly review that evolution in order to put our proposal in context.
@@ -40,7 +42,7 @@ Since the very beginning of computer vision, a considerable amount of effort has
 \subsection{Traditional Approaches}
 \label{cha:objrecog:sec:relatedworks:subsec:traditional}
 
-Object recognition has been traditionally dominated by feature-based methods. This approach relies on extracting features, i.e., pieces of information which describe simple but significant properties of the objects. Those features are encoded into \emph{descriptors} such as \ac{SIFT}\cite{Lowe2004}, \ac{SURF}\cite{Bay2006}, \ac{BRIEF}\cite{Calonder2010}, \ac{BRISK}\cite{Leutenegger2011}, \ac{ORB}\cite{Rublee2011}, or \ac{FREAK}\cite{Alahi2012} to name a few. After extracting those descriptors, machine learning techniques are applied to train a system with them so that it becomes able to classify features extracted from unknown instances. Based on the types of features, these methods can be divided into two categories: global or local feature-based methods. Global ones are characterized by dealing with the object as a whole; they define a set of features which completely encompass the object and describe it effectively. On the other hand, local methods describe local patches of the object, those regions are located around highly distinctive spots named \emph{keypoints}. 
+Object recognition has been traditionally dominated by feature-based methods. This approach relies on extracting features, i.e., pieces of information which describe simple but significant properties of the objects. Those features are encoded into \emph{descriptors} such as \ac{SIFT}\cite{Lowe2004}, \ac{SURF}\cite{Bay2006}, \ac{BRIEF}\cite{Calonder2010}, \ac{BRISK}\cite{Leutenegger2011}, or \ac{ORB}\cite{Rublee2011} to name a few. After extracting those descriptors, machine learning techniques are applied to train a system with them so that it becomes able to classify features extracted from unknown instances. Based on the types of features, these methods can be divided into two categories: global or local feature-based methods. Global ones are characterized by dealing with the object as a whole; they define a set of features which completely encompass the object and describe it effectively. On the other hand, local methods describe local patches of the object, those regions are located around highly distinctive spots named \emph{keypoints}. 
 
 Real-world scenes tend to be unstructured environments. This implies that object recognition systems must not be affected by clutter or partial occlusions. In addition, they should be invariant to illumination, transforms, and object variations. Those are the main reasons why local surface feature-based methods have been popular and successful during the last years -- since they do not need the whole object to describe it properly, they are able to cope with cluttered environments and occlusions \cite{Lowe1999}. 
 
@@ -55,7 +57,9 @@ However, despite all the advantageous assets of \acs{3D} data, researchers had t
 
 The combination of those three factors (the advantages of \acs{3D} data, low-cost sensors, and parallel computing devices) transformed the field of computer vision in general, and object recognition in particular. As we can see in Figure \ref{fig:terms_statistics}, there has been a significant dominance of \acs{3D} over \acs{2D} research in computer vision since the year 2000.
 
-\begin{figure}[!b]
+\clearpage
+
+\begin{figure}[!t]
 	\input{Figures/ObjRecog/terms_statistics.tikz}
 	\caption{Evolution of the number of academic documents containing the terms 2D, 3D, and Deep Learning together with \emph{Computer Vision}. Search terms statistics obtained from \href{http://www.scopus.com/}{scopus.com}.}
 	\label{fig:terms_statistics}
@@ -72,7 +76,7 @@ Deep learning architectures usually consist of a multilayer stack of hierarchica
 
 \begin{figure}[!b]
 	\centering
-	\includegraphics[width=0.7\textwidth]{Figures/ObjRecog/weights}
+	\includegraphics[width=0.8\textwidth]{Figures/ObjRecog/weights}
 	\caption{Filters learned by the network proposed by Krizhevsky et al. \cite{Krizhevsky2012}. Each of the 96 filters shown is of size $11\times11\times3$. The filters have clearly learned to detect edges of various orientations and they resemble Gabor filters. Image analysis using that kind of filters is thought to be similar to perception in the human visual system \cite{Marvcelja1980}.}
 	\label{fig:alexnet_weights}
 \end{figure}
@@ -97,7 +101,6 @@ Most of the literature focuses on how \acp{CNN} can learn filters and recognize 
 
 \begin{figure}[!t]
 	\centering
-	\hfill
 	\begin{subfigure}{0.2\linewidth}
 		\includegraphics[width=\linewidth]{Figures/ObjRecog/chair_mesh}
 		\caption{Mesh}
@@ -115,7 +118,6 @@ Most of the literature focuses on how \acp{CNN} can learn filters and recognize 
 		\caption{Voxel grid}
 		\label{subfig:objrecog:3d_mesh_cloud_grid:grid}
 	\end{subfigure}
-	\hfill
 	\caption{Common volumetric representations: polygonal mesh (\subref{subfig:objrecog:3d_mesh_cloud_grid:mesh}), point cloud (\subref{subfig:objrecog:3d_mesh_cloud_grid:cloud}), and voxel grid (\subref{subfig:objrecog:3d_mesh_cloud_grid:grid}) of a chair model (which is color coded by height and depth).}
 	\label{fig:objrecog:3d_mesh_cloud_grid}
 \end{figure}
@@ -258,6 +260,14 @@ Deep neural network architectures are usually composed by many layers which in t
 
 The \emph{Princeton ModelNet} project is one of the most popular large-scale \acs{3D} object dataset. Its goal, as their authors state, is to provide researchers with a comprehensive clean collection of \acs{3D} \ac{CAD} models for objects, which were obtained via online search engines. Employees from the \ac{AMT} service were hired to classify over \num{150000} models into \num{662} different categories.
 
+At the moment, there are two versions of this dataset publicly available for download\footnote{\url{http://modelnet.cs.princeton.edu/}}: \emph{ModelNet-10} and \emph{ModelNet-40}. Those are subsets of the original dataset which only provide the \num{10} and \num{40} most popular object categories respectively. These subsets are specially clean versions of the complete dataset.
+
+On the one hand, ModelNet-10 is composed of a collection of over 5000 models classified into 10 categories and divided into training and test splits. In addition, the orientation of all \ac{CAD} models of the dataset was manually aligned. On the other hand, ModelNet-40 features over \num{9800} models classified into \num{40} categories, also including training and test sets. However, the orientations of its models are not aligned as they are in ModelNet-10. Figure \ref{fig:objrecog:modelnet_models} shows some model examples from ModelNet-10. Figure \ref{fig:objrecog:modelnet_distribution} and Table \ref{table:objrecog:modelnet_distribution} show the model distribution per each class of both subsets taking into account the training and test splits. 
+
+Since the final goal of the \acp{CNN} is to provide means to recognize objects onboard a mobile robotic platform which features \ac{RGB-D} sensors, it is logical to transform the full mesh representation provided by the dataset into the representation that our networks will deal with. \ac{RGB-D} cameras output depth maps which can be used to generate \acs{3D} point clouds of the scene viewed by the camera. In this regard, we will transform each \ac{CAD} object of the dataset into partial point clouds from different \acp{PoV}.
+
+\clearpage
+
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=0.15\textwidth]{Figures/ObjRecog/desk_0}\hfill
@@ -323,9 +333,7 @@ The \emph{Princeton ModelNet} project is one of the most popular large-scale \ac
 	\label{fig:objrecog:modelnet_models}
 \end{figure}
 
-At the moment, there are two versions of this dataset publicly available for download\footnote{\url{http://modelnet.cs.princeton.edu/}}: \emph{ModelNet-10} and \emph{ModelNet-40}. Those are subsets of the original dataset which only provide the \num{10} and \num{40} most popular object categories respectively. These subsets are specially clean versions of the complete dataset.
-
-On the one hand, ModelNet-10 is composed of a collection of over 5000 models classified into 10 categories and divided into training and test splits. In addition, the orientation of all \ac{CAD} models of the dataset was manually aligned. On the other hand, ModelNet-40 features over \num{9800} models classified into \num{40} categories, also including training and test sets. However, the orientations of its models are not aligned as they are in ModelNet-10. Figure \ref{fig:objrecog:modelnet_models} shows some model examples from ModelNet-10. Figure \ref{fig:objrecog:modelnet_distribution} and Table \ref{table:objrecog:modelnet_distribution} show the model distribution per each class of both subsets taking into account the training and test splits. 
+\clearpage
 
 \begin{figure}[!h]
     \centering
@@ -334,13 +342,7 @@ On the one hand, ModelNet-10 is composed of a collection of over 5000 models cla
     \label{fig:objrecog:modelnet_distribution}
 \end{figure}
 
-Since the final goal of the \acp{CNN} is to provide means to recognize objects onboard a mobile robotic platform which features \ac{RGB-D} sensors, it is logical to transform the full mesh representation provided by the dataset into the representation that our networks will deal with. \ac{RGB-D} cameras output depth maps which can be used to generate \acs{3D} point clouds of the scene viewed by the camera. In this regard, we will transform each \ac{CAD} object of the dataset into partial point clouds from different \acp{POV}.
-
-For this purpose, we converted the \ac{OFF} models into \ac{PCD} clouds using a raytracing-based process. The object is placed in the center of a \acs{3D} sphere, which is tessellated to a certain level, and a virtual camera pointing to the center of the sphere is placed in each vertex of that truncated icosahedron. Then those partial views are rendered and their $z$-buffer data, which contains the depth information, is used to generate point clouds from each \acs{POV}. In the end, those views are translated and rotated, depending on their \ac{POV}, and merged into a cloud for the full object.
-
-Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process. For the conversion, we used the first tessellation level of the sphere, which generates $42$ vertices or \acp{POV}. A resolution of $256\times256$ pixels was used for rendering the views. A voxel grid filter with a leaf size of $0.7\times0.7\times0.7$ units is applied to the merged cloud to equalize the point density, which is higher in certain zones due to view overlapping.
-
-\begin{figure}[!t]
+\begin{figure}[!htb]
 	\centering
 	\resizebox{\textwidth}{!}{
 		\input{Figures/ObjRecog/adapter/adapter.tikz}
@@ -349,6 +351,7 @@ Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process.
 	\label{fig:objrecog:adapter}
 \end{figure}
 
+\clearpage
 
 \begin{table}
     \centering
@@ -402,6 +405,13 @@ Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process.
     \label{table:objrecog:modelnet_distribution}
 \end{table}
 
+\clearpage
+
+For this purpose, we converted the \ac{OFF} models into \ac{PCD} clouds using a raytracing-based process. The object is placed in the center of a \acs{3D} sphere, which is tessellated to a certain level, and a virtual camera pointing to the center of the sphere is placed in each vertex of that truncated icosahedron. Then those partial views are rendered and their $z$-buffer data, which contains the depth information, is used to generate point clouds from each \acs{PoV}. In the end, those views are translated and rotated, depending on their \ac{PoV}, and merged into a cloud for the full object.
+
+Figure \ref{fig:objrecog:adapter} shows a diagram of the aforementioned process. For the conversion, we used the first tessellation level of the sphere, which generates $42$ vertices or \acp{PoV}. A resolution of $256\times256$ pixels was used for rendering the views. A voxel grid filter with a leaf size of $0.7\times0.7\times0.7$ units is applied to the merged cloud to equalize the point density, which is higher in certain zones due to view overlapping.
+
+
 \section{PointNet}
 \label{cha:objrecog:sec:pointnet}
 
@@ -410,31 +420,31 @@ In this first iteration of our efforts towards an object class recognition solut
 \subsection{Data Representation}
 \label{cha:objrecog:sec:pointnet:subsec:data}
 
-As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it. Occupancy grids expose a compact representation of the volumetric space; they stand between meshes or clouds, which offer rich but unstructured information, and voxelized representations, with packed but poor information. At that midpoint, occupancy grids provide important shape cues to perform learning while enabling an efficient processing of that information thanks to their matrix-like organization.
+As we mentioned before, our proposed architecture takes a point cloud of an object as input to recognize it. However, point clouds are unstructured representations that cannot be easily handled by common \ac{CNN} architectures due to the lack of a matrix-like organization. The most straightforward way to apply formal convolutions to that unstructured space is to impose a certain organization into it. Occupancy grids expose a compact representation of the volumetric space: they stand between meshes or clouds, which offer rich but unstructured information, and voxelized representations, with packed but poor information. At that midpoint, occupancy grids provide important shape cues to perform learning while enabling an efficient processing of that information.
 
-As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not. VoxNet's occupancy grid outperforms 3D ShapeNets in terms of accuracy in the ModelNet challenge for the 3D-centric approaches described above. However, ray tracing grids considerably harmed performance in terms of execution time so that other approaches must be considered for a real-time implementation.
+As we previously reviewed in Section \ref{cha:objrecog:sec:relatedworks}, certain 3D deep learning architectures make use of occupancy grids as a representation for the input data. For instance, 3D ShapeNets \cite{Wu2015} is a \ac{CDBN} which represents a 3D shape as a $30 \times 30 \times 30$ binary tensor in which a one indicates that a voxel intersects the mesh surface, and a zero represents empty space. VoxNet \cite{Maturana2015} introduces three different occupancy grids that employ 3D ray tracing to compute the number of beams hitting or passing each voxel and then use that information to compute the value of each voxel depending on the chosen model: a binary occupancy grid using probabilistic estimates, a density grid in which each voxel holds a value corresponding to the probability that it will block a sensor beam, and a hit grid that only considers hits thus ignoring empty or unknown space. The binary and density grids proposed by Maturana \emph{et al.} \cite{Maturana2015} differentiate unknown and empty space, whilst the hit grid and the binary tensor do not. VoxNet's occupancy grid outperforms 3D ShapeNets in terms of accuracy in the ModelNet challenge for the 3D-centric approaches described above. However, ray tracing grids considerably harmed runtime so that other approaches must be considered for a real-time implementation.
 
 \begin{figure}[!t]
   \centering
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/detergent_mesh.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/detergent_mesh.png}
     \caption{Mesh}
     \label{fig:objrecog:meshcloudgrid:mesh}
   \end{subfigure}
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/detergent_cloud.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/detergent_cloud.png}
     \caption{Cloud}
     \label{fig:objrecog:meshcloudgrid:cloud}
   \end{subfigure}
   \begin{subfigure}{0.3\linewidth}
     \centering
-    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/detergent_grid.png}
+    \includegraphics[width=0.8\linewidth]{Figures/ObjRecog/detergent_grid.png}
     \caption{Grid}
     \label{fig:objrecog:meshcloudgrid:grid}
   \end{subfigure}
-  \caption{Various 3D representations for an object. A mesh (\subref{fig:objrecog:meshcloudgrid:mesh}) is transformed into a point cloud (\subref{fig:objrecog:meshcloudgrid:cloud}), and that cloud is processed to obtain a voxelized occupancy grid (\subref{fig:objrecog:meshcloudgrid:grid}). The occupancy grid shown in this figure is a cube of $30\times 30 \times 30$ voxels. Each voxel of that cube holds the point density inside its volume. In this case, dark voxels indicate high density whilst bright ones are low density volumes.}
+  \caption{Various 3D representations for an object. A mesh (\subref{fig:objrecog:meshcloudgrid:mesh}) is transformed into a point cloud (\subref{fig:objrecog:meshcloudgrid:cloud}), and that cloud is processed to obtain a voxelized occupancy grid (\subref{fig:objrecog:meshcloudgrid:grid}). The occupancy grid shown in this figure is a cube of $30\times 30 \times 30$ voxels. Each voxel of that cube holds the point density inside its volume. In this case, dark voxels indicate high density whilst bright ones are low density.}
   \label{fig:objrecog:meshcloudgrid}
 \end{figure}
 
@@ -443,25 +453,39 @@ With PointNet, we propose an occupancy grid inspired by the aforementioned succe
 \subsection{Network Architecture}
 \label{cha:objrecog:sec:pointnet:subsec:network}
 
+As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in \ac{2D} images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters. Furthermore, the composition of several of these regions can define a feature of a more complex object. By doing that, a combination of various filters is able to recognize a full object. We apply this approach used in \ac{2D} images to \ac{3D} recognition. Our PointNet architecture features two convolutional layers $(m, n, d)$, which convolve the data in batches of $n\times n\times n$ voxels with $m$ learnable filters and a stride of $d$; pooling layers $(n, d)$, which perform max-pooling with a filter size of $n$ and a stride of $d$; Inner Product layers $(n)$, that are fully connected layers with $n$ neurons; and \ac{ReLU} layers after each convolution and the first Inner Product one. The deep architecture featured by \emph{PointNet} is represented in Figure \ref{fig:objrecog:pointnetarch}.
+
 \begin{figure}[!b]
-  \centering
-  \includegraphics{example-image}
-  \caption{PointNet's 3D \ac{CNN} architecture. [MISSINGDETAILS]}
-  \label{fig:objrecog:pointnetarch}
+	\resizebox{\linewidth}{!}{
+	\begin{tikzpicture}
+			\tikzset{
+            block/.style={minimum width=12em, minimum height=3 em, draw=black, very thick},}
+            \node [block] (pcdl) at (0,0) {\textbf{PC Data Layer} (300, 5)};
+            \node [block, right = 2 em of pcdl.east] (conv) {\textbf{Convolution}(48, 3, 1)};
+            \node [block, right = 2 em of conv.east] (pool) {\textbf{Pooling}(3, 2)};
+            \node [block, right = 2 em of pool.east] (conv2) {\textbf{Convolution}(160, 3, 2)};
+            \node [block, below = 2 em of conv2.south] (pool2) {\textbf{Pooling}(2, 2)};
+            \node [block, left = 2 em of pool2.west] (inner) {\textbf{Inner Layer}(1000)};
+            \node [block, left = 2 em of inner.west] (inner2) {\textbf{Inner Layer}(10)};
+            \node [block, left = 2 em of inner2.west] (softmax) {\textbf{Softmax with Loss}};
+            \draw[-latex, very thick] (pcdl.east) -- (conv.west);
+            \draw[-latex, very thick] (conv.east) -- (pool.west);
+            \draw[-latex, very thick] (pool.east) -- (conv2.west);
+            \draw[-latex, very thick] (conv2.south) -- (pool2.north);
+            \draw[-latex, very thick] (pool2.west) -- (inner.east);
+            \draw[-latex, very thick] (inner.west) -- (inner2.east);
+            \draw[-latex, very thick] (inner2.west) -- (softmax.east);
+    \end{tikzpicture}}
+    \caption{\emph{PointNet} \acl{CNN} architecture.}
+    \label{fig:objrecog:pointnetarch}
 \end{figure}
-
-As we have previously stated, \acp{CNN} have proven to be very useful for recognizing and classifying objects in \ac{2D} images. A convolutional layer can recognize basic patterns such as corners or planes and if we stack several of them they can learn a topology of hierarchical filters. Furthermore, the composition of several of these regions can define a feature of a more complex object. By doing that, a combination of various filters is able to recognize a full object. We apply this approach used in \ac{2D} images to \ac{3D} recognition. The deep architecture featured by \emph{PointNet} is represented in Figure \ref{fig:objrecog:pointnetarch}.
-
-\newpage
 
 \subsection{Experiments}
 \label{cha:objrecog:sec:pointnet:subsec:experiments}
 
-In order to evaluate the performance of our proposed representation and network, we carried out a set of experiments using the previously described ModelNet-10 dataset. Those experiments aim to prove that the network is able to achieve reasonable accuracy while still being able to execute in real time. Furthermore, we also study ways to increase our performance by analyzing our data, e.g., the balance between classes in the dataset and the possible sources of confusion that make learning harder. To that end, we first describe our data generation process as well as the experimentation methodology (implementation details and test setup); then we show our experiments together with a discussion for each one of them to keep on building and experimenting in an incremental way.
+In order to evaluate the performance of our proposed representation and network, we carried out a set of experiments using the ModelNet-10 dataset. Those experiments aim to prove that the network is able to achieve reasonable accuracy while still being able to execute in real time. Furthermore, we also study ways to increase our performance by analyzing our data, e.g., the balance between classes in the dataset and the possible sources of confusion that make learning harder. To that end, we first describe our data generation process as well as the experimentation methodology (implementation details and test setup); then we show our experiments together with a discussion for each one of them to keep on building and experimenting in an incremental way.
 
-\subsubsection{Data Generation}
-
-\begin{figure}[!b]
+\begin{figure}[!htb]
   \centering
   \begin{subfigure}{\linewidth}
     \includegraphics[width=0.24\linewidth]{Figures/ObjRecog/toilet_0_view}
@@ -472,23 +496,25 @@ In order to evaluate the performance of our proposed representation and network,
     \label{fig:objrecog:dataproc:renders}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_off.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/toilet_off.png}
     \caption{Mesh.}
     \label{fig:objrecog:dataproc:mesh}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_cloud.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/toilet_cloud.png}
     \caption{Cloud.}
     \label{fig:objrecog:dataproc:cloud}
   \end{subfigure}
   \begin{subfigure}{0.32\linewidth}
-    \includegraphics[width=\linewidth]{Figures/ObjRecog/toilet_cloud_downsampled.png}
+    \includegraphics[width=0.9\linewidth]{Figures/ObjRecog/toilet_cloud_downsampled.png}
     \caption{Downsampled.}
     \label{fig:objrecog:dataproc:downsampled}
   \end{subfigure}
   \caption{Dataset model processing example to generate the point clouds for PointNet. Some rendered views of a toilet model are shown in (\subref{fig:objrecog:dataproc:renders}). The original \ac{OFF} mesh is shown in (\subref{fig:objrecog:dataproc:mesh}). The generated point cloud after merging all points of view is shown in (\subref{fig:objrecog:dataproc:cloud}), and (\subref{fig:objrecog:dataproc:downsampled}) shows the downsampled cloud using a voxel grid filter with a leaf size of $0.7 \times 0.7 \times 0.7$.}
   \label{fig:objrecog:pointnetarchdata}
 \end{figure}
+
+\subsubsection{Data Generation}
 
 We generated point clouds to feed PointNet following the procedure described in Section \ref{cha:objrecog:sec:datasets}. Figure \ref{fig:objrecog:pointnetarchdata} illustrates the result of the aforementioned process. After that, the resulting point clouds are used to train, randomizing the order of the models, and test the system taking into account the corresponding splits provided by ModelNet-10.
 
@@ -503,10 +529,10 @@ All the timings and results were obtained by performing the experiments in the f
 
 The first experiment just consisted of training the vanilla network to establish a baseline upon which we could build future improments. To do so, we trained \emph{PointNet} using \ac{SGD} with a learning rate of $1e^{-4}$ and a momentum of $9e^{-1}$ during $200$ iterations with early stopping. This first experimental iteration achieved and accuracy rate of $77.6$\% in the test set. As shown in Table \ref{table:objrecog:pointnet:confusion}, the confusion matrix reveals the stability of the system, mainly confusing items that look alike such as desk and table. Because of the nature of \acp{CNN}, which heavily rely on detecting combinations of features, these kind of errors are common. As we can observe in Figure \ref{fig:objrecog:tabledesk}, the visual features that define a desk and a table are almost the same, making it hard to distinguish between both classes. Figure \ref{fig:objrecog:tabledesk_activations} shows the neuron activations for the output layer of the architecture, proving that \emph{Desk} and \emph{Table} are consistently confused in the test set. In light of those experiments it is conceivable to think that a deeper network would provide better results by being able to model the subtleties of such small differences.
 
-\begin{table}[!b]\caption{Confusion matrix for the first set of experiments making use of the vanilla \emph{PointNet} architecture. Notice the high amount of confusion in the Desk-Table pair.}\label{table:objrecog:pointnet:confusion}
+\begin{table}[!htb]
 \centering
 \pgfplotstabletypeset[color cells]{
-    Desk, Table, Nstand, Bed, Toilet, Dresser, Bathtub, Sofa, Monitor, Chair	
+    Desk, Table, Nstand, Bed, Toilet, Dresser, Batht, Sofa, Mntr, Chair	
     52, 9, 1, 4, 0, 5, 1, 5, 0, 9
     25, 69, 0, 1, 0, 0, 0, 0, 1, 4
     1, 2, 60, 1, 4, 8, 0, 0, 2, 8
@@ -518,9 +544,10 @@ The first experiment just consisted of training the vanilla network to establish
     1, 1, 1, 1, 0, 5, 1, 1, 87, 2
     1, 2, 1, 2, 1, 1, 0, 1, 1, 90
 }
+\caption{Confusion matrix for the first set of experiments making use of the vanilla \emph{PointNet} architecture. Notice the high amount of confusion in the Desk-Table pair.}\label{table:objrecog:pointnet:confusion}
 \end{table}
 
-\begin{figure}[!t]
+\begin{figure}[!htb]
     \centering
     \begin{subfigure}{0.49\linewidth}
         \includegraphics[width=\linewidth]{Figures/ObjRecog/table}
@@ -535,11 +562,6 @@ The first experiment just consisted of training the vanilla network to establish
     \caption{Similarity between two objects of different classes: Table and Desk. The point cloud shown in (\subref{subfig:objrecog:tabledesk:table}) represents an object of the Table class, whilst the point cloud in (\subref{subfig:objrecog:tabledesk:desk}) represents an object whose class is Desk but it is misclassified as a Table due to their resemblance.}
     \label{fig:objrecog:tabledesk}
 \end{figure}
-
-\bigskip
-\bigskip
-\bigskip
-\bigskip
 
 \begin{figure}[!htb]
     \centering
@@ -557,10 +579,7 @@ The first experiment just consisted of training the vanilla network to establish
     \label{fig:objrecog:tabledesk_activations}
 \end{figure}
 
-
-For the deeper network experiment we added several layers to the vanilla \emph{PointNet} architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers induce a more complex or expressive model. Another fully connected or inner product layer was also added. Since these layers make the classification possible, making that classifier deeper would theoretically make us able to provide better classification results. Despite all those theoretical improvements, one must also consider that we are also introducing more parameters in the network thus making it harder to train and more prone to overfitting the train data.
-
-\newpage
+For the deeper network experiment we added several layers to the vanilla \emph{PointNet} architecture. One more convolutional layer was added since these layers are coupled to the detection of the features of the objects, so the more layers induce a more complex or expressive model. Another fully connected or inner product layer was also added. Since these layers make the classification possible, making that classifier deeper would theoretically make us able to provide better classification results. Despite all those theoretical improvements, one must also consider that we are also introducing more parameters in the network thus making it harder to train and prone to overfitting the train data.
 
 This architecture was trained during $1.000$ iterations to account for that increase in training difficulty. The best result was provided at $800$ iterations with an accuracy of $76.7$\% in the test set. Those models that kept on training dropped performance to $75.9$\% due to overfitting. Surprisingly, increasing the depth of the network did not help rising test accuracy. Because of that, we decided to investigate our data to check if any factor was hindering the training process.
 
@@ -570,7 +589,7 @@ Training using an unbalanced dataset tends to harm those classes with the least 
     \centering
     \begin{tikzpicture}
         \begin{axis}[
-            height=8cm,
+            height=6cm,
             width=0.8\linewidth,
             ylabel={Accuracy $[\% /100]$},
             xlabel={Class $[ID]$},
@@ -606,7 +625,9 @@ After analyzing the results, it can be stated that neither a deeper network nor 
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
 
-Although \emph{PointNet} was a step forward at the time it was released, there were still a set of open questions regarding its effectiveness. Such questions are strongly related to common problems that arise when recognizing objects in real-world scenes: how sensitive is the network to the noise introduced by the sensor? And most importantly, how robust is the network against clutter and occlusions? In this second iteration of our object recognition system we aim to throw some light into such unknowns. To that end, we carry out a study in which we test various data representations and an improved network iterated over \emph{PointNet}. The section is organized as follows. First off, we introduce our proposals for robust data representations in Section \ref{cha:objrecog:sec:study:subsec:representation}. In the second place, we discuss the improved network architecture in Section \ref{cha:objrecog:sec:study:subsec:architecture}. After that, the main body of this iteration is presented in Section \ref{cha:objrecog:sec:study:subsec:experiments}: an extensive experimentation to determine the effect of noise and occlusion. In the end, in Section \ref{cha:objrecog:sec:study:subsec:conclusion} we discuss the insights gained thanks to the experimentation and we also set the scene for the last iteration of the object recognition system.
+Although \emph{PointNet} was a step forward at the time it was released, there were still a set of open questions regarding its effectiveness. Such questions are strongly related to common problems that arise when recognizing objects in real-world scenes: how sensitive is the network to the noise introduced by the sensor? And most importantly, how robust is the network against clutter and occlusions? In this second iteration of our object recognition system we aim to throw some light into such unknowns. To that end, we carry out a study in which we test various data representations and an improved network iterated over the previously introduced \emph{PointNet} network.
+
+This section is organized as follows. First off, we introduce our proposals for robust data representations in Section \ref{cha:objrecog:sec:study:subsec:representation}. In the second place, we discuss the improved network architecture in Section \ref{cha:objrecog:sec:study:subsec:architecture}. After that, the main body of this iteration is presented in Section \ref{cha:objrecog:sec:study:subsec:experiments}: an extensive experimentation to determine the effect of noise and occlusion. In the end, in Section \ref{cha:objrecog:sec:study:subsec:conclusion} we discuss the insights gained thanks to the experimentation and we also set the scene for the last iteration of the object recognition system.
 
 \subsection{Data Representation}
 \label{cha:objrecog:sec:study:subsec:representation}
@@ -615,10 +636,12 @@ As we already stated previously, a volumetric representation to be fed to a \acs
 
 In this regard, our proposal for the study is twofold. First, we implemented two different ways of generating the structure of the tensor -- position, grid size, and leaf size -- using a fixed grid and an adaptive one. Second, we developed two possible occupancy measures for the volumetric elements of the tensor.
 
+\newpage
+
 \subsubsection{Tensor Generation}
 \label{cha:objrecog:sec:study:subsec:representation:subsubsec:tensor}
 
-Providing that the input to our network consists of point clouds generated from the information provided by \acs{RGB-D} sensors, we need to generate a discretized representation of the unbounded \acs{3D} data to feed the network. Each cloud will be represented as a \acs{3D} tensor. For that purpose, we need to spawn a grid to subdivide the space occupied by the point clouds. Two types are proposed: one with fixed leaf and grid sizes, and another one which will adapt those sizes to fit the data.
+Providing that the input to our network consists of point clouds, we need to generate a discretized representation of the unbounded \acs{3D} data to feed the network. Each cloud will be represented as a \acs{3D} tensor so we need to spawn a grid to subdivide the space occupied by the point clouds. Two types are proposed: one with fixed leaf and grid sizes, and another one which will adapt those sizes to fit the data.
 
 \paragraph{Fixed}
 
@@ -759,7 +782,7 @@ Binary representations are simple and require low computational power. However, 
 
 It is important to notice that point density directly depends on the cloud resolution which in turn depends on many factors involving the camera and the scene, e.g., it is common for \acs{RGB-D} to generate denser shapes in closer surfaces. To alleviate this problem, we can normalize the density inside each voxel dividing each value by the maximum density over the whole tensor. An example of normalized density tensor is shown in Figure \ref{fig:objrecog:density_occ}.
 
-\begin{figure}[!b]
+\begin{figure}[!htb]
 	\centering
 	\hfill
 	\begin{subfigure}{0.325\textwidth}
@@ -793,12 +816,12 @@ It is important to notice that point density directly depends on the cloud resol
 In this section, we will describe the main layers that compose the \ac{CNN} that will be used for the study. Figure \ref{fig:objrecog:cviuarch} shows a diagram of the chosen architecture. It is highly inspired by \emph{Voxnet} \cite{Maturana2015} and \emph{PointNet} \cite{Garcia-Garcia2016}. The network was implemented using Caffe. It features \acs{2D} convolutions and takes full \acs{3D} object model point clouds as input.
 
 \begin{figure}[!b]
-  \centering
-  \includegraphics{example-image}
-  \caption{CVIU's architecture. [MISSINGDETAILS]}
-  \label{fig:objrecog:cviuarch}
+	\centering
+	\resizebox{\textwidth}{!}{
+		\includegraphics[width=\textwidth]{Figures/ObjRecog/cviuarch}}
+		\caption{\acs{2.5D} \acl{CNN} architecture used for the experiments. This network is an extension of the one presented in PointNet \cite{Garcia-Garcia2016}. The network accepts \acs{3D} tensors as input.}
+	\label{fig:objrecog:cviuarch}
 \end{figure}
-
 The input layer is a custom data layer implemented in Caffe which takes object point clouds as inputs and generates the corresponding discrete volumetric representation as discussed in the previous section.
 
 Next, we can find a \emph{convolution layer} or $C(m, n, d)$. This layer applies $m$ filters of size $n\times n$ and a stride of $d\times d$ voxels. In our case, this first convolution layer learns $48$ $3\times3$ filters using a stride of $1\times 1$ voxels. This convolution layer is followed by a \ac{ReLU} activation to introduce non-linearities to the model.
@@ -807,7 +830,7 @@ After that, another convolution layer is found. In this case, it will learn $128
 
 A \emph{pooling layer} or $P(n, d)$ takes place after those blocks. It performs a max-pooling process to summarize the input data, taking the maximum value of a fixed local spatial region of $n\times n$ which is slided across the input volume using a stride of $d \times d$ voxels. In this case, a pooling region of $2\times 2$ voxels with the same stride was chosen.
 
-At last, we can find an \emph{inner product layer} or $IP(n)$. It is just a fully connected layer, a traditional neural network architecture which consists of $n$ neurons ($1024$ in this case). It is followed by a \acs{ReLU} activation and a \emph{dropout layer} \cite{Srivastava2014} or $DP(r)$. The function of the dropout layer is to avoid overfitting, randomly dropping connections with a probability $r$ ($0.5$ in our case). In the end, another fully connected layer represents the output of the network, with as many output neurons as classes has our classification problem. Since our dataset has $10$ classes (see Section \ref{subsec:dataset}) this layer has $10$ neurons.
+At last, we can find an \emph{inner product layer} or $IP(n)$. It is just a fully connected layer, a traditional neural network architecture which consists of $n$ neurons ($1024$ in this case). It is followed by a \acs{ReLU} activation and a \emph{dropout layer} \cite{Srivastava2014} or $DP(r)$. The function of the dropout layer is to avoid overfitting, randomly dropping connections with a probability $r$ ($0.5$ in our case). In the end, another fully connected layer represents the output of the network, with as many output neurons as classes has our classification problem. Since our dataset has $10$ classes (see Section \ref{cha:objrecog:sec:datasets}) this layer has $10$ neurons.
 
 We use the term \acs{2.5D} to refer to this network due to the fact that it processes \acs{3D} data using \acs{2D} convolutions. This means that, in the end, its convolutions do not fully take into account the depth spatial dimension of the input as if we were using pure \acs{3D} convolution filters. It is intuitive to think that a \acs{3D} \acs{CNN} would yield better results due to that extra spatial dimension. However, a \acs{3D} \acs{CNN} has some disadvantages that made us consider using a \acs{2.5D} \acs{CNN} instead for the experimentation: (1) higher computational cost, (2) memory footprint is also much higher, (3) more parameters thus harder training. For those reasons, the main body of the experiments were carried out using the \acs{2.5D} approach.
 
@@ -859,13 +882,9 @@ We will make use of a simplification of this model, only taking into account the
 
 \paragraph{Occlusion Simulation}
 
-In addition to modelling the sensor to improve our synthetic data, it is important to also take the environment into account. In a real-world scenario, objects are not usually perfectly isolated and easily segmented; in fact, it is common for them to be occluded by other elements of the scene.
+In addition to modelling the sensor to improve our synthetic data, it is important to also take the environment into account. In a real-world scenario, objects are not usually perfectly isolated and easily segmented; in fact, it is common for them to be occluded by other elements.
 
-The occlusion simulation process consists of picking a random point of the cloud with a uniform probability distribution. Then, a number of closest neighbors to that point are picked. At last, both the neighbors and the point are considered occluded surface and removed from the point cloud. The number of neighbors to pick depends on the amount of occlusion $\psi$ we want to simulate. For instance, for an occlusion $\psi=25\%$ we will remove neighbors until the rest of the cloud contains a $75\%$ of the original amount of points, i.e., we will remove a $25\%$ of the original cloud. Figure \ref{fig:occlusion} shows the effect of the random occlusion process with different occlusion factors $\psi$ over a synthetic partial view of a table object of the dataset.
-
-It is important to notice the randomness of the occlusion process. This means that even with a high $\psi$ it is possible not to remove any important surface information and vice versa. In other words, it is possible for some objects to remove a $50\%$ of their points and still be recognizable because the removed region was not significant at all, e.g., a completely flat surface. However it is possible to render an object unrecognizable by removing a small portion of its points if the randomly picked surface is significant for its geometry. This remark is specially important when testing the robustness of the system. In order to guarantee that an appropriate measure of the robustness against missing information is obtained, a significant amount of testing sets must be generated and their results averaged so that it is highly probable to test against objects which have been occluded all over their surface across the whole testing set.
-
-\begin{figure}[!b]
+\begin{figure}[!htb]
 	\centering
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
@@ -893,6 +912,10 @@ It is important to notice the randomness of the occlusion process. This means th
 	\label{fig:objrecog:occlusion}
 \end{figure}
 
+The occlusion simulation process consists of picking a random point of the cloud with a uniform probability distribution. Then, a number of closest neighbors to that point are picked. At last, both the neighbors and the point are considered occluded surface and removed from the point cloud. The number of neighbors to pick depends on the amount of occlusion $\psi$ we want to simulate. For instance, for an occlusion $\psi=25\%$ we will remove neighbors until the rest of the cloud contains a $75\%$ of the original amount of points, i.e., we will remove a $25\%$ of the original cloud. Figure \ref{fig:objrecog:occlusion} shows the effect of the random occlusion process with different occlusion factors $\psi$ over a synthetic partial view of a table object of the dataset.
+
+It is important to notice the randomness of the occlusion process. This means that even with a high $\psi$ it is possible not to remove any important surface information and vice versa. In other words, it is possible for some objects to remove a $50\%$ of their points and still be recognizable because the removed region was not significant at all, e.g., a completely flat surface. However it is possible to render an object unrecognizable by removing a small portion of its points if the randomly picked surface is significant for its geometry. This remark is specially important when testing the robustness of the system. In order to guarantee that an appropriate measure of the robustness against missing information is obtained, a significant amount of testing sets must be generated and their results averaged so that it is highly probable to test against objects which have been occluded all over their surface across the whole testing set.
+
 \subsubsection{Implementation and Setup}
 \label{cha:objrecog:sec:study:subsec:experiments:subsubsec:setup}
 
@@ -900,7 +923,7 @@ It is important to notice the randomness of the occlusion process. This means th
 
 Results were obtained using the following test setup: Intel Core i7-5820K with 32 GiB of Kingston HyperX 2666MHz and CL13 DDR4 RAM on an Asus X99-A motherboard (Intel X99 chipset). Additionally, the system included an NVIDIA Tesla K40c GPU used for training and inference. The framework of choice was Caffe RC2 running on Ubuntu 14.04.02. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.5, and cuDNN v3.
 
-\subsubsection{Results and Discussion}
+\subsubsection{Results}
 \label{cha:objrecog:sec:study:subsec:experiments:subsubsec:results}
 
 The networks were trained for a maximum of $5000$ iterations -- weights were snapshotted every $100$ iterations so in the end we selected the best sets of them as if we were early stopping -- using Adadelta as optimizer with $\delta = 1\cdot10^{-8}$. The regularization term or weight decay in Caffe was set to $5\cdot10^{-3}$. A batch size of $32$ training samples was chosen.
@@ -929,9 +952,11 @@ Figure \ref{fig:objrecog:3dcnn:experiments:25d_density} shows the accuracy resul
 
 Taking those facts into account, we can extract two conclusions. First, the adaptive grid is able to achieve a slightly better peak accuracy in all cases; however, the fixed grid takes less iterations to reach accuracy values close to the peak in all cases. Second, there is no significant difference in using a bigger grid size of $64$ voxels instead of a smaller one of $32$.
 
-The most important fact that can be observed in the aforementioned figures is that there is a considerable gap between training and validation accuracy in all situations. As we can observe, all networks reach maximum accuracy for the training set whilst the validation one hits a glass ceiling at approximately $0.80$. We hypothesize that the network suffers overfitting even when we thoroughly applied measures to avoid that. The most probable cause for that problem is the reduced number of training examples. In the case of ModelNet10 the training set consists of only $3991$ models. Considering the complexity of the \acs{CNN}, it is reasonable to think that the lack of a richer training set is causing overfitting.
+The most important observation is that there is a considerable gap between training and validation accuracy. As we can observe, all networks reach maximum accuracy for the training set whilst the validation one hits a glass ceiling at approximately $0.80$. We hypothesize that this might be caused by overfitting even when we applied measures to avoid that. The most probable cause for that problem is the reduced number of training examples. The training set consists of only $3991$ models. Considering the complexity of the \acs{CNN}, it is reasonable to think that the lack of a richer training set is causing overfitting.
 
-\begin{figure}[!b]
+Concerning the robustness against occlusion, we took the best networks after training and tested them using the same validation sets as before but introducing occlusions in them (up to a $30\%$). Figure \ref{fig:objrecog:3dcnn:experiments:25d_density_occlusion} shows the accuracy of both grid types with different sizes as the amount of occlusion in the validation model increases. As we can observe, occlusion has a significant and negative impact on the fixed grid -- bigger grid sizes are less affected -- going down from $\approx0.75$ accuracy to $0.40 - 0.50$ approximately in the worst and best case respectively when a $30\%$ of the model is occluded. On the contrary, the adaptive grid does not suffer that much -- it goes down from $\approx0.78$ to $\approx0.60$ in the worst case -- and there is no significant difference between grid sizes. In conclusion, the adaptive grid is considerably more robust to occlusion than the fixed one.
+
+\begin{figure}[!htb]
 	\centering
 		\begin{subfigure}{0.49\textwidth}
 		\input{Figures/ObjRecog/25d_fixed_density_occlusion.tikz}
@@ -947,9 +972,7 @@ The most important fact that can be observed in the aforementioned figures is th
 	\label{fig:objrecog:3dcnn:experiments:25d_density_occlusion}
 \end{figure}
 
-Concerning the robustness against occlusion, we took the best networks after training and tested them using the same validation sets as before but introducing occlusions in them (up to a $30\%$). Figure \ref{fig:objrecog:3dcnn:experiments:25d_density_occlusion} shows the accuracy of both grid types with different sizes as the amount of occlusion in the validation model increases. As we can observe, occlusion has a significant and negative impact on the fixed grid -- bigger grid sizes are less affected -- going down from $\approx0.75$ accuracy to $0.40 - 0.50$ approximately in the worst and best case respectively when a $30\%$ of the model is occluded. On the contrary, the adaptive grid does not suffer that much -- it goes down from $\approx0.78$ to $\approx0.60$ in the worst case -- and there is no significant difference between grid sizes. In conclusion, the adaptive grid is considerably more robust to occlusion than the fixed one.
-
-Regarding the resilience to noise, we also tested the best networks obtained from the aforementioned training process using validation sets with different levels of noise (ranging from $\sigma=1\cdot10^{-2}$ to $\sigma=1\cdot10^1$). Figure \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_noise} shows the results of those experiments. It can be observed that adding noise has a significant impact on the fixed grid, even small quantities, reducing the accuracy from $\approx0.75$ to $\approx0.60$, $\approx0.4$, and $\approx0.2$ for $\sigma=1\cdot10^{-1}, \sigma=1\cdot{10^0}$, and $\sigma=1\cdot10^1$ respectively. On the other hand, the adaptive one shows remarkable robustness against low levels of noise (up to $\sigma=1\cdot10^{-1}$), barely diminishing its accuracy.
+Regarding the resilience to noise, we also tested the best networks obtained from the aforementioned training process using validation sets with different levels of noise (ranging from $\sigma=1\cdot10^{-2}$ to $\sigma=1\cdot10^1$). Figure \ref{fig:objrecog:3dcnn:experiments:25d_density_noise} shows the results of those experiments. It can be observed that adding noise has a significant impact on the fixed grid, even small quantities, reducing the accuracy from $\approx0.75$ to $\approx0.60$, $\approx0.4$, and $\approx0.2$ for $\sigma=1\cdot10^{-1}, \sigma=1\cdot{10^0}$, and $\sigma=1\cdot10^1$ respectively. On the other hand, the adaptive one shows remarkable robustness against low levels of noise (up to $\sigma=1\cdot10^{-1}$), barely diminishing its accuracy.
 
 \begin{figure}[!t]
 	\centering
@@ -979,7 +1002,6 @@ In the end, both grids suffer huge penalties in accuracy when noise levels highe
 		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary}
 	\end{subfigure}
 	\centering
-	\par\bigskip
 	\begin{subfigure}{0.49\linewidth}
 		\input{Figures/ObjRecog/25d_adaptive_binary_occlusion.tikz}
 		\caption{Occlusion}
@@ -991,13 +1013,13 @@ In the end, both grids suffer huge penalties in accuracy when noise levels highe
 		\caption{Noise}
 		\label{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise}
 	\end{subfigure}
-	\caption{Evolution of training and validation accuracy of the model-based \acs{CNN} using adaptive binary grids (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary}). Evolution of validation accuracy for the best network weights after training as the amount of occlusion in the validation set increases (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion}) and different levels of noise are introduced (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise}).}
+	\caption{Evolution of training and validation accuracy using adaptive binary grids (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary}). Evolution of validation accuracy as the amount of occlusion in the validation set increases (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion}) and different levels of noise are introduced (\subref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise}).}
 	\label{fig:objrecog:3dcnn:experiments:25d_binary}
 \end{figure}
 
 After testing the performance of the normalized density grid, we also trained and assessed the accuracy of the binary one in the same scenarios. This test intended to show whether there is any gain in using representations which include more information about the shape -- at a small penalty to execution time.
 
-For this experimentation we picked the best performer in the previous sections: the adaptive grid. We also discarded the intermediate size ($48$ voxels) since there was no significant difference between it and the others. Figure \ref{fig:objrecog:3dcnn:experiments:25d_adaptive_binary} shows the accuracy results of the network trained using binary grids. As we can observe, there is no significant difference between grid sizes neither. However, using this representation we achieved a peak accuracy of approximately $0.85$, using $64$ voxels grids, which is better to some extent than the normalized density one shown in Figure \ref{fig:objrecog:3dcnn:experiments:25d_density}.
+We picked the best performer in the previous sections: the adaptive grid. We also discarded the intermediate size since there was no significant difference between it and the others. Figure \ref{fig:objrecog:3dcnn:experiments:25d_binary} shows the accuracy results of the network trained using binary grids. As we can observe, there is no significant difference between grid sizes neither. However, using this representation we achieved a peak accuracy of approximately $0.85$, using $64$ voxels grids, which is better to some extent than the normalized density one shown in Figure \ref{fig:objrecog:3dcnn:experiments:25d_density}.
 
 Occlusion and noise tolerance (shown in Figures \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_occlusion} and \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_binary_noise} respectively) is mostly similar to the robustness shown by the normalized density adaptive grid (see Figures \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_occlusion} and \ref{subfig:objrecog:3dcnn:experiments:25d_adaptive_density_noise}) except from a small offset caused by the higher accuracy of the binary grid network.
 
@@ -1005,7 +1027,7 @@ In conclusion, the less-is-better effect applies in this situation and turns out
 
 \paragraph{3D \ac{CNN}}
 
-At last, we tested the best configuration -- binary adaptive grids -- with a \acs{3D} \acs{CNN} architecture with pure \acs{3D} convolutions. We kept the same architecture we introduced in Section \ref{sec:convolutional_neural_network}, but extended its convolution and pooling layers to three dimensions. We then trained the network using adaptive binary grids as the volumetric representation of choice and monitored validation and training errors. Due to memory limitations on the \acs{GPU} we could only experiment with grids of $32\times32\times32$ voxels.
+At last, we tested the best configuration -- binary adaptive grids -- with a \acs{3D} \acs{CNN} architecture with pure \acs{3D} convolutions. We kept the same architecture we introduced in Section \ref{cha:objrecog:sec:study:subsec:architecture}, but extended its convolution and pooling layers to three dimensions. We then trained the network using adaptive binary grids as the volumetric representation of choice and monitored validation and training errors. Due to memory limitations on the \acs{GPU} we could only experiment with grids of $32\times32\times32$ voxels.
 
 \begin{figure}[!hbt]
 	\centering
@@ -1013,6 +1035,8 @@ At last, we tested the best configuration -- binary adaptive grids -- with a \ac
 	\caption{Evolution of training and validation accuracy of the \acs{3D} \acs{CNN} using adaptive binary grids with size $32\times32\times32$.}
 	\label{fig:objrecog:3dcnn:experiments:3d}
 \end{figure}
+
+\clearpage
 
 Figure \ref{fig:objrecog:3dcnn:experiments:3d} shows the results of this experiment. As we can observe, we trained the network for five times more iterations than before and even then we couldn't achieve a proper convergence. The training set accuracy kept increasing slowly up to approximately $0.65$ whilst the validation one got stuck around $0.40$ for the whole experiment.
 
@@ -1022,21 +1046,51 @@ On the one hand, the data representation might not be adequate for such fine-gra
 
 On the other hand, the complexity of the network increased considerably after including that extra dimension in convolution and pooling layers. This means that the number of parameters of the network gets increased significantly, making it harder to train with so few samples due to overfitting. This hypothesis is backed up by the fact that training accuracy kept increasing slowly while validation one got stuck. This would eventually lead to a perfect fit on the training set but low accuracy on the validation split.
 
-\paragraph{Discussion}
+\subsection{Conclusion}
+\label{cha:objrecog:sec:study:subsec:conclusion}
 
 To sum up, we determined that the adaptive grid slightly outperforms the fixed one in normal conditions. The same happens with the grid size, obtaining marginally better results with bigger sizes. However, when it comes down to noise and occlusion robustness, the adaptive grid exceeds the accuracy of the fixed grid by a large margin for low levels of occlusion and noise, whilst for intermediate and high levels the impact on both grids is somewhat similar. In other words, the adaptive grid is better than the fixed one and it is preferable to use a bigger grid size if the performance impact can be afforded.
 
 It is important to remark that the binary occupancy measure performed better than the normalized density one, both using adaptive grids, while maintaining similar resilience against noise and occlusions. The best network trained with normalized density grids reached a peak accuracy of approximately 0.79 while the best binary one achieved approximately a 0.85 accuracy on the validation set.
 
-Another remarkable fact was that all networks exhibited a considerable amount of overfitting, i.e., training accuracy was almost perfect whilst validation was far away from it by a considerable margin. We hypothesize that this was due to the fact that the dataset has few training examples considering the complexity of the network. Besides, we also inspected the confusion matrix shown in Table \ref{table:confmatrix} to gain insight about the behavior of our network. As we can observe, there are many misclassified samples of classes that are similar. If we take a closer look at some of the misclassified samples (see Figures \ref{fig:3dcnn:experiments:confusion_desk_table}, \ref{fig:3dcnn:experiments:confusion_nstand_dresser}, and \ref{fig:3dcnn:experiments:confusion_sofa_bed}) it is reasonable to think that the network is not able to classify them properly because they are extremely similar. In this regard, the dataset must be augmented introducing noise, translations, rotations, and variations of the models to avoid overfitting and learn better those models that can be easily misclassified.
+Another remarkable fact was that all networks exhibited a considerable amount of overfitting, i.e., training accuracy was almost perfect whilst validation was far away from it by a considerable margin. We hypothesize that this was due to the fact that the dataset has few training examples considering the complexity of the network. Besides, we also inspected the confusion matrix shown in Table \ref{table:confmatrix} to gain insight about the behavior of our network. As we can observe, there are many misclassified samples of classes that are similar. If we take a closer look at some of the misclassified samples (as it happened before in PointNet's experiments) it is reasonable to think that the network is not able to classify them properly because they are extremely similar. In this regard, the dataset must be augmented introducing noise, translations, rotations, and variations of the models to avoid overfitting and learn better those models that can be easily misclassified.
 
-\subsection{Conclusion}
-\label{cha:objrecog:sec:study:subsec:conclusion}
+\begin{table}[!ht]
+	\centering
+	\footnotesize
+	\newcolumntype{C}{>{\centering\arraybackslash}p{2.35em}}%
+	\pgfplotstabletypeset[
+	column type=,
+	begin table={\begin{tabularx}{0.85\textwidth}{CCCCCCCCCC}},
+		end table={\end{tabularx}},
+	color cells={min=1,max=100},
+	col sep=comma,
+	every head row/.style={after row=\toprule},
+	every last row/.style={after row=\bottomrule},
+    columns/Class/.style={string type},
+	/pgfplots/colormap={whiteblue}{rgb255(0cm)=(255,255,255); rgb255(1cm)=(110,159,189)},]{
+		Desk, Table, Nstand, Bed, Tlt, Dresser, Bath, Sofa, Mntr, Chair	
+		52.0, 9.0, 1.0, 4.0, 0.0, 5.0, 1.0, 5.0, 0.0, 9.0
+		25.0, 69.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 4.0
+		1.0, 2.0, 60.0, 1.0, 4.0, 8.0, 0.0, 0.0, 2.0, 8.0
+		4.0, 0.0, 0.0, 80.0, 0.0, 0.0, 3.0, 11.0, 1.0, 1.0
+		1.0, 0.0, 3.0, 1.0, 84.0, 0.0, 1.0, 3.0, 2.0, 5.0
+		3.0, 0.0, 14.0, 0.0, 0.0, 61.0, 0.0, 1.0, 6.0, 1.0
+		0.0, 1.0, 0.0, 3.0, 0.0, 0.0, 34.0, 8.0, 3.0, 1.0
+		1.0, 0.0, 1.0, 4.0, 1.0, 2.0, 0.0, 88.0, 1.0, 2.0
+		1.0, 1.0, 1.0, 1.0, 0.0, 5.0, 1.0, 1.0, 87.0, 2.0
+		1.0, 2.0, 1.0, 2.0, 1.0, 1.0, 0.0, 1.0, 1.0, 90.0
+	}
+	\caption{Confusion matrix of the validation results achieved by the best set of weights for the \acs{2.5D} \acs{CNN} with  binary adaptive grids with a grid size of $64$ voxels. Darker cells indicate more predictions while lighter ones indicate less.}
+	\label{table:confmatrix}
+\end{table}
+
+As a result of such experimentation we can draw the following main conclusion: the volumetric representation itself has a huge impact on the performance of the network in terms of accuracy. On the one hand, the adaptive tensor exhibited not only better accuracy results than the fixed one, but it also introduced occlusion and noise robustness to some extent. On the other hand, the binary occupancy measure outperformed the normalized density one, fostering the less-is-better principle. In conclusion, this study provides a reasonable insight about the effect of \acs{3D} data representation in this kind of networks. In addition, it proves that taking into account real-world conditions is a matter of utmost importance when training these networks with synthetic datasets.
 
 \section{LonchaNet}
 \label{cha:objrecog:sec:lonchanet}
 
-In this work, we present a novel approach that uses multiple 2D views from 3D models for 3D object recognition. The proposed 2D renderings are based on cross sections of 3D models. The proposed method outperforms most existing approaches that participated in the ModelNet challenge. Currently, we are in the second position of the leaderboard, obtaining $94.37\%$ classification accuracy. Our proposal is focused on learning a discriminative representation that is able to distinguish among most categories of the ModelNet dataset. We also contribute with a new architecture that uses the existing GoogLeNet network \cite{Szegedy2015}. We use three independent GoogLeNet networks for learning specific features of each cross-section or slice from the 3D model.
+In this section, we present a novel approach that uses multiple \ac{2D} views from \acs{3D} models for \acs{3D} object recognition. The proposed 2D renderings are based on cross sections of \acs{3D} models. The proposed method outperforms most existing approaches that participated in the ModelNet challenge. Currently, we are in the second position of the leaderboard, obtaining $94.37\%$ classification accuracy. Our proposal is focused on learning a discriminative representation that is able to distinguish among most categories of the ModelNet dataset. We also contribute with a new architecture that uses the existing GoogLeNet network \cite{Szegedy2015}. We use three independent GoogLeNet networks for learning specific features of each cross-section or slice from the 3D model.
 
 As stated before, we propose a 3D object recognition method using deep learning. First, for every example in the dataset, we took three sections from an object, one for each 3D axis, and project the 3D points to a plane, so we obtain three images from every example.  Each of these three images that shape a single example are then fed to a deep \acl{CNN}. Our novel deep architecture features three GoogLeNets, one for each image, joined in a layer prior to the classification layer. This provides us with great expressiveness and a high success rate.
 

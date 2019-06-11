@@ -2,7 +2,7 @@
   \begin{axis}[
 	  grid=both,
 	  width=\linewidth,
-	  height=20 em,
+	  height=22 em,
       xlabel={Iteration},
       ylabel={Accuracy},
 	  legend cell align=left,

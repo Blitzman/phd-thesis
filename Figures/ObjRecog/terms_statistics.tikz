@@ -3,7 +3,7 @@
 	  ymode=log,
 	  grid=both,
 	  width=\linewidth,
-	  height=14 em,
+	  height=20 em,
       xlabel={Year},
       ylabel={Documents},
 	  legend cell align=left,
