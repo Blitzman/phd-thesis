@@ -1,11 +1,37 @@
 \chapter{Introduction}
 \label{cha:introduction}
 
+\begin{chapterabstract}
+
+\end{chapterabstract}
+
+\minitoc
+
+\clearpage
+
 \section{Motivation}
 \label{cha:introduction:sec:motivation}
 
 \section{Approach}
 \label{cha:introduction:sec:approach}
+
+The main thread that stitches all the components of this thesis together is deep learning.
+
+This work focuses on a subset of the problems that we stated in the previous section from a learning-based point of view:
+
+\begin{itemize}
+    \item Object Class Recognition.
+    \item Semantic Segmentation.
+    \item Simulation to Real Transfer.
+    \item Tactile Sensing.
+\end{itemize}
+
+Apart from taking advantage of deep learning as a tool to solve those problems, this thesis places emphasis on the data themselves and novel ways to process them:
+
+\begin{itemize}
+    \item We make use of \ac{3D} information and make it the core element of all our approaches. The observation is that the additional dimension can be useful to learn to classify and segment without the ambiguity of \ac{2D} representations.
+    \item We introduce learning-based architectures that are able to process such \ac{3D} information respecting its spatial arrangement. If we were to process \ac{3D} data in a \ac{2D} way we would start giving away all its advantages.
+\end{itemize}
 
 \subsection{Machine Learning in Computer Vision}
 
@@ -38,12 +64,17 @@ This thesis is the result of continuous effort throughout the last years. Such e
 \subsection{Chapter \ref{cha:semseg}: Semantic Segmentation}
 
 \begin{itemize}
-  \item \fullcite{Garcia-Garcia2017}
-  \item \fullcite{Garcia-Garcia2018}
-  \item \fullcite{Martinez-Gonzalez2018}
-  \item \fullcite{Oprea2019}
-  \item \fullcite{Garcia-Garcia2019b}
+  \item \fullcite{Garcia-Garcia2017b}
 \end{itemize}
+
+\subsection{Chapter \ref{cha:sim2real}: Sim2Real}
+
+\begin{itemize}
+    \item \fullcite{Garcia-Garcia2018}
+    \item \fullcite{Martinez-Gonzalez2018}
+    \item \fullcite{Oprea2019}
+    \item \fullcite{Garcia-Garcia2019b}
+  \end{itemize}
 
 \subsection{Chapter \ref{cha:tactile}: Tactile Sensing}
 
@@ -73,4 +104,4 @@ During the years spent working on the main topics of this thesis, several collab
 \section{Thesis Structure}
 \label{cha:introduction:sec:structure}
 
-This thesis is structured as follows. This first chapter introduced the problem and the motivation for this work; it also stated the goals and contributions. The following three chapters discuss the three core problems of this thesis: 3D object classification in Chapter \ref{cha:objrecog}, semantic segmentation and sim2real in Chapter \ref{cha:semseg}, and tactile sensing in Chapter \ref{cha:tactile}. For ach chapter, we review the state of the art, we describe our proposal, and we also carry out experiments to validate such contributions. Finally, in Chapter \ref{cha:conclusion}, we draw overall conclusions, revisit the highlights of this work, and discuss the possible application scenarios as well as future research directions.
+This thesis is structured as follows. This first chapter introduced the problem and the motivation for this work; it also stated the goals and contributions. The following four chapters discuss the four core problems of this thesis: 3D object classification in Chapter \ref{cha:objrecog}, semantic segmentation in Chapter \ref{cha:semseg}, simulation to real transfer in Chapter \ref{cha:sim2real}, and tactile sensing in Chapter \ref{cha:tactile}. For each chapter, we review the state of the art, we describe our proposal, and we also carry out experiments to validate such contributions. Finally, in Chapter \ref{cha:conclusion}, we draw overall conclusions, revisit the highlights of this work, and discuss the possible application scenarios as well as future research directions.
