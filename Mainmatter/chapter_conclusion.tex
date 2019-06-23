@@ -1,11 +1,59 @@
 \chapter{Conclusion}
 \label{cha:conclusion}
 
-\section{Findings and Conclusions}
+\begin{chapterabstract}
+This last chapter of the thesis presents the final conclusions of this work. Firstly, Section \ref{cha:conclusion:sec:findings} presents the general conclusions of the work. Next, Section \ref{cha:conclusion:sec:limitations} goes through the major findings. At last, Section \ref{cha:conclusion:sec:future} concludes this thesis by listing the limitations of each one of the chapters in this thesis and also lists a set of possible future lines of research.
+\end{chapterabstract}
+
+\minitoc
+
+\clearpage
+
+\section{Conclusions}
 \label{cha:conclusion:sec:findings}
 
-\section{Limitations}
-\label{cha:conclusion:sec:limitations}
+In this thesis, we have explored four core problems for indoor robotics with a heavy emphasis on computer vision. However, despite the obvious differences and the distance between each topic, we can extract certain general conclusions.
 
-\section{Future Work}
+First and foremost, after reviewing the state of the art of each of the topics of this thesis, we can state that deep learning has secured solid ground to be considered the \emph{de facto} paradigm for solving computer vision and robotics problems. In almost every aspect, deep learning architectures outperform traditional hand-engineered approaches.
+
+A general observation across all problems is the fact that \ac{3D} representations offer useful information that is clearly beneficial for learning models with better generalization capabilities. However, to take full advantage of three-dimensional information, network architectures need to properly take into account the spatial arrangement and the unstructured nature of \ac{3D} data.
+
+Following on the last observation, we also experienced the difficulties of training models for three-dimensional data. That additional dimension poses various challenges that range from memory footprint to increased execution time and also harder training prone to overfitting. In that regard, in order to ensure generalization, more quantity and more varied data is needed.
+
+It is exactly at this spot where synthetic data generation is proven to be an extremely valuable tool to avoid the cost and errors of manually generated datasets. However, they still have to deal with problems of their own, mainly the transfer of the knowledge acquired in the synthetic domain to the real-world.
+
+\section{Contributions}
+\label{cha:conclusion:sec:contributions}
+
+Once we have stated the general conclusions of the thesis, we briefly summarize the main contributions and findings.
+
+Chapter \ref{cha:objrecog} introduced a set of networks and \acs{3D} data representations for the object classification problem. First, we proposed \emph{PointNet}: a \acl{CNN} architecture for \acs{3D} object classification which makes use of \acs{3D} representations such as point clouds or meshes by structuring them into an occupancy grid. Later, we tested an improved version under difficult conditions such as noise and occlusion to gain insight about real-world situations. At last, we presented our latest iteration, namely \emph{LonchaNet}, a novel slice-based model which significantly improves over other approaches. We show the performance of these models and prove their suitability for real time object classification.
+
+In Chapter \ref{cha:semseg} we performed a comprehensive review of the state of the art of semantic segmentation for image and video using deep learning techniques. We provided an useful starting point for novel researchers and also enough details and depth so that more experienced ones could find it useful. Most importantly, apart from reviewing datasets and methods, we also gathered insights about weaknesses and future research.
+
+One of the key observations that was made after the review was the scarcity of high-quality and large-scale datasets for data-driven algorithmms learning with \ac{3D} data. Following that train of thought, Chapter \ref{cha:sim2real} introduced a novel large-scale synthetic dataset for various robotic perception tasks with special focus on 3D semantic segmentation: \emph{the RobotriX}. Together with the data, we also released the full set of tools to generate it with detailed documentation.
+
+Finally, Chapter \ref{cha:tactile} moved to the tactile sensing topic and showed a novel \acl{GNN} architecture which is able to classify the stability of robotic grasps using humanoid hands equipped with tactile sensors whose readings are interpreted as \acs{3D} graphs. We also demonstrated that this approach exhibits better generalization capabilities than previous methods based on more traditional architectures.
+
+\section{Limitations and Future Work}
 \label{cha:conclusion:sec:future}
+
+To conclude this thesis, there are many aspects from the works presented here that can be improved in one way or another. Apart from those limitations to address, the work done here also raises questions that might spark important future work. Here we briefly highlight both limitations and future works.
+
+\subsection{Object Classification}
+
+\begin{itemize}
+    \item Semantic segmentation of \ac{3D} point clouds with graph networks
+    \item Efficient representations for \acs{3D} data
+    \item 
+\end{itemize}
+
+\subsection{Semantic Segmentation}
+
+\subsection{Simulation to Real}
+
+\subsection{Tactile Sensing}
+
+\begin{itemize}
+    \item Graph topologies for the sensor readings: although it has been proven that generating a graph representation which better represents the actual topology of the tactels in a tactile sensor is useful, an open question remains: is it there a better topology? Further experimentation can be carried out to determine that. One possible line is learning the topology itself via a neural network, e.g., a \ac{GNG} \cite{Fritzke1999}.
+\end{itemize}
