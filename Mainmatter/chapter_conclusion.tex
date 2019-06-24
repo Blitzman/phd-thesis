@@ -50,10 +50,22 @@ To conclude this thesis, there are many aspects from the works presented here th
 
 \subsection{Semantic Segmentation}
 
+\begin{itemize}
+    \item 
+\end{itemize}
+
 \subsection{Simulation to Real}
+
+\begin{itemize}
+    \item Non-rigid deformations: one limitation of our dataset and the tool itself that we use to generate it is that interactions are restricted to rigid objects. Non-rigid objects are not modeled so no deformations can occur. This is a challenging problem that might increase the usefulness of the dataset and the generation tool for many other robotic manipulation tasks.
+    \item Random scene generation: one of the main flaws of our dataset is the limited amount of photorealistic scenes. This is due to the difficulty of designing a plausible scene and at the same time making sure that lighting, textures, and geometries look as realistic as possible. One possible way to improve or dataset would be to devise an algorithmic approach to generate this kind of scenes.
+    \item Post-processing for increased realism: recently, many works have taken advantage of \acp{GAN} to augment datasets with subtle but realistic changes. We wonder if such kind of techniques could be used to improve the realism of the renders in an adversarial manner.
+    \item Real-time raytracing: with the advent of the modern \acp{GPU} which feature hardware explicitly designed for carrying out raytracing operations it would be possible to raytracing in the generation phase to make scenes look even more realistic. Apart from the integration with the engine at hand, it also implies work on the art part (texturing and illumination setup).
+\end{itemize}
 
 \subsection{Tactile Sensing}
 
 \begin{itemize}
     \item Graph topologies for the sensor readings: although it has been proven that generating a graph representation which better represents the actual topology of the tactels in a tactile sensor is useful, an open question remains: is it there a better topology? Further experimentation can be carried out to determine that. One possible line is learning the topology itself via a neural network, e.g., a \ac{GNG} \cite{Fritzke1999}.
+    \item Temporal information for dynamic grasps: our proposal was focused on detecting if a given static grasp would be stable or not. However, objects are rarely such static entities but they are rather affected by many varying forces. In that regard, a promising future line of research would investigate the possibility of adding temporal information to a graph-based architectures. A possible way to do that would integrate other common recurrent architectures for such purpose such as \acl{LSTM}.
 \end{itemize}
