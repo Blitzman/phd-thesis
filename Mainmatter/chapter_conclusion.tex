@@ -1,4 +1,4 @@
-\chapter{Conclusion}
+ \chapter{Conclusion}
 \label{cha:conclusion}
 
 \begin{chapterabstract}
@@ -43,15 +43,16 @@ To conclude this thesis, there are many aspects from the works presented here th
 \subsection{Object Classification}
 
 \begin{itemize}
-    \item Semantic segmentation of \ac{3D} point clouds with graph networks
-    \item Efficient representations for \acs{3D} data
-    \item 
+    \item Efficient and accurate representations for 3D data: although occupancy grids have been proven useful for the object classification task, they still present a set of disadvantages which renders them unsuitable for certain situations. One of the main weaknesses of such representation is the memory footprint which causes larger models that barely fit into \ac{GPU} memory for training if a considerable resolution is requested. Alternative sparse representations such as octrees or graphs might help but they would require new architectures to process them.
+    \item Real-world datasets and deployment: our work has heavily focused on developing object recognition algorithms under certain conditions (fully isolated objects and synthetic models). Although we experimented introducing real-wolrd conditions such as noise and occlusions, it is still questionable whether or not the proposed models will behave properly in the real world. It would be interesting to check if such models can be trained or at least fine-tuned with smaller scale real-world object databases to measure their generalization capability.
 \end{itemize}
 
 \subsection{Semantic Segmentation}
 
 \begin{itemize}
-    \item 
+    \item Update datasets and methods: deep learning evolves at the speed of light and the hotness of the topic makes it difficult to maintain an up-to-date review. Since the writing of that chapter, various works have been published: novel datasets and environments and new methods, either iterations of the already presented ones or radically new concepts.
+    \item Panorama and hyperspectral segmentation: despite the thoroughness of our review, some lines were intentionally left out due to the low relevance they presented at the moment. Some of those lines are panorama and hyperspectral images segmentation, which make use of a different input rather than common \ac{RGB} images.
+    \item Real-time segmentation: with the growing complexity of deep learning models, they are becoming increasingly accurate but at the same time they are becoming heavier and slower. Most works focus on increasing the accuracy rate without taking into account that such models might need to be deployed into mobile solutions to be useful in a practical application. Recent works are following this line trying to streamline segmentation models that allow for real-time implementations while keeping good accuracy.
 \end{itemize}
 
 \subsection{Simulation to Real}
