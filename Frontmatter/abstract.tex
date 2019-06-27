@@ -1,5 +1,9 @@
 \chapter{Abstract}
 
-\lipsum[13]
-\lipsum[2]
-\lipsum[20]
+The care of dependent people (for reasons of aging, accidents, disabilities or illnesses) is one of the top priority lines of research for the European countries as stated in the Horizon 2020 goals. In order to minimize the cost and the intrusiveness of the therapies for care and rehabilitation, it is desired that such cares are administered at the patient's home. The natural solution for this environment is an indoor mobile robotic platform.
+
+Such robotic platform for home care needs to solve to a certain extent a set of problems that lie in the intersection of multiple disciplines, e.g., computer vision, machine learning, and robotics. In that crossroads, one of the most notable challenges (and the one we will focus on) is scene understanding: the robot needs to understand the unstructured and dynamic environment in which it navigates and the objects with which it can interact.
+
+To achieve full scene understanding, various tasks must be accomplished. In this thesis we will focus on three of them: object class recognition, semantic segmentation, and grasp stability prediction. The first one refers to the process of categorizing an object into a set of classes (e.g., chair, bed, or pillow); the second one goes one level beyond object categorization and aims to provide a per-pixel dense labeling of each object in an image; the latter consists on determining if an object which has been grasped by a robotic hand is in a stable configuration or if it will fall.
+
+This thesis presents contributions towards solving those three tasks using deep learning as the main tool for solving such recognition, segmentation, and prediction problems. All those solutions share one core observation: they all rely on tridimensional data inputs to leverage that additional dimension and its spatial arrangement. The four main contributions of this thesis are: first, we show a set of architectures and data representations for 3D object classification using point clouds; secondly, we carry out an extensive review of the state of the art of semantic segmentation datasets and methods; third, we introduce a novel synthetic and large-scale photorealistic dataset for solving various robotic and vision problems together; at last, we propose a novel method and representation to deal with tactile sensors and learn to predict grasp stability.  
