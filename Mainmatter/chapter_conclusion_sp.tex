@@ -1,0 +1,72 @@
+\chapter{Conclusión}
+\label{cha:conclusion_sp}
+
+\begin{chapterabstract}
+Este último capítulo de la tesis presenta las conclusiones finales de este trabajo. En primer lugar, la sección \ref{cha:conclusion_sp:sec:findings} presenta las conclusiones generales del trabajo. A continuación, la Sección \ref{cha:conclusion_sp:sec:limitations} expone los principales hallazgos y contribuciones del mismo. Por último, la Sección \ref{cha:conclusion_sp:sec:future} concluye esta tesis enumerando las limitaciones de cada uno de los capítulos y también enumera un conjunto de posibles líneas de investigación futuras.
+\end{chapterabstract}
+
+\minitoc
+
+\clearpage
+
+\section{Conclusiones}
+\label{cha:conclusion_sp:sec:findings}
+
+En esta tesis, hemos explorado cuatro problemas centrales de la robótica en interiores con un fuerte énfasis en la visión por computador. Sin embargo, a pesar de las diferencias obvias y de la distancia entre cada tema, podemos extraer ciertas conclusiones generales.
+
+En primer lugar, después de revisar el estado del arte de cada uno de los temas de esta tesis, podemos afirmar que el aprendizaje profundo ha cosechado suficientes éxitos con facilidad para ser considerado el paradigma por defecto para la resolución de problemas de visión por computador y robótica. En casi todos los aspectos, las arquitecturas de aprendizaje profundo superan a los enfoques tradicionales.
+
+Una observación general para todos los problemas es el hecho de que las representaciones \ac{3D} ofrecen información útil que es claramente beneficiosa para modelos de aprendizaje (generalmente en forma de mejor capacidad de generalización). Sin embargo, para aprovechar plenamente la información tridimensional, las arquitectura deben tener debidamente en cuenta la disposición espacial y el carácter no estructurado de los datos \ac{3D}.
+
+Siguiendo con la última observación, también experimentamos las dificultades del entrenamiento de modelos para los datos tridimensionales. Esta dimensión adicional plantea varios retos que van desde el consumo de memoria hasta el aumento del tiempo de ejecución, pasando por un entrenamiento más difícil y propenso al \emph{overfitting}. En ese sentido, para garantizar la generalización, se necesitan más datos y más variados.
+
+Es exactamente en este punto donde la generación de datos sintéticos ha demostrado ser una herramienta extremadamente valiosa para evitar el coste y los errores de los conjuntos de datos etiquetados manualmente. Sin embargo, todavía tienen que lidiar con sus propios problemas, principalmente la transferencia del conocimiento adquirido en el dominio sintético al mundo real.
+
+\section{Contribuciones}
+\label{cha:conclusion_sp:sec:contributions}
+
+Una vez que hemos establecido las conclusiones generales de la tesis, resumimos brevemente las principales contribuciones y hallazgos.
+
+En el capítulo \ref{cha:objrecog} se presenta un conjunto de redes y representaciones de datos en 3D para el problema de la clasificación de objetos. Primero, propusimos \emph{PointNet}: una arquitectura para la clasificación de objetos \acs{3D} que hace uso de representaciones \acs{3D} como nubes de puntos o mallas al estructurarlas en una malla de ocupación. Más tarde, analizamos una versión mejorada bajo condiciones difíciles como el ruido y la oclusión para obtener información sobre situaciones del mundo real. Por último, presentamos nuestra última iteración, \emph{LonchaNet}, un nuevo modelo basado en cortes o \emph{slices} que mejora significativamente con respecto a otros enfoques. Mostramos el rendimiento de estos modelos y demostramos su idoneidad para la clasificación de objetos en tiempo real.
+
+En el capítulo \ref{cha:semseg} realizamos una revisión exhaustiva del estado del arte de la segmentación semántica para imagen y vídeo utilizando técnicas de aprendizaje profundo. Proporcionamos un punto de partida útil para los investigadores noveles y también suficientes detalles y profundidad para que los más experimentados pudieran encontrarlo útil. Lo más importante es que, además de revisar los conjuntos de datos y los métodos, también recogemos información sobre las debilidades y fortalezas de los mismos así como líneas futuras de investigación.
+
+Una de las observaciones clave después de la revisión fue la escasez de conjuntos de datos de alta calidad y de gran escala para el aprendizaje en algoritmos basados en datos \ac{3D}. Siguiendo ese hilo de pensamiento, el capítulo \ref{cha:sim2real} introdujo un nuevo conjunto de datos sintético de gran escala para diversas tareas de percepción robótica con especial atención a la segmentación semántica 3D: \emph{the RobotriX}. Junto con los datos, también se hizo público el conjunto completo de herramientas para generarlos con documentación detallada.
+
+Finalmente, el capítulo \ref{cha:tactile} abordó el campo de \emph{tactile sensing} y mostró una arquitectura capaz de clasificar la estabilidad de los agarres robóticos utilizando manos humanoides equipadas con sensores táctiles cuyas lecturas se interpretan como grafos \acs{3D}. También demostramos que este enfoque exhibe mejor capacidad de generalización que los métodos anteriores basados en arquitecturas tradicionales.
+
+\section{Limitaciones y Trabajos Futuros}
+\label{cha:conclusion_sp:sec:future}
+
+Para concluir esta tesis, hay muchos aspectos de los trabajos aquí presentados que pueden ser mejorados de una manera u otra. Aparte de las limitaciones que hay que abordar, la labor realizada aquí también plantea cuestiones que podrían suscitar importantes trabajos futuros. Aquí destacamos brevemente tanto las limitaciones como dichas líneas futuras de investigación.
+
+\subsection{Object Classification}
+
+\begin{itemize}
+    \item Representaciones eficientes y precisas de datos 3D: aunque las mallas de ocupación han demostrado ser útiles para la tarea de clasificación de objetos, todavía presentan una serie de desventajas que las hacen inadecuadas para ciertas situaciones. Una de las principales debilidades de dicha representación es el consumo de memoria (o complejidad espacial) que provoca modelos más grandes que apenas caben en la memoria de la \ac{GPU} para su entrenamiento si se requiere una resolución considerable. Representaciones alternativas dispersas, como \emph{octrees} o grafos, podrían ayudar, pero requerirían nuevas arquitecturas para su procesamiento.
+    \item Conjuntos de datos del mundo real: nuestro trabajo se ha centrado principalmente en el desarrollo de algoritmos de reconocimiento de objetos bajo ciertas condiciones (objetos totalmente aislados y modelos sintéticos). Aunque experimentamos con la introducción de condiciones reales como el ruido y las oclusiones, todavía es cuestionable si los modelos propuestos se comportarán correctamente en el mundo real. Sería interesante comprobar si tales modelos pueden ser entrenados o al menos afinados con bases de datos de objetos del mundo real de menor escala para medir su capacidad de generalización.
+\end{itemize}
+
+\subsection{Semantic Segmentation}
+
+\begin{itemize}
+    \item Update datasets and methods: deep learning evolves at the speed of light and the hotness of the topic makes it difficult to maintain an up-to-date review. Since the writing of that chapter, various works have been published: novel datasets and environments and new methods, either iterations of the already presented ones or radically new concepts.
+    \item Panorama and hyperspectral segmentation: despite the thoroughness of our review, some lines were intentionally left out due to the low relevance they presented at the moment. Some of those lines are panorama and hyperspectral images segmentation, which make use of a different input rather than common \ac{RGB} images.
+    \item Real-time segmentation: with the growing complexity of deep learning models, they are becoming increasingly accurate but at the same time they are becoming heavier and slower. Most works focus on increasing the accuracy rate without taking into account that such models might need to be deployed into mobile solutions to be useful in a practical application. Recent works are following this line trying to streamline segmentation models that allow for real-time implementations while keeping good accuracy.
+\end{itemize}
+
+\subsection{Simulation to Real}
+
+\begin{itemize}
+    \item Non-rigid deformations: one limitation of our dataset and the tool itself that we use to generate it is that interactions are restricted to rigid objects. Non-rigid objects are not modeled so no deformations can occur. This is a challenging problem that might increase the usefulness of the dataset and the generation tool for many other robotic manipulation tasks.
+    \item Random scene generation: one of the main flaws of our dataset is the limited amount of photorealistic scenes. This is due to the difficulty of designing a plausible scene and at the same time making sure that lighting, textures, and geometries look as realistic as possible. One possible way to improve or dataset would be to devise an algorithmic approach to generate this kind of scenes.
+    \item Post-processing for increased realism: recently, many works have taken advantage of \acp{GAN} to augment datasets with subtle but realistic changes. We wonder if such kind of techniques could be used to improve the realism of the renders in an adversarial manner.
+    \item Real-time raytracing: with the advent of the modern \acp{GPU} which feature hardware explicitly designed for carrying out raytracing operations it would be possible to raytracing in the generation phase to make scenes look even more realistic. Apart from the integration with the engine at hand, it also implies work on the art part (texturing and illumination setup).
+\end{itemize}
+
+\subsection{Tactile Sensing}
+
+\begin{itemize}
+    \item Graph topologies for the sensor readings: although it has been proven that generating a graph representation which better represents the actual topology of the tactels in a tactile sensor is useful, an open question remains: is it there a better topology? Further experimentation can be carried out to determine that. One possible line is learning the topology itself via a neural network, e.g., a \ac{GNG} \cite{Fritzke1999}.
+    \item Temporal information for dynamic grasps: our proposal was focused on detecting if a given static grasp would be stable or not. However, objects are rarely such static entities but they are rather affected by many varying forces. In that regard, a promising future line of research would investigate the possibility of adding temporal information to a graph-based architectures. A possible way to do that would integrate other common recurrent architectures for such purpose such as \acl{LSTM}.
+\end{itemize}
