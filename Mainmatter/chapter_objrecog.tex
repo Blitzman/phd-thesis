@@ -4,7 +4,7 @@
 \begin{chapterabstract}
 In this chapter, we address the problem of object classification. To approach this challenge, we rely on the geometric information provided by 3D object representations such as point clouds. Furthermore, we focus on learning-based methods to distinguish objects from different classes while capturing the variability of shape of different objects which belong to the same class. Specifically, we leverage deep learning for such task.
 
-The chapter begins introducing and formulating the object classification task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature and datasets in Sections \ref{cha:objrecog:sec:relatedworks} and \ref{cha:objrecog:sec:datasets}. After that, we present our first proposal for 3D object classification, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Next, LonchaNet is introduced in Section \ref{cha:objrecog:sec:lonchanet} as the last iteration of our system that incorporates all the lessons learned by the previous work. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
+The chapter begins introducing and formulating the object classification task in Section \ref{cha:objrecog:sec:introduction} followed by a review of the most relevant literature and datasets in Sections \ref{cha:objrecog:sec:relatedworks} and \ref{cha:objrecog:sec:datasets}. After that, we present our first proposal for 3D object classification, namely PointNet, in Section \ref{cha:objrecog:sec:pointnet}. Later, PointNet is improved and thoroughly tested in adverse conditions with noise and occlusion throughout the study in Section \ref{cha:objrecog:sec:study}. Finally, Section \ref{cha:objrecog:sec:conclusion} draws conclusions and sets future lines of research.
 \end{chapterabstract}
 
 \minitoc
@@ -29,8 +29,6 @@ Apart from the methods, data also play a key role in object classification. As m
 After reviewing the literature and introducing the data we are going to use, we start describing our first approach to perform object classification using 3D data, namely PointNet, capable of learning object classes from point clouds discretized as occupancy grids with uniform voxel grids in the tridimensional space. Section \ref{cha:objrecog:sec:pointnet} describes this architecture, its data representation, and also benchmarks it on a standard 3D object classification dataset to validate it.
 
 Following that, Section \ref{cha:objrecog:sec:study} analyzes how noise and occlusion impact such 3D deep learning architecture and the importance of the data representation when dealing with such adverse conditions that commonly appear in the real world. In that study, we also propose minor changes to the architecture and the representation themselves that significantly boost accuracy with regard to the originally proposed PointNet.
-
-At last, Section \ref{cha:objrecog:sec:lonchanet} takes all the lessons learned from the initial PointNet proposal and the extensive study to introduce a novel slice-based architecture to tackle the 3D object class recognition problem, LonchaNet, which achieved state of the art results in a standard benchmark.
 
 In the end, Section \ref{cha:objrecog:sec:conclusion} concludes this chapter by summarizing the insights gathered while discussing the proposed approaches. Furthermore, we also expose our main flaws and how to improve upon them besides from proposing new proposing future lines of research for 3D object classification.
 
@@ -251,7 +249,7 @@ Maturana and Scherer \cite{Maturana2015} use occupancy grids in \emph{VoxNet} to
 \subsection{Our Proposal in Context}
 \label{cha:objrecog:sec:relatedworks:subsec:context}
 
-Our proposal builds upon the successes in the literature which suggested that applying deep learning techniques to 3D information to solve the object class recognition problem exhibits potential to raise the bar in terms of performance. Firstly, we introduce a novel way for representing the \ac{3D} input data, which is based on point density occupancy grids, and we integrate it into a \ac{CNN} architecture. The focus of this first iteration is to prove that simple representations and architectures for 3D data can perform reasonably well while keeping computational cost at bay to enable real-time class recognition. Secondly, we carry out an in-depth study of the effect of adverse conditions that characterize real-world scenarios -- such as noise caused by the sensor and occlusions due to the positions of the objects in the scene -- on the performance of \acp{CNN} applied to \acs{3D} object class recognition. In this case, our target is the assessment of iterative improvements applied to the previous architecture and representations to show that not only they can perform real-time recognition at reasonable accuracy but also maintain it under adverse circumstances. At last, we take a sideways step to propose a novel approach that uses multiple \ac{2D} cross-section views of \ac{3D} models for \ac{3D} object class recognition.
+Our proposal builds upon the successes in the literature which suggested that applying deep learning techniques to 3D information to solve the object class recognition problem exhibits potential to raise the bar in terms of performance. Firstly, we introduce a novel way for representing the \ac{3D} input data, which is based on point density occupancy grids, and we integrate it into a \ac{CNN} architecture. The focus of this first iteration is to prove that simple representations and architectures for 3D data can perform reasonably well while keeping computational cost at bay to enable real-time class recognition. Secondly, we carry out an in-depth study of the effect of adverse conditions that characterize real-world scenarios -- such as noise caused by the sensor and occlusions due to the positions of the objects in the scene -- on the performance of \acp{CNN} applied to \acs{3D} object class recognition. In this case, our target is the assessment of iterative improvements applied to the previous architecture and representations to show that not only they can perform real-time recognition at reasonable accuracy but also maintain it under adverse circumstances.
 
 \section{Datasets}
 \label{cha:objrecog:sec:datasets}
@@ -619,10 +617,7 @@ Training using an unbalanced dataset tends to harm those classes with the least 
 
 After analyzing the results, it can be stated that neither a deeper network nor balancing the dataset increase accuracy. In fact, the experiments of the original architecture with the unbalanced ModelNet-10 exhibited better performance with a $77.6$\% success rate. In addition, \emph{PointNet} takes an average time of $24.6$ milliseconds to classify an example (in comparison with \emph{VoxNet}, which can take up to half a second for its raytracing-based implementation). These results prove the system as a fast and accurate \ac{3D} object class recognition tool.
 
-\subsection{Conclusion}
-\label{cha:objrecog:sec:pointnet:subsec:conclusion}
-
-\emph{PointNet} is our first approach towards devising an efficient and accurate \ac{CNN} for \ac{3D} object class recognition. It was inspired by other contemporary works such \emph{VoxNet} and \ac{3D} \emph{ShapeNets}, in the sense that it also handles tridimensional data for object recognition. Its contributions lies in the fact that the architecture itself and the representation too were simplified and the whole pipeline was implemented in Caffe thus providing a faster method than the state of art ones yet obtaining a high accuracy rate in the ModelNet-10 dataset.
+To sum up, \emph{PointNet} is our first approach towards devising an efficient and accurate \ac{CNN} for \ac{3D} object class recognition. It was inspired by other contemporary works such \emph{VoxNet} and \ac{3D} \emph{ShapeNets}, in the sense that it also handles tridimensional data for object recognition. Its contributions lies in the fact that the architecture itself and the representation too were simplified and the whole pipeline was implemented in Caffe thus providing a faster method than the state of art ones yet obtaining a high accuracy rate in the ModelNet-10 dataset.
 
 \section{Noise and Occlusion}
 \label{cha:objrecog:sec:study}
@@ -1048,10 +1043,7 @@ On the one hand, the data representation might not be adequate for such fine-gra
 
 On the other hand, the complexity of the network increased considerably after including that extra dimension in convolution and pooling layers. This means that the number of parameters of the network gets increased significantly, making it harder to train with so few samples due to overfitting. This hypothesis is backed up by the fact that training accuracy kept increasing slowly while validation one got stuck. This would eventually lead to a perfect fit on the training set but low accuracy on the validation split.
 
-\subsection{Conclusion}
-\label{cha:objrecog:sec:study:subsec:conclusion}
-
-To sum up, we determined that the adaptive grid slightly outperforms the fixed one in normal conditions. The same happens with the grid size, obtaining marginally better results with bigger sizes. However, when it comes down to noise and occlusion robustness, the adaptive grid exceeds the accuracy of the fixed grid by a large margin for low levels of occlusion and noise, whilst for intermediate and high levels the impact on both grids is somewhat similar. In other words, the adaptive grid is better than the fixed one and it is preferable to use a bigger grid size if the performance impact can be afforded.
+In conclusion, we determined that the adaptive grid slightly outperforms the fixed one in normal conditions. The same happens with the grid size, obtaining marginally better results with bigger sizes. However, when it comes down to noise and occlusion robustness, the adaptive grid exceeds the accuracy of the fixed grid by a large margin for low levels of occlusion and noise, whilst for intermediate and high levels the impact on both grids is somewhat similar. In other words, the adaptive grid is better than the fixed one and it is preferable to use a bigger grid size if the performance impact can be afforded.
 
 It is important to remark that the binary occupancy measure performed better than the normalized density one, both using adaptive grids, while maintaining similar resilience against noise and occlusions. The best network trained with normalized density grids reached a peak accuracy of approximately 0.79 while the best binary one achieved approximately a 0.85 accuracy on the validation set.
 
@@ -1089,225 +1081,15 @@ Another remarkable fact was that all networks exhibited a considerable amount of
 
 As a result of such experimentation we can draw the following main conclusion: the volumetric representation itself has a huge impact on the performance of the network in terms of accuracy. On the one hand, the adaptive tensor exhibited not only better accuracy results than the fixed one, but it also introduced occlusion and noise robustness to some extent. On the other hand, the binary occupancy measure outperformed the normalized density one, fostering the less-is-better principle. In conclusion, this study provides a reasonable insight about the effect of \acs{3D} data representation in this kind of networks. In addition, it proves that taking into account real-world conditions is a matter of utmost importance when training these networks with synthetic datasets.
 
-\section{LonchaNet}
-\label{cha:objrecog:sec:lonchanet}
-
-Gathering all the knowledge acquired from our previous iterations, this section introduces a novel approach that uses multiple \ac{2D} views from \acs{3D} models for \acs{3D} object class recognition. The proposed \ac{2D} renderings are based on cross sections of \acs{3D} models. This time, our proposal is focused on learning a discriminative representation that is able to distinguish even the most challenging situations of similarity that we faced before. Our new proposal makes use of different network paths for learning specific features of each cross-section or slice from a 3D point cloud of the object to be recognized.
-
-This section is organized as follows. First, Section \ref{cha:objrecog:sec:lonchanet:subsec:representation} introduces our novel data representation and explains its generation process. Secondly, \ref{cha:objrecog:sec:lonchanet:subsec:architecture} describes the network architecture that we will employ to classify our proposed representation. Next, Section \ref{cha:objrecog:sec:lonchanet:subsec:experiments} shows all the experiments carried out to validate both the network architecture and the data representation. At last, Section \ref{cha:objrecog:sec:lonchanet:subsec:conclusion} concludes this iteration and reflects on the achieved results.
-
-
-\subsection{Data Representation}
-\label{cha:objrecog:sec:lonchanet:subsec:representation}
-
-LonchaNet takes point clouds as input, but the neural network architecture itself has three paths (as we will explain later) so it makes use of three images corresponding to three slices of the \ac{3D} object.
-
-The first step towards feeding that representation to the network is to extract the slices from the \acs{3D} point cloud. To that end, we calculate the central point for each axis of the cloud. Then we make a slice across the $XY$, $XZ$, and $YZ$ planes with a thickness of $5\%$ of the model size (a value that was empirically determined to work properly). Those points that fall inside these sections are isolated and projected to the corresponding \acs{2D} planes to generate an image of $500 \times 500$ pixels. These images are binary maps in which the background is black and the projected points are white. This process is shown in Figure \ref{fig:objrecog:slicing}.
-
-\begin{figure}[!t]	
-	\centering
-	\begin{subfigure}[t]{0.3\linewidth}
-		\centering
-		\includegraphics[width=1\linewidth]{Figures/ObjRecog/slices/chairn_1}
-        \caption{Sliced example}
-        \label{fig:slicing_a}
-	\end{subfigure}
-	\begin{subfigure}[t]{0.3\linewidth}
-		\centering
-		\includegraphics[width=1\linewidth]{Figures/ObjRecog/slices/chairn_2}
-        \caption{Points of every slice}
-        \label{fig:slicing_b}
-	\end{subfigure}
-    \begin{subfigure}[t]{0.8\linewidth}
-		\centering
-        \vspace{1em}
-		\includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice31}
-        \includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice32}
-        \includegraphics[height=0.32\linewidth]{Figures/ObjRecog/slices/chair_slice33}
-        \caption{Resultant projections of the three slices}
-        \label{fig:slicing_c}
-	\end{subfigure}
-    \caption{LonchaNet slicing process for a chair model.}
-    \label{fig:objrecog:slicing}
-\end{figure}
-
-Due to the inconsistent point density produced by the sampling process, there are some slices in which the points are scattered, resulting in a projection that does not represent the object faithfully. To deal with this problem, a post-processing step is carried out for each projection in which we apply a dilation operator of $10$ pixels using a square as the structuring element. This post-processing step fills the gaps between the scattered points and produces a more informative representation of the object, as shown in Figure \ref{fig:objrecog:dilation}.
-
-\begin{figure}[!t]
-	\centering
-	\begin{subfigure}[t]{0.35\linewidth}
-		\centering
-		\includegraphics[width=\linewidth, height=\linewidth]{Figures/ObjRecog/slices/bathtub_original}
-        \caption{Chair model slice with scattered pixels in the $XZ$ plane.}
-        \label{fig:dilation_a}
-	\end{subfigure}
-	\quad
-	\begin{subfigure}[t]{0.35\linewidth}
-		\centering
-		\includegraphics[width=\linewidth, height=\linewidth]{Figures/ObjRecog/slices/bathtub_dilated}
-        \caption{Chair model slice with dilated pixels in the $XZ$ plane.}
-        \label{fig:dilation_b}
-    \end{subfigure}
-    \caption{A comparison of a slice before and after the dilation process. The dilated image provides a more accurate representation the object.}
-    \label{fig:objrecog:dilation}
-\end{figure}
-
-This sliced representation of the object allows us to train and test a \acs{3D} recognition system in a \acs{2D} fashion. By doing that, we hypothesize that we can reach the high success rate and the fast execution time that characterizes deep image recognition networks yet preserving and taking advantage of the \acs{3D} information implicitly materialized in the slicing method.
-
-\subsection{Network Architecture}
-\label{cha:objrecog:sec:lonchanet:subsec:architecture}
-
-The main architecture of LonchaNet is composed of three isolated GoogLeNet that are joined at a concatenation layer followed by a fully connected layer for inference, as shown in Figure \ref{fig:objrecog:3dslicelenet}. As stated before, GoogLeNet \cite{Szegedy2015} is the state-of-the-art deep \acl{CNN} for image recognition tasks, providing the highest accuracy in several challenges, so we chose it over the other topologies.
-
-In this architecture, all convolutions use \ac{ReLU} activation. The size of the receptive field in this network is $224 \times 224$ taking RGB  channels with mean subtraction (for LonchaNet we use binary maps with no mean normalization). GoogLeNet network is $22$ layers deep when considering only layers with trainable parameters. The overall number of layers (independent building blocks) used for the construction of the network is about $100$. The use of average pooling before the classifier is based on \cite{Lin2013}, although this implementation differs in the use of an extra linear layer. This enables adapting and fine-tuning the network for other datasets.
-
-\begin{figure}[!b]
-    \centering
-    \resizebox{\linewidth}{!}{\input{Figures/ObjRecog/lonchanetwork.tikz}}
-    \caption{LonchaNet architecture.}
-    \label{fig:objrecog:3dslicelenet}
-\end{figure}
-
-LonchaNet features three independent GoogLeNet (we will reference them as "branches") learning features that define an object for each slice, so we force each branch to specialize the filters in  particular features of every slice. Finally, the responses of each branch are concatenated in a single output that is fed to a fully connected layer that acts as a classifier.
-
-\subsection{Experiments}
-\label{cha:objrecog:sec:lonchanet:subsec:experiments}
-
-To evaluate and validate our proposal, we carried out a series of experiments again on the ModelNet-10 dataset.
-
-\subsubsection{Data Generation}
-\label{cha:objrecog:sec:lonchanet:subsec:experiments:subsubsec:data}
-
-Data was generated in a similar fashion as we did for PointNet. The meshes from the ModelNet-10 dataset were converted to point clouds following the procedure described in Section \ref{cha:objrecog:sec:datasets}. However, this time we applied the slicing process that we described before to generate three projections from each object to feed the network.
-
-\subsubsection{Methodology and Setup}
-\label{cha:objrecog:sec:lonchanet:subsec:experiments:subsubsec:methodology}
-
-All timings and results were obtained by conducting the experiments in the following test setup: Intel Core i7-5820K with 32 GiB of Kingston HyperX 2666 MHz and CL13 DDR4 RAM on an Asus X99-A motherboard (Intel X99 chipset). Secondary storage was provided by a Samsung 850 EVO SSD. Additionally, the system included two NVIDIA Tesla K40c \acp{GPU} used for training and inference.
-
-The framework of choice was Caffe RC2 running on Ubuntu 14.04.02. It was compiled using CMake 2.8.7, g++ 4.8.2, CUDA 7.5, and cuDNN v3.
-
-\subsubsection{Results and Discussion}
-\label{cha:objrecog:sec:lonchanet:subsec:experiments:subsubsec:results}
-
-We trained from scratch and tested LonchaNet with the ModelNet-10 dataset, as described earlier. It is remarkable that no transfer learning or fine tuning over a pre-trained set of parameters was used. It is remarkable that the training and test splits are defined by the dataset itself and also it is worth saying that the number of examples per class are not balanced (as we already analyzed with PointNet). This fact could harm the accuracy of the system, biasing the learning and the classification to the classes with more number of examples as stated by \cite{He2009}.
-
-Regarding the parameters that affect the learning process, we trained the architecture with a base learning rate of $0.00001$, multiplying the current learning rate by $0.75$ every $10000$ iterations. Our optimizer of choice was ADAM \cite{KingmaB14} with $\beta_1=0.9$ and $\beta_2=0.999$. The training process executed for $20000$ iterations, but the best weights set was produced in the iteration $\#18300$ which threw a validation accuracy of $94.3709$\%, the second best score in the leaderboard of the ModelNet-10 challenge.
-
-It is also worth noting the fast computations of our architecture. One training iteration with a batch size of $30$ examples takes an average of $2.25$ seconds. Also, classifying a new examples only takes $0.0896$ seconds in our test machine.
-
-\begin{figure}[!htb]
-	\centering
-	\begin{tikzpicture}
-	\begin{axis}[
-	width=\linewidth,
-    height=16 em,
-	ylabel=Accuracy,
-    xlabel near ticks,
-	xlabel=Class,
-	ymajorgrids=true,
-	xtick pos=left,
-	enlarge x limits=0.15,
-	legend style={at={(0.5,0.03)},anchor=south},
-	ybar=2pt,
-	bar width=5 pt,
-	xmin=1,
-	xmax=10,
-	ymin=0.0,
-	ymax=1.0,
-	ytick={0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0},
-    y tick label style={
-        /pgf/number format/.cd,
-        fixed,
-        fixed zerofill,
-        precision=1,
-        /tikz/.cd
-    },
-	xtick=data,
-    xticklabels={Desk,Table,Nightstand,Bed, Toilet,Dresser, Bathtub, Sofa, Monitor, Chair},
-    xticklabel style={rotate=60},
-	axis on top=false,]
-	\addplot [color=uablue35, fill=uablue35] coordinates {(1, 0.79) (2, 0.96) (3, 0.86) (4, 0.97) (5, 0.98) (6, 0.92) (7, 0.94) (8, 0.9) (9, 1) (10, 0.98)}; 
-	\end{axis} 
-	\end{tikzpicture}
-	\caption{Accuracy per class for the test split of the ModelNet-10 dataset achieved by LonchaNet after $18300$ training iterations using the \emph{ModelNet-10} dataset (solver type is ADAM, learning rate is 0.00001, $\beta_1$ is 0.9 and $\beta_2$ is 0.999).}
-	\label{fig:success_per_class}
-\end{figure}
-
-
-Figure \ref{fig:success_per_class} shows the test accuracy per class. It can be seen that the classes with the less success rates are the very same classes with the less number of examples, namely the classes desk and nightstand. In light of this fact we can expect that if we could have a balanced dataset, the error rate of these classes would decrease significantly.
-
-In Table \ref{fig:objrecog:confmatrix}, we can observe the confusion matrix for this experiment. This table confirms the stability and reliability of the system, which confuses only objects of classes that heavily look alike from a visual perspective.
-
-\begin{table}[!t]
-    \centering
-	\footnotesize
-	\newcolumntype{C}{>{\centering\arraybackslash}p{2.35em}}%
-	\pgfplotstabletypeset[
-	column type=,
-	begin table={\begin{tabularx}{0.85\textwidth}{CCCCCCCCCC}},
-		end table={\end{tabularx}},
-	color cells={min=1,max=100},
-	col sep=comma,
-	every head row/.style={after row=\toprule},
-	every last row/.style={after row=\bottomrule},
-    columns/Class/.style={string type},
-	/pgfplots/colormap={whiteblue}{rgb255(0cm)=(255,255,255); rgb255(1cm)=(110,159,189)},]{
-		Desk, Table, Nstand, Bed, Tlt, Dresser, Bath, Sofa, Mntr, Chair	
-		79.0, 10.0, 2.0, 1.0, 0.0, 2.0, 0.0, 3.0, 1.0, 0.0
-		1.0, 96.0, 2.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0
-		0.0, 5.0, 86.0, 0.0, 0.0, 9.0, 0.0, 0.0, 0.0, 0.0
-		0.0, 2.0, 0.0, 97.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0
-		0.0, 0.0, 0.0, 1.0, 98.0, 0.0, 0.0, 0.0, 0.0, 1.0
-		0.0, 0.0, 7.0, 0.0, 0.0, 92.0, 0.0, 1.0, 0.0, 0.0
-		0.0, 2.0, 0.0, 4.0, 0.0, 0.0, 94.0, 0.0, 0.0, 0.0
-		0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 99.0, 0.0, 0.0
-		0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 100.0, 0.0
-		0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 99.0
-	}
-	\caption{Confusion matrix of the classification results achieved by \emph{LonchaNet} after $18300$ training iterations using the \emph{ModelNet-10} dataset (solver is ADAM, learning rate is 0.00001, $\beta_1$ is 0.9 and $beta_2$ is 0.999). It is important to remark the confusion between the classes Desk and Table and Nightstand and Dresser. The values shown in the table are percentages.}
-	\label{fig:objrecog:confmatrix}
-\end{table}
-
-That is the case of the classes desk and table which the system confuses, yet not the other way around. This could be possibly caused by the fact that a desk is a type of table, meaning the desks have minor visual features that go unnoticed in some examples, making those examples hard to distinguish from the table ones. Also, there is a confusion problem among the classes nightstand and dresser. This kind of confusion is very common in \acs{CNN} architectures because, again, they rely on visual features of an object and these two classes are visually similar. This is a recurrent problem throughout the whole chapter that this last architecture was somehow able to alleviate but not solve completely.
-
-\subsection{Conclusion}
-\label{cha:objrecog:sec:lonchanet:subsec:conclusion}
-
-In this last iteration of our object recognition approaches, we introduced a novel architecture for \acs{3D} object recognition, namely LonchaNet, together with a new sliced representation for \acs{3D} point clouds to feed it. Our system takes three slices of the input point cloud (one for each axis), projects the points to a plane ($XY$, $XZ$, $YZ$), generates three projected images which are post-processed with a dilation operator, and then sends them to the neural network. The architecture features three independent GoogLeNet branches whose last layer activations are concatenated and fed to a fully connected layer for the final classification. Each of this branches learns particular features of a slice.
-
-This method allows us to take advantage of fast and space-efficient \acs{2D} computation whilst preserving part of the \acs{3D} information. Our experiments show that LonchaNet achieves a significantly higher accuracy rate of $94.37\%$ (in comparison with our previous approaches) in the ModelNet-10 test set. Furtermore, it is fast: once the model is trained, classifying a single \acs{3D} object only takes $0.0896$ seconds.
 
 \section{Conclusion}
 \label{cha:objrecog:sec:conclusion}
 
-In this chapter, we presented three iteratively improved approaches for \acs{3D} object class recognition. With the first one, PointNet, we proved that it was possible and efficient to classify \acs{3D} objects using a simplified version of a voxelized representation for the object. Next, we carried out a study to show the resilience of a new tensor representation against noise and occlusion with an improved architecture. At last, we introduced LonchaNet, an architecture that combines the best of both worlds: a \acs{3D} representation is transformed into three \acs{2D} ones by using slices and projections of the original cloud; such slices are then processed by a three-branched network. Using such architecture, we reached the second place in the leaderboard of the ModelNet-10 challenge, with an accuracy of $94.37\%$ in the accuracy test set. The state of the leaderboard at the moment this research was carried out is shown in Table \ref{table:objrecog:modelnet_leaderboard}.
-
-\begin{table}[!htb]
-	\centering
-	\begin{tabular}{ccc}
-    	Method & ModelNet10 Accuracy & ModelNet40 Accuracy\\
-        \hline
-        VRN Ensemble \cite{Brock2016} & 97.14\% & 95.54\%\\
-        \textbf{LonchaNet} & \textbf{94.37}\% & N/A\\
-        ORION \cite{Sedaghat2016} & 93.80\% & N/A\\
-        FusionNet \cite{Hegde2016} & 93.11\% & 90.80\% \\
-        Pairwise \cite{Johns2016} & 92.80\% & 90.70\% \\
-        GIFT \cite{Bai2016} & 92.35\% & 83.10\% \\
-        VoxNet \cite{Maturana2015} & 92.00\% & 83.00\% \\
-        3D-GAN \cite{Wu2016} & 91.00\% & 83.30\% \\
-        DeepPano \cite{Shi2015} & 85.45\% & 77.63\% \\
-        3DShapeNets \cite{Wu2015} & 83.50\% & 77.00\% \\
-        MVCNN \cite{Su2015} & N/A & 90.10\% \\
-        \hline
-    \end{tabular}
-    \caption{ModelNet leaderboard as of January, 2017.}
-    \label{table:objrecog:modelnet_leaderboard}
-\end{table}
+In this chapter, we presented two iteratively improved approaches for \acs{3D} object class recognition. With the first one, PointNet, we proved that it was possible and efficient to classify \acs{3D} objects using a simplified version of a voxelized representation for the object. Next, we carried out a study to show the resilience of a new tensor representation against noise and occlusion with an improved architecture. 
 
 \subsection{Limitations and Future Works}
 
-One of the most limiting factors is memory. Both for PointNet and for LonchaNet, we face important memory constraints. The former one is limited to $64\times 64\times 64$ voxels on a rather high-end \ac{GPU}; the latter is limited to three branches due to the space requirements from GoogleNet. Next-generation \acp{GPU} with larger memory pools will immediately allow us to increase those sizes to test if our models get better. In addition, we are looking into alternative ways of representing the point clouds (e.g., graphs) to save memory and avoid the curse of dimensionality.
+One of the most limiting factors is memory since in all networks we face important memory constraints. For instance, \emph{PointNet} is limited to $64\times 64\times 64$ voxels on a rather high-end \ac{GPU}. Next-generation \acp{GPU} with larger memory pools will immediately allow us to increase those sizes to test if our models get better. In addition, we are looking into alternative ways of representing the point clouds (e.g., graphs) to save memory and avoid the curse of dimensionality.
 
 Following on this work we plan to train and validate our architecture with the larger version of the dataset: ModelNet-40. This dataset features 40 classes with more than $127.000$ models so this experiment could give us better insights about the generalization capabilities of our system.
 
