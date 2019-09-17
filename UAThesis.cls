@@ -278,6 +278,7 @@
 \usepackage{forest}
 \usepackage[hyphens]{url}
 \usepackage{xspace}
+\usepackage{appendix}
 \newcommand{\TikZ}{Ti\emph{k}Z\xspace}
 
 \usepackage[
@@ -319,6 +320,9 @@
   \ChNameVar{\Large\fontfamily{palatino}}
   \ChNumVar{\fontsize{60}{62}\usefont{OT1}{ptm}{mn}{n}\fontfamily{palatino}}
   \ChTitleVar{\Huge\bfseries\rm\fontfamily{palatino}}
+  
+\renewcommand\appendixname{Apéndice}
+\renewcommand\appendixpagename{Apéndice}
 
 %----------------------------------------------------------------------------------------
 % COMMANDS
