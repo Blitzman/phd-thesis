@@ -189,6 +189,8 @@
 
 \RequirePackage{xcolor}
 
+\definecolor{uaorange}{RGB}{206,111,5}
+
 \definecolor{rgb0}{RGB}{0,0,0}
 \definecolor{rgb1}{RGB}{0,0,255}
 \definecolor{rgb2}{RGB}{0,255,0}
@@ -571,9 +573,9 @@ bookmarksopen=true,
 bookmarksopenlevel=0,
 hypertexnames=false,
 colorlinks=true, % Set to false to disable coloring links
-citecolor=uablue50, % The color of citations
-linkcolor=uablue50, % The color of references to document elements (sections, figures, etc)
-urlcolor=uablue50, % The color of hyperlinks (URLs)
+citecolor=uaorange, % The color of citations
+linkcolor=uaorange, % The color of references to document elements (sections, figures, etc)
+urlcolor=uaorange, % The color of hyperlinks (URLs)
 pdfstartview={FitV},
 unicode,
 breaklinks=true,
